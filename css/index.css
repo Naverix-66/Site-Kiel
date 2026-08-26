@@ -1,0 +1,313 @@
+/* ============================================================
+   VARIABLES GLOBALES
+   Même thème "clean girl" que la v1, seule la mise en page
+   du tableau change.
+   ============================================================ */
+:root {
+
+    /* -- Couleurs -- */
+    --couleur-fond: #FBF3EE;
+    --couleur-carte: #FFFFFF;
+    --couleur-encre: #4B3B36;
+    --couleur-encre-claire: #9C8880;
+
+    --couleur-accent: #D9A6A0;
+    --couleur-accent-fonce: #C17F77;
+    --couleur-or: #C9A876;
+
+    --couleur-verrouille-fond: #ECE6E0;
+    --couleur-verrouille-texte: #BEB2A9;
+
+    --couleur-bordure: #E8D6D1;   /* bordures du tableau, rose très clair */
+
+    /* -- Typographies -- */
+    --police-titre: 'Cormorant Garamond', serif;
+    --police-texte: 'Jost', sans-serif;
+
+    /* -- Autres réglages réutilisés -- */
+    --transition-douce: 0.3s ease;
+}
+
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background-color: var(--couleur-fond);
+    font-family: var(--police-texte);
+    color: var(--couleur-encre);
+}
+
+.main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+    text-align: center;
+}
+
+h1 {
+    font-family: var(--police-titre);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 2.4rem;
+    margin-bottom: 8px;
+}
+
+h3 {
+    font-weight: 300;
+    font-size: 1rem;
+    color: var(--couleur-encre-claire);
+    margin: 4px 0;
+    letter-spacing: 0.02em;
+}
+
+
+/* ============================================================
+   LE TABLEAU
+   Vrai tableau : bordures visibles, colonne d'en-tête pour la
+   saison, lignes bien délimitées.
+   ============================================================ */
+.calendrier {
+    width: 100%;
+    margin-top: 44px;
+    border-collapse: collapse;         /* les bordures des cases voisines fusionnent en une seule ligne */
+    background-color: var(--couleur-carte);
+    border-radius: 14px;
+    overflow: hidden;                  /* pour que les coins arrondis coupent bien le contenu interne */
+    box-shadow: 0 10px 30px rgba(75, 59, 54, 0.07);
+}
+
+.calendrier caption {
+    /* Utile pour l'accessibilité, mais on ne veut pas l'afficher visuellement */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+}
+
+/* -- La colonne d'en-tête (Automne / Hiver / Été) -- */
+.calendrier th {
+    width: 110px;
+    background-color: #FCEEEA;
+    color: var(--couleur-accent-fonce);
+    font-family: var(--police-titre);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.2rem;
+    border: 1px solid var(--couleur-bordure);
+    border-left: none;
+}
+
+/* -- Les cases des mois -- */
+.calendrier td {
+    border: 1px solid var(--couleur-bordure);
+    padding: 18px 8px;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;      /* nécessaire pour positionner le cadenas et le ruban */
+
+    /*
+       IMPORTANT — c'est ce qui corrige le bug de superposition :
+       le ruban "Jouer" est caché par défaut via transform: translateY(100%),
+       ce qui le place juste EN DESSOUS de la case. Sans "overflow: hidden"
+       ici, ce ruban caché débordait dans la case de la ligne suivante et
+       se superposait avec elle (visible dès que plusieurs lignes étaient
+       débloquées). "overflow: hidden" force le ruban cité à rester
+       invisible tant qu'il est en dehors des limites de SA case.
+    */
+    overflow: hidden;
+
+    transition: background-color var(--transition-douce);
+}
+
+/* Le numéro et le nom du mois, toujours visibles tous les deux */
+.case-nombre {
+    display: block;
+    font-family: var(--police-titre);
+    font-weight: 600;
+    font-size: 1.9rem;
+    line-height: 1.1;
+}
+
+.case-nom {
+    display: block;
+    font-family: var(--police-texte);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+
+/* ----------------------------------------------------------
+   MOIS DISPONIBLES (classe ajoutée par le JS : .disponible)
+   ---------------------------------------------------------- */
+.case.disponible {
+    cursor: pointer;
+    color: var(--couleur-encre);
+}
+
+.case.disponible .case-nom {
+    color: var(--couleur-accent-fonce);
+}
+
+.case.disponible:hover {
+    background-color: #FCEEEA;
+}
+
+/* Bandeau "Jouer" qui apparaît en bas de la case au survol,
+   pour confirmer que la case est cliquable */
+.case.disponible::after {
+    content: "Jouer →";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 5px 0;
+    background-color: var(--couleur-accent);
+    color: #FFFFFF;
+    font-family: var(--police-texte);
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+
+    transform: translateY(100%);     /* caché sous la case par défaut, grâce à overflow:hidden sur le parent */
+    transition: transform var(--transition-douce);
+}
+
+.case.disponible:hover::after {
+    transform: translateY(0);
+}
+
+
+/* ----------------------------------------------------------
+   MOIS VERROUILLÉS (classe ajoutée par le JS : .verrouille)
+   ---------------------------------------------------------- */
+.case.verrouille {
+    background-color: var(--couleur-verrouille-fond);
+    color: var(--couleur-verrouille-texte);
+    cursor: not-allowed;
+}
+
+.case.verrouille .case-nom {
+    color: var(--couleur-verrouille-texte);
+}
+
+/* Petit cadenas TOUJOURS visible en haut à droite, pas seulement au survol :
+   on veut que ce soit clair dès le premier coup d'œil. */
+.case.verrouille::before {
+    content: "🔒";
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+
+/* ----------------------------------------------------------
+   PROCHAINE CASE À SE DÉBLOQUER (classe ajoutée par le JS :
+   .prochain-a-debloquer, en plus de .verrouille)
+   ----------------------------------------------------------
+   C'est la toute prochaine case verrouillée dans l'ordre du
+   calendrier — celle qui va se débloquer en premier. Au lieu
+   d'un cadenas simple, on montre un sablier, et au survol un
+   vrai décompte ("Encore X j.") plutôt que le message
+   générique "bientôt".
+   ---------------------------------------------------------- */
+.case.verrouille.prochain-a-debloquer {
+    border: 1px dashed var(--couleur-accent);
+}
+
+.case.verrouille.prochain-a-debloquer::before {
+    content: "⏳";   /* remplace le 🔒 du cas générique */
+}
+
+.case.verrouille.prochain-a-debloquer::after {
+    /* On garde le comportement du ::after générique (glisse depuis le bas au hover),
+       on remplace juste le texte affiché. */
+    content: "Encore " attr(data-jours) " j.";
+    background-color: var(--couleur-accent-fonce);
+}
+
+
+/* ----------------------------------------------------------
+   CASE VIDE (le petit cœur en bas à droite du tableau)
+   ---------------------------------------------------------- */
+.case-vide {
+    border: 1px solid var(--couleur-bordure);
+    color: var(--couleur-accent);
+    font-size: 1.4rem;
+    opacity: 0.4;
+}
+
+
+/* ============================================================
+   LÉGENDE
+   Explique les deux couleurs pour qu'il n'y ait aucune
+   ambiguïté sur ce qui est cliquable.
+   ============================================================ */
+.legende {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+    font-size: 0.85rem;
+    color: var(--couleur-encre-claire);
+}
+
+.legende-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legende-pastille {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.legende-pastille--dispo {
+    background-color: var(--couleur-accent);
+}
+
+.legende-pastille--verrouille {
+    background-color: var(--couleur-verrouille-texte);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+
+    .calendrier th {
+        width: 70px;
+        font-size: 0.95rem;
+    }
+
+    .calendrier td {
+        padding: 10px 4px;
+    }
+
+    .case-nombre {
+        font-size: 1.3rem;
+    }
+
+    .case-nom {
+        font-size: 0.6rem;
+    }
+
+    .legende {
+        gap: 18px;
+        font-size: 0.75rem;
+    }
+}

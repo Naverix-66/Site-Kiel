@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Polices Google Fonts : Cormorant Garamond (élégant/manuscrit) + Jost (texte courant) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Jost:wght@300;400;500;600&display=swap">
+
+    <link rel="stylesheet" href="css/index.css">
+    <title>11-months</title>
+</head>
+<body>
+
+    <header>
+    </header>
+
+
+    <div class="main">
+
+        <h1>Voici le calendrier de cette longue année :</h1>
+        <h3>Clique sur un mois pour jouer !</h3>
+        <h3>Et patiente le mois prochain pour découvrir un nouveau jeu</h3>
+
+        <!--
+            Vrai tableau HTML sémantique cette fois :
+            - <th scope="row"> pour la saison, en en-tête de chaque ligne
+            - chaque case contient DEUX infos toujours visibles :
+              le numéro (case-nombre) et le nom du mois (case-nom)
+            - data-mois reste utilisé par le JS pour savoir si le mois est débloqué
+        -->
+        <table class="calendrier">
+            <caption>Calendrier des mois</caption>
+            <tbody>
+                <tr>
+                    <th scope="row">Automne</th>
+                    <td class="case" data-mois="9">
+                        <span class="case-nombre">09</span>
+                        <span class="case-nom">Septembre</span>
+                    </td>
+                    <td class="case" data-mois="10">
+                        <span class="case-nombre">10</span>
+                        <span class="case-nom">Octobre</span>
+                    </td>
+                    <td class="case" data-mois="11">
+                        <span class="case-nombre">11</span>
+                        <span class="case-nom">Novembre</span>
+                    </td>
+                    <td class="case" data-mois="12">
+                        <span class="case-nombre">12</span>
+                        <span class="case-nom">Décembre</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Hiver</th>
+                    <td class="case" data-mois="1">
+                        <span class="case-nombre">01</span>
+                        <span class="case-nom">Janvier</span>
+                    </td>
+                    <td class="case" data-mois="2">
+                        <span class="case-nombre">02</span>
+                        <span class="case-nom">Février</span>
+                    </td>
+                    <td class="case" data-mois="3">
+                        <span class="case-nombre">03</span>
+                        <span class="case-nom">Mars</span>
+                    </td>
+                    <td class="case" data-mois="4">
+                        <span class="case-nombre">04</span>
+                        <span class="case-nom">Avril</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">Été</th>
+                    <td class="case" data-mois="5">
+                        <span class="case-nombre">05</span>
+                        <span class="case-nom">Mai</span>
+                    </td>
+                    <td class="case" data-mois="6">
+                        <span class="case-nombre">06</span>
+                        <span class="case-nom">Juin</span>
+                    </td>
+                    <td class="case" data-mois="7">
+                        <span class="case-nombre">07</span>
+                        <span class="case-nom">Juillet</span>
+                    </td>
+                    <td class="case-vide">&#10084;</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Légende : explique les deux couleurs pour qu'il n'y ait aucune ambiguïté -->
+        <div class="legende">
+            <div class="legende-item">
+                <span class="legende-pastille legende-pastille--dispo"></span>
+                Disponible, clique pour jouer
+            </div>
+            <div class="legende-item">
+                <span class="legende-pastille legende-pastille--verrouille"></span>
+                Pas encore débloqué
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+    </footer>
+
+    <script src="js/index.js" defer></script>
+
+</body>
+</html>
