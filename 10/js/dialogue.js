@@ -288,7 +288,8 @@ function couleurDeFondDuPortrait(cle) {
 function peindrePortrait(cle) {
 
     const ui = dialogue.ui;
-    const nom = cle && aUnPortrait(cle) ? cle : null;
+    // apparenceDe : Samsam sans son pyjama a son propre portrait.
+    const nom = cle && aUnPortrait(cle) ? apparenceDe(cle) : null;
 
     // Même interlocuteur qu'à la réplique d'avant : rien à refaire.
     if (ui.imageDe === nom) return;

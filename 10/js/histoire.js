@@ -413,6 +413,22 @@ function orienterPeluche(peluche, cible) {
 }
 
 
+/* ------------------------------------------------------------
+   changerDeTenue(peluche, tenue)
+   ------------------------------------------------------------
+   Change la planche d'une peluche dessinée (voir TENUES dans
+   moteur.js) sans rien changer d'autre : même place, même taille,
+   même animation en cours. Le portrait suit tout seul.
+   ------------------------------------------------------------ */
+function changerDeTenue(peluche, tenue) {
+    APPARENCES[peluche.cle] = tenue;
+    if (!peluche.dessinee) return;
+    const anim = peluche.corps.animEnCours || "idle-bas";
+    peluche.corps.use(sprite(tenue, { anim: anim }));
+    peluche.corps.animEnCours = anim;
+}
+
+
 // De face, comme au repos.
 function remettreDeFace(peluche) {
     if (!peluche.dessinee) return;

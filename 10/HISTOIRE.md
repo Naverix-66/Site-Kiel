@@ -61,9 +61,8 @@ Plus **le pétale de rose**, qui ne sert à rien. Sauf à tout.
 - **La corde** — le pyjama Miffy de Samsam (fin de l'acte I). **Le nœud** : Doudou.
 
 **Codé (21/09, `js/acte2.js`, sauvegarde d'avant : tag git `avant-acte-2`)** :
-- **Ouverture** : Samsam donne son pyjama, puis tire le rideau sur lui jusqu'aux
-  oreilles (il n'a plus de pyjama — en attendant son dessin sans pyjama, on ne
-  le voit plus, mais on lui parle). Bob ouvre la fenêtre en grand, ne voit que
+- **Ouverture** : Samsam donne son pyjama — il passe à sa planche sans pyjama
+  (tenue `samsam_sans_pyjama`, portrait compris). Bob ouvre la fenêtre en grand, ne voit que
   du noir ; Doudou le retient (« Je suis sorti dehors sans rien. Je suis revenu
   avec elles », ses coutures) et prend le pyjama pour préparer la corde.
   Carton « Acte II — L'équipement ».
@@ -199,8 +198,8 @@ et un vrai jeu :
 - Le plan réel de l'appartement (photo en attente) → corrige `js/pieces.js`.
 - ~~Sprites des peluches~~ → **reçus le 17/09** (Rosy, Samsam, Fraisy, Bluey,
   Doudou, Cakey + les icônes d'objets), convertis par `outils/refaire_peluches.ps1`.
-  Manquent : **Moin** (il n'existe qu'en texte), et un **Samsam sans pyjama**
-  pour après la fin de l'acte I (il le donne à Bob).
+  **Samsam sans pyjama** et **la vraie veilleuse** (lampe.png) reçus le 21/09.
+  Manque : **Moin** (il n'existe qu'en texte).
 - La vraie couleur des rideaux de Klara (le rideau tombé est crème pour l'instant).
 - ~~Cakey appâte la mouette avec son gâteau~~ → **NON, décidé par Evan.**
   Cakey ne partage JAMAIS son gâteau avec la mouette.

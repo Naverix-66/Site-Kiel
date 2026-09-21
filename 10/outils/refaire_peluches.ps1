@@ -54,7 +54,10 @@ $CASTING = @(
     @{ cle = "doudou"; fichier = "doudou"; taille = 1.0; apercu = "doudou_planche_2d-removebg-preview.png" },
     @{ cle = "fraisy"; fichier = "fraisy"; taille = 0.8; apercu = "fraisy_planche_2d-removebg-preview (1).png" },
     @{ cle = "cakey";  fichier = "cackey"; taille = 1.3; apercu = "cackey_planche_2d-removebg-preview.png" },
-    @{ cle = "samsam"; fichier = "samsam"; taille = 1.6; apercu = "samsam_planche_2d-removebg-preview.png" }
+    @{ cle = "samsam"; fichier = "samsam"; taille = 1.6; apercu = "samsam_planche_2d-removebg-preview.png" },
+    # Samsam après avoir donné son pyjama (acte II) : une TENUE, pas un
+    # personnage — voir TENUES dans js\moteur.js.
+    @{ cle = "samsam_sans_pyjama"; fichier = "samsamNoPyjama"; taille = 1.6; apercu = "samsamNoPyjama_planche_2d.png" }
 )
 
 # Les planches où l'IA a mis une image de PROFIL au bout d'une
@@ -154,6 +157,22 @@ public static class OutilsPeluches
         Ecrire(p, l, h, chemin);
     }
 
+    // Remplace une case d'une planche (grille x grille) par une image
+    // de la taille d'une case.
+    public static void CollerCase(string planche, int grille, int col, int ligne, string image)
+    {
+        int l, h, li, hi;
+        var p = Lire(planche, out l, out h);
+        var q = Lire(image, out li, out hi);
+        int c = l / grille;
+        for (int y = 0; y < c; y++)
+            for (int x = 0; x < c; x++)
+                for (int k = 0; k < 4; k++)
+                    p[((ligne * c + y) * l + col * c + x) * 4 + k] =
+                        (x < li && y < hi) ? q[(y * li + x) * 4 + k] : (byte)0;
+        Ecrire(p, l, h, planche);
+    }
+
     // Tête et épaules de la case (0,0), recadrées en carré.
     public static string Portrait(string planche, double part, string sortie)
     {
@@ -251,12 +270,22 @@ foreach ($s in $sujets) {
 
 # ---- 3. LES ICÔNES -------------------------------------------
 #  Ordre de la planche d'Evan (= ICONES_OBJETS, js\moteur.js) :
-#  veilleuse, baguette, couvercle, dé | pétale, plume, tomate | chaussette, pyjama
+#  veilleuse, baguette, couvercle | dé, pétale, plume | tomate, chaussette, pyjama
 "3. Icones"
 $c = PlancheHD (Join-Path $dossierPeluches "objects_planche_2d.jpg") `
     (Join-Path $dossierPeluches "objects_planche_2d-removebg-preview.png") `
     $CASE_ICONE (Join-Path $dossierUi "objets.png") @("-Grille", "3", "-ChaqueCase")
 "   objets.png : cases de $CASE_ICONE px"
+
+#  La veilleuse : la planche la montrait en lampe de chevet. Evan a
+#  dessiné la vraie (lampe.png, déjà détourée) : elle prend la case 0.
+$lampe = Join-Path $dossierPeluches "lampe.png"
+$lampeBlanc = Join-Path $travail "lampe_blanc.png"
+$veilleuse = Join-Path $travail "veilleuse_icone.png"
+[OutilsPeluches]::SurFondBlanc($lampe, $lampeBlanc)
+PlancheHD $lampeBlanc $lampe $CASE_ICONE $veilleuse @("-Grille", "1", "-ChaqueCase") | Out-Null
+[OutilsPeluches]::CollerCase((Join-Path $dossierUi "objets.png"), 3, 0, 0, $veilleuse)
+"   veilleuse (lampe.png) -> case 0"
 
 ""
 "Terminé. Images de contrôle agrandies dans : $travail"

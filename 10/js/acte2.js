@@ -145,9 +145,9 @@ function demarrerActeII(nouveau) {
     if (aObjet("plume")) donnerObjet("plume");
     if (aObjet("pyjama")) donnerObjet("pyjama");
 
-    // Samsam, sans son pyjama, a tiré le rideau sur lui jusqu'aux
-    // oreilles. On ne le voit plus, mais il est là.
-    cacherSamsamSousLeRideau();
+    // Samsam a donné son pyjama : il porte sa planche sans pyjama
+    // (dessinée par Evan), et son portrait suit.
+    samsamSansPyjama();
 
     placerPeluche(PELUCHES.doudou, 7, 1);
     if (saitQue("jus_ouvert")) placerPeluche(PELUCHES.fraisy, 2, 3);
@@ -175,11 +175,9 @@ function demarrerActeII(nouveau) {
 }
 
 
-function cacherSamsamSousLeRideau() {
-    const samsam = PELUCHES.samsam;
-    montrerPeluche(samsam, false);
-    samsam.sousLeRideau = true;
-    if (samsam.zone) samsam.zone.hauteurVisuelle = 18;
+function samsamSansPyjama() {
+    changerDeTenue(PELUCHES.samsam, "samsam_sans_pyjama");
+    montrerPeluche(PELUCHES.samsam, true);
 }
 
 
@@ -278,8 +276,8 @@ function sortirParLaFenetre() {
         { qui: "bob", texte: "..." },
         { qui: "samsam", texte: "Prends-le. S'il te plaît." },
         { qui: "samsam", texte: "C'est le seul endroit où je peux aller." },
-        { texte: "Bob prend le pyjama. Il est encore tiède." },
-        { texte: "Samsam garde la chaussette. Et il tire le rideau sur lui, jusqu'aux oreilles.", quand: cacherSamsamSousLeRideau },
+        { texte: "Bob prend le pyjama. Il est encore tiède.", quand: samsamSansPyjama },
+        { texte: "Samsam garde la chaussette." },
         { texte: "" },
         { texte: "Bob grimpe sur le rebord et ouvre la fenêtre en grand. Le froid entre d'un coup, comme de l'eau." },
         { texte: "En bas, il n'y a rien. Ni la cour, ni les arbres. Deux étages de noir." },
@@ -596,7 +594,7 @@ function leFrigoII() {
 
 
 /* ============================================================
-   SAMSAM — sous le rideau, et plus fort que tout le monde
+   SAMSAM — sans pyjama, et plus fort que tout le monde
    ============================================================
    Il ne se lève pas parce qu'il n'y arrive pas. Il aide quand
    même plus que les autres, d'une seule patte.
@@ -615,7 +613,6 @@ function parlerASamsamII() {
 
     if (saitQue("phare")) {
         lancerDialogue([
-            { texte: "Samsam sort le bout du museau de sous le rideau." },
             { qui: "samsam", texte: "Mon pyjama est très solide." },
             { qui: "samsam", texte: "Il a tenu toutes mes nuits. Il tiendra la tienne." },
         ]);
@@ -632,7 +629,7 @@ function parlerASamsamII() {
 
     if (saitQue("jus_ouvert")) {
         lancerDialogue([
-            { texte: "Sous le rideau, Samsam et Fraisy partagent la bouteille de jus de mangue." },
+            { texte: "Contre le mur, sous la fenêtre, Samsam et Fraisy partagent la bouteille de jus de mangue." },
             { qui: "samsam", texte: "Il fait moins froid, à deux." },
             { qui: "samsam", texte: "Je n'avais pas froid." },
         ]);
@@ -640,7 +637,7 @@ function parlerASamsamII() {
     }
 
     lancerDialogue([
-        { texte: "Sous le rideau, il y a une grosse bosse grise qui respire lentement." },
+        { texte: "Samsam, sous la fenêtre, sans son pyjama. Il a l'air plus petit, comme ça. Il ne l'est pas." },
         { qui: "samsam", texte: "Tu cherches." },
         { qui: "bob", texte: "Oui." },
         { qui: "samsam", texte: "Si tu as quelque chose de lourd à porter. Ou de dur à ouvrir." },
@@ -654,7 +651,7 @@ function samsamOuvreLeJus() {
     lancerDialogue([
         { qui: "bob", texte: "Samsam. Tu peux ouvrir ça ?" },
         { qui: "samsam", texte: "Oui." },
-        { texte: "Une patte sort de sous le rideau. Une seule. Elle prend la bouteille, et elle tourne." },
+        { texte: "Samsam prend la bouteille d'une seule patte, sans se lever. Et il tourne." },
         { texte: "Le couvercle résiste. Samsam ne dit rien. Il tourne encore, tout doucement, et son bras tremble un peu." },
         { texte: "Pop.", quand: sonner("bouchon") },
         { qui: "samsam", texte: "Voilà." },
@@ -666,7 +663,7 @@ function samsamOuvreLeJus() {
         { qui: "fraisy", texte: "Du jus de mangue ! À deux heures du matin ! C'est le meilleur moment pour du jus de mangue, tout le monde le sait." },
         { qui: "fraisy", texte: "Samsam, t'en veux ? T'en veux. On partage." },
         { qui: "fraisy", texte: "Bob, tu gardes le couvercle, et nous on garde ce qu'il y a dedans. C'est équitable." },
-        { texte: "Fraisy s'assoit contre le rideau, la bouteille entre elle et Samsam. Samsam a un peu moins froid." },
+        { texte: "Fraisy s'assoit contre Samsam, la bouteille entre eux deux. Samsam a un peu moins froid." },
         { texte: "Bob tient le couvercle au bout de son bras. Il est rond, doré, et il fait exactement sa taille." },
     ], function () {
         terminerLesMarches();
@@ -873,7 +870,7 @@ function tousALaFenetre() {
     Object.keys(POSTES_FENETRE).forEach(function (cle) {
         const p = PELUCHES[cle];
         const poste = POSTES_FENETRE[cle];
-        if (cle === "samsam") return;       // il y est déjà, sous le rideau
+        if (cle === "samsam") return;       // il y est déjà, sous la fenêtre
         marcherVers(p, poste[0], poste[1], { vitesse: cle === "doudou" ? 50 : 90 });
     });
 }
@@ -1067,7 +1064,6 @@ function leDepart() {
         { qui: "cakey", texte: "Et le pétale, Bob ? Il sert à quoi ?" },
         { qui: "bob", texte: "À rien." },
         { qui: "bob", texte: "Je le lui rends. Comme tous les matins." },
-        { texte: "Sous le rideau, Samsam sort la tête." },
         { qui: "samsam", texte: "Bob." },
         { qui: "samsam", texte: "Pardon de ne pas pouvoir descendre avec toi." },
         { qui: "bob", texte: "Tu descends avec moi, Samsam. Tu es la corde." },

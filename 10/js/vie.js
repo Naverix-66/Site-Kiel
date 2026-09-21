@@ -209,19 +209,14 @@ function animerPeluche(peluche) {
         // Pas de bulle sur un personnage caché : pendant le
         // cache-cache, elle trahirait Bluey à travers toute la pièce.
         // Ni quand Bob est déjà devant : le point doré prend la place.
-        // Exception : Samsam sous le rideau (acte II). On ne le voit
-        // plus, mais il est là, et on peut lui parler : sa bulle flotte
-        // au-dessus du tas de tissu.
         const vise = interactions.cible && interactions.cible === peluche.zone;
-        const cacheExpres = peluche.cache && !peluche.sousLeRideau;
-        if (!peluche.aDuNeuf || cacheExpres || dialogueEnCours() || vise) {
+        if (!peluche.aDuNeuf || peluche.cache || dialogueEnCours() || vise) {
             peluche.bulle.opacity = 0;
             return;
         }
-        peluche.bulle.opacity = peluche.sousLeRideau ? 1 : peluche.corps.opacity;
-        const hauteur = peluche.sousLeRideau ? 18 : peluche.cote;
+        peluche.bulle.opacity = peluche.corps.opacity;
         peluche.bulle.pos = peluche.basePos.add(
-            vec2(0, -hauteur - 20 + Math.sin(time() * 4) * 3)
+            vec2(0, -peluche.cote - 20 + Math.sin(time() * 4) * 3)
         );
         peluche.bulle.z = Z_NUIT + 10;      // lisible même dans le noir
     });

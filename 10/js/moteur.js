@@ -174,6 +174,34 @@ function aUnPortrait(cle) {
 
 
 /* ------------------------------------------------------------
+   LES TENUES — un personnage qui change d'apparence en route
+   ------------------------------------------------------------
+   Samsam donne son pyjama à la fin de l'acte I : à l'acte II, il
+   a sa planche sans pyjama (et le portrait qui va avec). Une tenue
+   a le même gabarit et la même taille que le personnage ; elle se
+   met avec changerDeTenue() (histoire.js), et APPARENCES dit qui
+   porte quoi en ce moment.
+   ------------------------------------------------------------ */
+const TENUES = ["samsam_sans_pyjama"];
+
+TENUES.forEach(function (tenue) {
+    loadSprite(tenue, "assets/peluches/" + tenue + "_anim.png", {
+        sliceX: 4,
+        sliceY: 4,
+        anims: ANIMS_PELUCHE,
+    });
+    loadSprite("portrait_" + tenue, "assets/peluches/portraits/" + tenue + ".png");
+});
+
+const APPARENCES = {};
+
+// La planche (et le portrait) que porte ce personnage en ce moment.
+function apparenceDe(cle) {
+    return APPARENCES[cle] || cle;
+}
+
+
+/* ------------------------------------------------------------
    LES ICÔNES D'OBJETS
    ------------------------------------------------------------
    Une planche de 3 x 3, dans l'ordre où Evan l'a générée. La
