@@ -19,6 +19,9 @@
                 Door) — basse, et plus basse encore pendant les
                 dialogues —, le vent qui entre par la fenêtre
                 ouverte, d'autant plus fort que Bob en est près
+   petits jeux  la musique se retire presque entièrement ; les
+                tintements, le fracas et le buzzer sont fabriqués
+                par le navigateur (sonSynthe, en bas du fichier)
    par-dessus   Mystic sounds, quand le phare s'allume (acte II) :
                 la musique se retire le temps qu'il joue
    au hasard    une mouette, au loin, de temps en temps
@@ -143,9 +146,10 @@ function preparerLesSons() {
         volumeDeBoucle("vent", 0.08 + 0.92 * proche);
 
         // La musique laisse la place : aux voix pendant un dialogue, et
-        // à un morceau joué par-dessus (jouerMorceau).
+        // à un morceau joué par-dessus (jouerMorceau), et presque tout
+        // entière pendant un petit jeu : on y retient son souffle.
         const pousse = son.morceauJusquA > son.ctx.currentTime ? 0.2
-            : (dialogueEnCours() ? 0.65 : 1);
+            : (jeuEnCours() ? 0.15 : (dialogueEnCours() ? 0.65 : 1));
         if (pousse !== son.pousseMusique && son.boucles.musique) {
             son.pousseMusique = pousse;
             volumeDeBoucle("musique", pousse);
@@ -353,14 +357,14 @@ function creerBoutonDuSon() {
         signe.pos = p;
         signe.text = son.coupe ? "×" : "♪";
         // Caché pendant les dialogues : la boîte prend le bas de l'écran.
-        const visible = !dialogueEnCours();
+        const visible = !dialogueEnCours() && !jeuEnCours();
         son.bouton.opacity = visible ? 0.55 : 0;
         signe.opacity = visible ? 1 : 0;
     };
     son.bouton.onUpdate(placer);
 
     const toucher = function (p) {
-        if (dialogueEnCours() || !p) return;
+        if (dialogueEnCours() || jeuEnCours() || !p) return;
         if (p.dist(son.bouton.pos) < 26) basculerLeSon();
     };
     onMousePress(function () { toucher(mousePos()); });
@@ -372,4 +376,108 @@ function basculerLeSon() {
     son.coupe = !son.coupe;
     try { localStorage.setItem(CLE_SON_COUPE, son.coupe ? "1" : "0"); } catch (e) { /* tant pis */ }
     if (son.maitre) son.maitre.gain.setTargetAtTime(son.coupe ? 0 : 1, son.ctx.currentTime, 0.1);
+}
+
+
+/* ============================================================
+   LES SONS FABRIQUÉS — pour les petits jeux
+   ============================================================
+   Pas de fichier : l'audio du navigateur sait fabriquer des sons
+   simples, et ceux-là sont exactement ce qu'il faut.
+
+     "tinte"    un verre ou une assiette qu'on effleure (deux notes
+                aiguës qui s'éteignent vite)
+     "fracas"   une pile de vaisselle qui s'effondre (un souffle de
+                bruit, et une pluie de tintements)
+     "bzzt"     le buzzer du Docteur Maboule
+     "tok"      un choc mou (une bobine contre la mousse)
+
+   Ils passent par le même volume général que le reste : le bouton
+   ♪ les coupe aussi.
+   ============================================================ */
+function sonSynthe(nom, force) {
+
+    if (!son.ctx || son.ctx.state !== "running") return;
+    const ctx = son.ctx;
+    const t = ctx.currentTime;
+    const k = force === undefined ? 1 : force;
+
+    if (nom === "tinte") {
+        const f = 2400 + Math.random() * 2200;
+        ping(t, f, 0.1 * k, 0.35);
+        ping(t + 0.01, f * 1.49, 0.04 * k, 0.25);
+
+    } else if (nom === "fracas") {
+        souffle(t, 1.1, 0.32 * k);
+        for (let i = 0; i < 14; i++) {
+            ping(t + Math.random() * 0.9, 1500 + Math.random() * 3500, (0.05 + Math.random() * 0.08) * k, 0.3 + Math.random() * 0.4);
+        }
+
+    } else if (nom === "bzzt") {
+        [110, 166].forEach(function (f) {
+            const o = ctx.createOscillator();
+            o.type = "square";
+            o.frequency.value = f;
+            const g = ctx.createGain();
+            g.gain.setValueAtTime(0.06 * k, t);
+            g.gain.setValueAtTime(0.06 * k, t + 0.32);
+            g.gain.linearRampToValueAtTime(0, t + 0.4);
+            o.connect(g);
+            g.connect(son.maitre);
+            o.start(t);
+            o.stop(t + 0.42);
+        });
+
+    } else if (nom === "tok") {
+        const o = ctx.createOscillator();
+        o.type = "sine";
+        o.frequency.setValueAtTime(190, t);
+        o.frequency.exponentialRampToValueAtTime(80, t + 0.09);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.25 * k, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+        o.connect(g);
+        g.connect(son.maitre);
+        o.start(t);
+        o.stop(t + 0.14);
+    }
+}
+
+
+// Une note pure qui s'éteint : la base d'un tintement.
+function ping(t, frequence, volume, duree) {
+    const ctx = son.ctx;
+    const o = ctx.createOscillator();
+    o.type = "sine";
+    o.frequency.value = frequence;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(volume, t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + duree);
+    o.connect(g);
+    g.connect(son.maitre);
+    o.start(t);
+    o.stop(t + duree + 0.05);
+}
+
+
+// Un souffle de bruit qui décroît : le cœur d'un fracas.
+function souffle(t, duree, volume) {
+    const ctx = son.ctx;
+    const n = Math.floor(ctx.sampleRate * duree);
+    const tampon = ctx.createBuffer(1, n, ctx.sampleRate);
+    const d = tampon.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+    const source = ctx.createBufferSource();
+    source.buffer = tampon;
+    const filtre = ctx.createBiquadFilter();
+    filtre.type = "bandpass";
+    filtre.frequency.value = 2200;
+    filtre.Q.value = 0.6;
+    const g = ctx.createGain();
+    g.gain.value = volume;
+    source.connect(filtre);
+    filtre.connect(g);
+    g.connect(son.maitre);
+    source.start(t);
 }

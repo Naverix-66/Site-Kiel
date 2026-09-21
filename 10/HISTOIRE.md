@@ -67,20 +67,36 @@ Plus **le pétale de rose**, qui ne sert à rien. Sauf à tout.
   avec elles », ses coutures) et prend le pyjama pour préparer la corde.
   Carton « Acte II — L'équipement ».
 - **Chacun son objet** : Fraisy sait où est la baguette (elle a léché le riz) ;
-  Bluey a vu « le rond doré » dans le frigo quand Bob a pris la tomate ; Cakey
+  Bluey a vu « le rond argenté » dans le frigo quand Bob a pris la tomate ; Cakey
   a trouvé les quatorze élastiques dans la boîte à couture, donc elle sait pour
   le dé ; Samsam ouvre le jus trop serré sans se lever, d'une seule patte, et
   Fraisy traverse l'appartement en quatre secondes pour le jus.
-- **Deux petits jeux** (`js/jeux.js`, on ne perd jamais) : tirer la baguette
-  sans faire tomber la pile, prendre le dé sans toucher aux aiguilles (on vise
-  la zone dorée) ; puis tirer la rallonge tous ensemble (on appuie vite).
+- **Trois petits jeux** (refaits le 21/09 à la demande d'Evan : « plus durs, et
+  avec une âme ») :
+  - **Le sommeil de Klara** (`js/jeux.js`, `js/reveil.js`) : chaque maladresse
+    fait du bruit, une jauge monte. Si elle déborde, Klara se réveille : tout le
+    monde court se ranger au pied du lit et fait le mort (Doudou sur place, « à
+    mon âge » ; Samsam, pour une fois, arrangé de ne pas pouvoir se lever).
+    Elle se rendort, et on reprend exactement où on en était.
+  - **La pile de vaisselle** (`js/jeu_vaisselle.js`) : l'évier vu de l'intérieur,
+    une pile très haute, la baguette tout au fond. On la remonte en faisant
+    glisser le doigt. Trop vite : la pile tangue, puis s'effondre (fracas, bruit
+    énorme, retour au fond). Toucher un verre : effondrement immédiat.
+  - **La boîte à couture** (`js/jeu_couture.js`) : un Docteur Maboule. Sortir
+    l'épingle, la bobine, puis le dé, chacun par son sillon dans la mousse ;
+    toucher un bord ou une aiguille : BZZT, « Aïe ! », du bruit.
+  - **La rallonge** : il faut tirer vite, mais s'arrêter net quand ça COINCE
+    (sinon le bureau cogne, et Klara dort juste à côté).
+  - Les tintements, le fracas et le buzzer sont fabriqués par le navigateur
+    (`sonSynthe`, dans `js/sons.js`) ; la musique se retire pendant les jeux.
 - **La lumière en dernier** (Bob : « si je la prends maintenant, je n'y verrai
   plus rien pour chercher le reste »). Doudou se souvient de sa première nuit
   ici, la veilleuse allumée. Bob la débranche : le studio tombe dans le bleu,
   Bluey hurle, Cakey a l'idée du phare (« Pourquoi tu crois que Klara la laisse
   allumée toutes les nuits ? » — et Bob regarde le billet d'avion). Tout le
   monde tire la rallonge ; c'est Samsam, sans se lever, qui a le plus tiré.
-- **Le phare** s'allume à la fenêtre (vraie lumière, et Mystic sounds).
+- **Le phare** s'allume à la fenêtre : seulement sa lumière (Evan : la petite lampe
+  dessinée sur le rebord ne rendait pas bien), et Mystic sounds.
 - **Le départ** : le nœud de Doudou, l'équipement enfilé, le pétale (« Je le
   lui rends. Comme tous les matins. »), « Tu descends avec moi, Samsam. Tu es
   la corde. », la voix de Bluey « de quand ça va aller », le gâteau levé, Moin.

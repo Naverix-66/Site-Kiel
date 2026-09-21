@@ -176,7 +176,6 @@ function allumerLaNuit() {
     ]);
 
     // Une scène neuve : l'ancien phare a disparu avec l'ancienne scène.
-    phare.lampe = null;
     phare.halo = null;
     phare.allume = false;
 
@@ -250,30 +249,24 @@ function changerDeNuit(nom, duree) {
 /* ------------------------------------------------------------
    Le phare : la veilleuse sur le rebord de la fenêtre de gauche
    ------------------------------------------------------------
-   La lampe elle-même (l'icône d'Evan, en petit) et un halo qui
-   respire doucement, tous deux AU-DESSUS du voile : c'est une
-   lumière, elle ne doit pas être dans le noir.
-   allume = false : posée mais pas encore branchée.
+   Seulement sa lumière : un halo qui respire doucement, AU-DESSUS
+   du voile (c'est une lumière, elle ne doit pas être dans le noir),
+   en plus du trou percé dans le voile « nuit_phare ».
    ------------------------------------------------------------ */
-const phare = { lampe: null, halo: null, allume: false, depuis: 0 };
+const phare = { halo: null, allume: false, depuis: 0 };
 
+// Evan : la petite lampe dessinée sur le rebord « ne rend pas bien » :
+// on ne garde que sa lumière. poserLePhare(false) ne montre donc
+// rien ; poserLePhare(true) allume le halo.
 function poserLePhare(allume) {
 
     const x = LUMIERE_PHARE.x * TAILLE_TUILE;
-    const y = TAILLE_TUILE - 2;
+    const y = TAILLE_TUILE - 8;
 
-    if (!phare.lampe) {
-        phare.lampe = add([
-            sprite("icones_objets", { frame: ICONES_OBJETS.veilleuse }),
-            pos(x, y),
-            anchor("bot"),
-            scale(16 / TAILLE_CASE_ICONE),
-            z(Z_NUIT + 2),
-        ]);
-
+    if (!phare.halo) {
         phare.halo = add([
             sprite("halo_phare"),
-            pos(x, y - 6),
+            pos(x, y),
             anchor("center"),
             opacity(0),
             z(Z_NUIT + 1),

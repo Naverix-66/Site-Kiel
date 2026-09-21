@@ -499,8 +499,10 @@ scene("appartement", (nomDeLaPiece) => {
         // derrière les meubles situés plus bas que lui.
         trierParProfondeur(bob);
 
+        // Un petit jeu peut imposer son regard : quand Klara se
+        // réveille, la caméra va voir le lit (reveil.js).
         const regard = introEnCours() ? pointDeVueIntro()
-            : (bobEstSorti() ? pointDeVueSortie() : bob.pos);
+            : (regardImpose() || (bobEstSorti() ? pointDeVueSortie() : bob.pos));
         suivreAvecLaCamera(regard, taille);
     });
 

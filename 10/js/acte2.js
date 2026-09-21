@@ -71,7 +71,7 @@ const acte2 = {
 // Les objets de l'acte, pour l'inventaire (voir OBJETS, acte1.js).
 OBJETS.baguette = { nom: "Une baguette à sushi" };
 OBJETS.jus = { nom: "Un jus de mangue (fermé)" };
-OBJETS.couvercle = { nom: "Un couvercle doré" };
+OBJETS.couvercle = { nom: "Un couvercle argenté" };
 OBJETS.de = { nom: "Un dé à coudre" };
 OBJETS.veilleuse = { nom: "La veilleuse jaune" };
 
@@ -446,19 +446,7 @@ function lEvierII() {
         { qui: "bob", texte: "Si je tire trop vite, tout tombe." },
         { qui: "bob", texte: "Cette pile tient debout toute seule. C'est de l'architecture. Je ne serai pas celui qui la fait tomber." },
     ], function () {
-        jeuDePrecision({
-            titre: "Tirer la baguette",
-            consigne: "Appuie quand le trait passe dans l'or. Doucement.",
-            reussites: 3,
-            vitesse: 0.85,
-            zone: 0.24,
-            bravos: ["Elle glisse d'un centimètre.", "Encore un peu...", "Elle vient !"],
-            rates: [
-                "La pile tremble. Bob ne respire plus.",
-                "Un verre tinte contre l'autre. Rien ne tombe.",
-                "La casserole penche... et se redresse.",
-                "Une fourchette glisse. Bob la rattrape du bout du pied.",
-            ],
+        jeuDeLaVaisselle({
             puis: function () {
                 lancerDialogue([
                     { texte: "La baguette sort de la pile. Rien ne bouge. Pas une fourchette." },
@@ -503,7 +491,7 @@ function parlerABlueyII() {
 
     if (aObjet("jus")) {
         lancerDialogue([
-            { qui: "bluey", texte: "LE ROND DORÉ !! TU L'AS !!" },
+            { qui: "bluey", texte: "LE ROND ARGENTÉ !! TU L'AS !!" },
             { qui: "bluey", texte: "MAIS IL EST ENCORE SUR LA BOUTEILLE !! IL FAUT QUELQU'UN DE TRÈS FORT !!" },
             { qui: "bluey", texte: "PAS MOI !! MOI JE SUIS TRÈS FORT MAIS PAS POUR ÇA !!" },
         ]);
@@ -515,9 +503,9 @@ function parlerABlueyII() {
             { qui: "bluey", texte: "BOB !! T'ES PAS PARTI !! TROP BIEN !!" },
             { qui: "bluey", texte: "ENFIN NON !! IL FAUT QUE TU PARTES !! MAIS T'ES LÀ !! TROP BIEN !!" },
             { qui: "bob", texte: "Il me faut un bouclier, Bluey." },
-            { qui: "bluey", texte: "LE ROND DORÉ !!" },
+            { qui: "bluey", texte: "LE ROND ARGENTÉ !!" },
             { qui: "bob", texte: "Le quoi ?" },
-            { qui: "bluey", texte: "DANS LE FRIGO !! TOUT AU FOND !! SUR LA PETITE BOUTEILLE JAUNE !! IL BRILLE QUAND ON OUVRE LA PORTE !!" },
+            { qui: "bluey", texte: "DANS LE FRIGO !! TOUT AU FOND !! SUR LA PETITE BOUTEILLE JAUNE !! IL BRILLE QUAND ON OUVRE LA PORTE !! COMME UNE PIÈCE !!" },
             { qui: "bluey", texte: "JE L'AI VU QUAND T'AS PRIS LA TOMATE !! PERSONNE M'A DEMANDÉ !!" },
             { qui: "bob", texte: "..." },
             { qui: "bob", texte: "Merci, Bluey. Vraiment." },
@@ -576,9 +564,9 @@ function leFrigoII() {
     ouvrirLeFrigo();
     lancerDialogue([
         { texte: "Bob rouvre le frigo. La lumière, encore, en pleine figure." },
-        { texte: "Derrière la bolognaise, tout au fond, une petite bouteille en verre de jus de mangue. Son couvercle est rond, et doré." },
+        { texte: "Derrière la bolognaise, tout au fond, une petite bouteille en verre de jus de mangue. Son couvercle est rond, et argenté." },
         saitQue("indice_bouclier")
-            ? { qui: "bob", texte: "Le rond doré. Bluey avait raison." }
+            ? { qui: "bob", texte: "Le rond argenté. Bluey avait raison." }
             : { qui: "bob", texte: "..." },
         { qui: "bob", texte: "Un bouclier." },
         { texte: "Bob attrape la bouteille à deux pattes et tourne le couvercle. Rien. Il cale ses pieds contre une courgette et tourne plus fort. Toujours rien." },
@@ -664,7 +652,7 @@ function samsamOuvreLeJus() {
         { qui: "fraisy", texte: "Samsam, t'en veux ? T'en veux. On partage." },
         { qui: "fraisy", texte: "Bob, tu gardes le couvercle, et nous on garde ce qu'il y a dedans. C'est équitable." },
         { texte: "Fraisy s'assoit contre Samsam, la bouteille entre eux deux. Samsam a un peu moins froid." },
-        { texte: "Bob tient le couvercle au bout de son bras. Il est rond, doré, et il fait exactement sa taille." },
+        { texte: "Bob tient le couvercle au bout de son bras. Il est rond, argenté, et il fait exactement sa taille." },
     ], function () {
         terminerLesMarches();
         donnerObjet("jus");
@@ -766,21 +754,10 @@ function laPenderieII() {
         { qui: "bob", texte: "Même ici, tout est rangé." },
         { qui: "bob", texte: "Je ne dérange rien. Rien du tout." },
     ], function () {
-        jeuDePrecision({
-            titre: "Prendre le dé à coudre",
-            consigne: "Appuie quand le trait passe dans l'or. Sans toucher aux aiguilles.",
-            reussites: 2,
-            vitesse: 0.75,
-            zone: 0.18,
-            bravos: ["Le dé se soulève d'un millimètre.", "Il vient !"],
-            rates: [
-                "Aïe. Une aiguille.",
-                "Une bobine roule. Bob la remet à sa place, dans le bon sens.",
-                "Aïe. Pardon. Pardon.",
-            ],
+        jeuDeLaCouture({
             puis: function (rates) {
                 lancerDialogue([
-                    { texte: "Bob soulève le dé sans qu'une seule aiguille ne bouge. Il referme la boîte exactement comme elle était." },
+                    { texte: "Bob remet l'épingle et la bobine exactement où elles étaient, et il referme la boîte comme on borde quelqu'un." },
                     rates > 0
                         ? { texte: "Il a une petite piqûre au bout de la patte. Il ne dira rien. Ça ne se fait pas, de se plaindre d'une boîte qu'on emprunte." }
                         : { texte: "Pas une piqûre. Pas un fil de travers." },
@@ -915,9 +892,9 @@ function leBureauII() {
     ], function () {
         jeuDeForce({
             titre: "Tirer la rallonge",
-            consigne: "Appuie vite ! Tout le monde tire avec toi.",
-            appuis: 16,
-            fuite: 0.12,
+            consigne: "Appuie vite, tout le monde tire avec toi. Mais quand ça COINCE, arrête-toi net : le bureau cogne, et Klara dort juste à côté.",
+            appuis: 28,
+            fuite: 0.22,
             equipe: ["cakey", "bluey", "fraisy", "doudou"],
             cris: ["HISSEZ !!", "Encore !", "Elle bouge !", "Tirez, tirez !", "Mon gâteau ! Ça va, il va bien."],
             puis: function () {

@@ -144,6 +144,15 @@ function animerPeluche(peluche) {
             }
         }
 
+        // Une peluche qui fait le mort (reveil.js) : couchée, raide,
+        // et plus rien ne bouge.
+        if (peluche.pose !== undefined && peluche.pose !== null) {
+            penche = peluche.pose;
+            decalageX = 0;
+            decalageY = 0;
+            etirement = 1;
+        }
+
         decalageY -= peluche.bump;
 
         // Le bump retombe tout seul.

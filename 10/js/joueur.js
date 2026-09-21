@@ -50,6 +50,9 @@ function creerBob(tuileX, tuileY) {
         // La planche est dessinée plus fin que le monde (config.js).
         scale(1 / FINESSE_PELUCHES),
 
+        // Pour faire le mort quand Klara se réveille (reveil.js).
+        rotate(0),
+
         body(),
         z(Z_DECOR),
         "bob",
