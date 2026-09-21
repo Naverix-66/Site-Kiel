@@ -16,8 +16,9 @@
      - tout est rangé dans le couvercle, pour être remis EXACTEMENT
        à sa place demain.
 
-   Même commande que la vaisselle : on tient la souris (ou le doigt)
-   et la pièce le suit, d'autant plus vite qu'il est loin ; ou les flèches.
+   On pose le doigt (ou on clique) n'importe où : la pièce est PRISE,
+   et suit le geste à partir de là (elle ne saute jamais). Ou les flèches.
+   Entre deux pièces, une petite pause.
 
    ------------------------------------------------------------
    RÉGLER
@@ -62,6 +63,13 @@ const COULEURS_EPINGLES = [[214, 64, 86], [86, 126, 196], [236, 190, 70], [110, 
 // Les aiguilles plantées au bord des sillons : une au milieu de
 // chaque segment intérieur, d'un côté puis de l'autre. Elles
 // débordent un peu dans le sillon — c'est tout le jeu.
+//
+// Une aiguille est plantée dans la MOUSSE, jamais par-dessus le
+// sillon d'à côté. Evan : entre deux sillons trop proches, on aurait
+// dit qu'elle appartenait au voisin. Si son côté n'a pas la place,
+// elle passe de l'autre côté ; si aucun n'a la place, pas d'aiguille.
+const LONGUEUR_AIGUILLE = 16;
+
 function planterLesAiguilles(piece) {
     const aiguilles = [];
     const c = piece.chemin;
@@ -70,14 +78,37 @@ function planterLesAiguilles(piece) {
         const b = vec2(c[i + 1][0], c[i + 1][1]);
         const milieu = a.lerp(b, 0.5);
         const dir = b.sub(a).unit();
-        const normale = vec2(-dir.y, dir.x).scale(i % 2 === 0 ? 1 : -1);
-        aiguilles.push({
-            pos: milieu.add(normale.scale(piece.demi - 1)),
-            dehors: normale,
-            couleur: COULEURS_EPINGLES[i % COULEURS_EPINGLES.length],
-        });
+        const cotes = i % 2 === 0 ? [1, -1] : [-1, 1];
+        for (let k = 0; k < cotes.length; k++) {
+            const normale = vec2(-dir.y, dir.x).scale(cotes[k]);
+            const pointe = milieu.add(normale.scale(piece.demi - 1));
+            if (!aiguilleDansLaMousse(piece, pointe, normale)) continue;
+            aiguilles.push({
+                pos: pointe,
+                dehors: normale,
+                couleur: COULEURS_EPINGLES[i % COULEURS_EPINGLES.length],
+            });
+            break;
+        }
     }
     return aiguilles;
+}
+
+
+// Toute l'aiguille, de la pointe à la tête, doit rester dans la
+// mousse : loin des autres sillons, loin du sien, et dans la boîte.
+function aiguilleDansLaMousse(piece, pointe, dehors) {
+    for (let k = 4; k <= LONGUEUR_AIGUILLE + 4; k += 2) {
+        const p = pointe.add(dehors.scale(k));
+        if (p.x < 20 || p.x > COUTURE.L - 20 || p.y < 74 || p.y > COUTURE.H - 20) return false;
+        if (plusProcheDuSillon(piece.chemin, p).distance < piece.demi + 1) return false;
+        for (let j = 0; j < COUTURE.pieces.length; j++) {
+            const autre = COUTURE.pieces[j];
+            if (autre === piece) continue;
+            if (plusProcheDuSillon(autre.chemin, p).distance < autre.demi + 4) return false;
+        }
+    }
+    return true;
 }
 
 
@@ -123,6 +154,8 @@ function jeuDeLaCouture(o) {
         invulnerable: 0,
         fini: false,
         depuis: 0,
+        prise: null,          // l'écart pointeur-pièce, au moment où on l'a prise
+        reprise: 0,           // la pause entre deux pièces
     };
 
     commencerJeu(null);
@@ -130,7 +163,7 @@ function jeuDeLaCouture(o) {
     const page = ouvrirPage({
         titre: "La boîte à couture",
         consigne: "Sors l'épingle, puis la bobine, puis le dé. Ne touche ni les bords, ni les aiguilles.",
-        aide: "Tiens la souris (ou le doigt) près de la pièce et guide-la. Ou les flèches.",
+        aide: "Pose le doigt (ou clique) n'importe où et déplace-le : la pièce suit ton geste. Ou les flèches.",
         couleurVue: [58, 44, 38],
         dessiner: function (g) { dessinerLaCouture(g, pieces, etat); },
     });
@@ -166,16 +199,28 @@ function jeuDeLaCouture(o) {
         const piece = pieces[etat.courante];
         const s = echelleDeLaCouture(g);
 
-        // La pièce file vers le pointeur tenu, d'autant plus vite qu'il
-        // est loin ; aux flèches, elle avance à vitesse fixe.
+        // Une petite pause entre deux pièces : on souffle, et on
+        // reprend la suivante tranquillement.
+        if (time() < etat.reprise) {
+            etat.prise = null;
+            return;
+        }
+
+        // On PREND la pièce là où on pose le doigt (ou clique) : elle ne
+        // saute jamais vers le pointeur, elle suit le geste à partir de
+        // là. Evan : sinon la pièce suivante filait vers la souris, restée
+        // loin, et BZZT tout de suite. Aux flèches : vitesse fixe.
         let voulue = vec2(0, 0);
         const tenu = pointeurTenu();
         if (tenu) {
             const coin = origineDeLaCouture(g);
-            const cible = vec2((tenu.x - coin.x) / s, (tenu.y - coin.y) / s);
+            const souris = vec2((tenu.x - coin.x) / s, (tenu.y - coin.y) / s);
+            if (!etat.prise) etat.prise = souris.sub(piece.pos);
+            const cible = souris.sub(etat.prise);
             voulue = cible.sub(piece.pos).scale(C.raideur);
             if (voulue.len() > C.vitesseSuivi) voulue = voulue.unit().scale(C.vitesseSuivi);
         } else {
+            etat.prise = null;
             const fleches = lireFleches();
             if (fleches.len() > 0) voulue = fleches.unit().scale(C.vitesseClavier);
         }
@@ -193,6 +238,8 @@ function jeuDeLaCouture(o) {
             piece.sortie = true;
             if (typeof jouerSon === "function") jouerSon("pop", { vitesse: 1 + 0.15 * etat.courante });
             etat.courante++;
+            etat.reprise = time() + 0.9;
+            etat.prise = null;
             if (etat.courante >= pieces.length) {
                 etat.fini = true;
                 etat.depuis = time();
@@ -306,7 +353,7 @@ function peindreLaBoiteACouture() {
     // ---- les aiguilles, plantées au bord des sillons ----
     C.pieces.forEach(function (def) {
         planterLesAiguilles(def).forEach(function (a) {
-            const tete = a.pos.add(a.dehors.scale(16));
+            const tete = a.pos.add(a.dehors.scale(LONGUEUR_AIGUILLE));
             trait(ctx, a.pos.x, a.pos.y, tete.x, tete.y, [214, 218, 226]);
             trait(ctx, a.pos.x + 1, a.pos.y, tete.x + 1, tete.y, [150, 156, 166]);
             rond(ctx, Math.round(tete.x), Math.round(tete.y), 3, a.couleur, assombrir(a.couleur, 0.45));
@@ -449,20 +496,6 @@ function dessinerLaCouture(g, pieces, etat) {
             opacity: i === etat.courante || p.sortie ? 1 : 0.8,
         });
     });
-
-    // Le fil entre le pointeur et la pièce qu'on tient.
-    const tenu = pointeurTenu();
-    if (tenu && !etat.fini) {
-        const p = pieces[etat.courante];
-        const depart = P(p.pos.x, p.pos.y);
-        const ecart = tenu.sub(depart);
-        const n = Math.floor(ecart.len() / 8);
-        for (let i = 1; i < n; i++) {
-            const q = depart.add(ecart.scale(i / n));
-            drawRect({ pos: q.sub(vec2(1, 1)), width: 2, height: 2, color: rgb(...COULEUR_CREME), opacity: 0.8 });
-        }
-        drawCircle({ pos: tenu, radius: 8, fill: false, outline: { width: 2, color: rgb(...COULEUR_CREME) }, opacity: 0.8 });
-    }
 
     // La patte de Bob, sur la pièce qu'on tient. Rouge au BZZT : le nez
     // du Docteur Maboule.

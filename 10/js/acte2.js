@@ -921,8 +921,8 @@ function leBureauII() {
         jeuDeForce({
             titre: "Tirer la rallonge",
             consigne: "Appuie vite, tout le monde tire avec toi. Mais quand ça COINCE, arrête-toi net : le bureau cogne, et Klara dort juste à côté.",
-            appuis: 28,
-            fuite: 0.22,
+            appuis: 20,
+            fuite: 0.1,
             equipe: ["cakey", "bluey", "fraisy", "doudou"],
             cris: ["HISSEZ !!", "Encore !", "Elle bouge !", "Tirez, tirez !", "Mon gâteau ! Ça va, il va bien."],
             puis: function () {

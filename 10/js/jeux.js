@@ -536,8 +536,8 @@ function direDansLePanneau(p, texte, duree) {
    faut s'arrêter net, puis repartir.
 
      titre, consigne   ce qu'on lit
-     appuis            combien d'appuis pour remplir la barre (26)
-     fuite             ce qui se vide chaque seconde, de 0 à 1 (0.2)
+     appuis            combien d'appuis pour remplir la barre (20)
+     fuite             ce qui se vide chaque seconde, de 0 à 1 (0.1)
      equipe            les clés des peluches qui tirent avec Bob
      cris              des phrases, une au hasard de temps en temps
      puis()            la suite
@@ -550,19 +550,19 @@ function jeuDeForce(o) {
         pause: 0,
         prochainCri: 0,
         phase: "tire",
-        finPhase: time() + 1.6,
+        finPhase: time() + 2.4,
         prevenu: false,
     };
-    const appuis = o.appuis || 26;
-    const fuite = o.fuite === undefined ? 0.2 : o.fuite;
+    const appuis = o.appuis || 20;
+    const fuite = o.fuite === undefined ? 0.1 : o.fuite;
 
     commencerJeu(function () {
         if (etat.fini) return;
 
         if (etat.phase === "coince") {
             // On tire alors que ça coince : le bureau cogne.
-            etat.plein = Math.max(0, etat.plein - 0.05);
-            faireDuBruit(0.09);
+            etat.plein = Math.max(0, etat.plein - 0.03);
+            faireDuBruit(0.06);
             shake(4);
             if (typeof jouerSon === "function") jouerSon("tremble", { vitesse: 0.8 });
             direDansLePanneau(panneau, "BANG ! Ça coince ! On arrête de tirer !", 1);
@@ -638,25 +638,26 @@ function jeuDeForce(o) {
                 return;
             }
         } else {
-            etat.plein = Math.max(0, etat.plein - fuite * dt());
+            // Quand ça coince, la rallonge ne recule pas : elle est bloquée.
+            if (etat.phase === "tire") etat.plein = Math.max(0, etat.plein - fuite * dt());
 
             // Les phases : on tire, puis ça coince, puis on tire...
-            // Un quart de seconde avant que ça coince, la barre
+            // Presque une demi-seconde avant que ça coince, la barre
             // clignote en orange : on a le temps de lever le doigt.
             if (time() > etat.finPhase) {
                 if (etat.phase === "tire") {
                     etat.phase = "coince";
-                    etat.finPhase = time() + 0.8 + Math.random() * 0.6;
+                    etat.finPhase = time() + 0.6 + Math.random() * 0.4;
                     if (typeof jouerSon === "function") jouerSon("tremble", { vitesse: 0.6, volume: 0.6 });
                 } else {
                     etat.phase = "tire";
-                    etat.finPhase = time() + 1.3 + Math.random() * 1.2;
+                    etat.finPhase = time() + 2 + Math.random() * 1.2;
                 }
             }
         }
 
         const g = placerPanneau(panneau);
-        const bientot = etat.phase === "tire" && etat.finPhase - time() < 0.3 && !etat.fini;
+        const bientot = etat.phase === "tire" && etat.finPhase - time() < 0.45 && !etat.fini;
 
         barre.pos = vec2(g.x, g.y);
         barre.width = g.largeur;
