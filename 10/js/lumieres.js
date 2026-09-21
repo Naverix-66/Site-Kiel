@@ -24,7 +24,9 @@
    par image, rien de lourd pour un téléphone.
 
    Seule la lumière du frigo bouge : c'est un halo à part, dont
-   l'opacité suit l'ouverture de sa porte.
+   l'opacité suit l'ouverture de sa porte. Et à l'acte II, la
+   veilleuse déménage : trois voiles tout prêts (NUITS), et un
+   halo pour le phare.
 
    ------------------------------------------------------------
    RÉGLER
@@ -129,23 +131,54 @@ function dessinerUnHalo(rayon, couleur) {
 }
 
 
+/* ------------------------------------------------------------
+   Les trois nuits de l'acte II
+   ------------------------------------------------------------
+   La veilleuse est une lumière qui DÉMÉNAGE : sur la table de nuit
+   (tout l'acte I), débranchée dans les pattes de Bob (le studio
+   tombe dans le bleu), puis sur le rebord de la fenêtre, allumée
+   comme un phare. Trois voiles, calculés une fois chacun, et on
+   passe de l'un à l'autre (changerDeNuit).
+   ------------------------------------------------------------ */
+const LUMIERE_PHARE = {
+    x: 5.5, y: 1.1, rayon: 4, etire: 1.15, efface: 0.97, couleur: [255, 196, 96], teinte: 0.36,
+};
+
+const NUITS = {
+    nuit_studio: LUMIERES_STUDIO,
+    nuit_sans_veilleuse: LUMIERES_STUDIO.slice(1),
+    nuit_phare: [LUMIERE_PHARE].concat(LUMIERES_STUDIO.slice(1)),
+};
+
+
 // Chargées AVANT le lancement : kaplay attend toutes les images
-// avant de démarrer la scène, le voile est donc prêt à temps.
-loadSprite("nuit_studio", dessinerLeVoileDeNuit(PIECES.studio, LUMIERES_STUDIO));
+// avant de démarrer la scène, les voiles sont donc prêts à temps.
+Object.keys(NUITS).forEach(function (nom) {
+    loadSprite(nom, dessinerLeVoileDeNuit(PIECES.studio, NUITS[nom]));
+});
 loadSprite("halo_frigo", dessinerUnHalo(3 * TAILLE_TUILE, [255, 244, 214]));
+loadSprite("halo_phare", dessinerUnHalo(2 * TAILLE_TUILE, [255, 214, 130]));
 
 
 /* ------------------------------------------------------------
    allumerLaNuit() — appelée par la scène, après les meubles.
    ------------------------------------------------------------ */
+const voile = { actuel: null };
+
 function allumerLaNuit() {
 
-    add([
+    voile.actuel = add([
         sprite("nuit_studio"),
         pos(0, -NUIT_MARGE_HAUT),
         z(Z_NUIT),
-        "nuit",
+        opacity(1),
+        { nomDeNuit: "nuit_studio", fondu: null },
     ]);
+
+    // Une scène neuve : l'ancien phare a disparu avec l'ancienne scène.
+    phare.lampe = null;
+    phare.halo = null;
+    phare.allume = false;
 
     // La lumière du frigo : posée devant sa porte, éteinte tant
     // qu'il est fermé. Son intensité suit l'image de la porte
@@ -164,4 +197,97 @@ function allumerLaNuit() {
     halo.onUpdate(function () {
         halo.opacity = 0.45 * Math.min(1, frigo.frame / 5);
     });
+}
+
+
+/* ------------------------------------------------------------
+   changerDeNuit(nom, duree) — passer d'un voile à un autre
+   ------------------------------------------------------------
+   duree = 0 : d'un coup (une prise qu'on débranche).
+   Sinon, un fondu : l'ancien voile s'efface pendant que le
+   nouveau apparaît.
+   ------------------------------------------------------------ */
+function changerDeNuit(nom, duree) {
+
+    const ancienne = voile.actuel;
+    if (ancienne && ancienne.nomDeNuit === nom) return;
+
+    const nouvelle = add([
+        sprite(nom),
+        pos(0, -NUIT_MARGE_HAUT),
+        z(Z_NUIT),
+        opacity(duree ? 0 : 1),
+        { nomDeNuit: nom, fondu: null },
+    ]);
+    voile.actuel = nouvelle;
+
+    if (!ancienne) return;
+
+    // Un changement en plein fondu : on arrête l'ancien fondu là où
+    // il en est, et c'est de là que repart le nouveau.
+    if (ancienne.fondu) ancienne.fondu.cancel();
+
+    if (!duree) {
+        destroy(ancienne);
+        return;
+    }
+
+    const debut = time();
+    const depart = ancienne.opacity;
+    nouvelle.fondu = onUpdate(function () {
+        const k = Math.min(1, (time() - debut) / duree);
+        nouvelle.opacity = k;
+        ancienne.opacity = depart * (1 - k);
+        if (k >= 1) {
+            nouvelle.fondu.cancel();
+            nouvelle.fondu = null;
+            destroy(ancienne);
+        }
+    });
+}
+
+
+/* ------------------------------------------------------------
+   Le phare : la veilleuse sur le rebord de la fenêtre de gauche
+   ------------------------------------------------------------
+   La lampe elle-même (l'icône d'Evan, en petit) et un halo qui
+   respire doucement, tous deux AU-DESSUS du voile : c'est une
+   lumière, elle ne doit pas être dans le noir.
+   allume = false : posée mais pas encore branchée.
+   ------------------------------------------------------------ */
+const phare = { lampe: null, halo: null, allume: false, depuis: 0 };
+
+function poserLePhare(allume) {
+
+    const x = LUMIERE_PHARE.x * TAILLE_TUILE;
+    const y = TAILLE_TUILE - 2;
+
+    if (!phare.lampe) {
+        phare.lampe = add([
+            sprite("icones_objets", { frame: ICONES_OBJETS.veilleuse }),
+            pos(x, y),
+            anchor("bot"),
+            scale(16 / TAILLE_CASE_ICONE),
+            z(Z_NUIT + 2),
+        ]);
+
+        phare.halo = add([
+            sprite("halo_phare"),
+            pos(x, y - 6),
+            anchor("center"),
+            opacity(0),
+            z(Z_NUIT + 1),
+        ]);
+
+        phare.halo.onUpdate(function () {
+            if (!phare.allume) { phare.halo.opacity = 0; return; }
+            const k = Math.min(1, (time() - phare.depuis) / 1.5);
+            phare.halo.opacity = k * (0.5 + 0.1 * Math.sin(time() * 2.2));
+        });
+    }
+
+    if (allume && !phare.allume) {
+        phare.allume = true;
+        phare.depuis = time();
+    }
 }

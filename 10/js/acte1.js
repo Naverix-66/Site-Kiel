@@ -40,7 +40,8 @@
                        crêpe de Fraisy : c'était Rosy.
      9. CAKEY          les deux secrets : Rosy ET Bob sont venus la
                        voir, chacun pour l'autre, pour le même soir.
-    10. la fenêtre     et le pyjama Miffy de Samsam.
+    10. la fenêtre     et le pyjama Miffy de Samsam — qui ouvre
+                       l'acte II (acte2.js).
 
    Le lit n'est plus un maillon : c'était une station muette, et
    c'est maintenant Cakey qui dit qu'il manque quelqu'un. Evan
@@ -188,6 +189,7 @@ const MANCHES_BLUEY = ["bluey_1", "bluey_2", "bluey_3"];
 function objectifCourant() {
 
     if (!saitQue("ouverture")) return "";
+    if (saitQue("acte2")) return objectifActeII();     // acte2.js
     if (!saitQue("fenetre_vue")) return "Fermer la fenêtre.";
 
     if (!saitQue("bluey_ok")) {
@@ -230,6 +232,7 @@ function rafraichirBulles() {
     if (typeof effacerToutesLesBulles !== "function") return;
     effacerToutesLesBulles();
 
+    if (saitQue("acte2")) { bullesActeII(); return; }   // acte2.js
     if (!saitQue("bluey_ok")) { marquerDuNeuf("bluey", saitQue("fenetre_vue")); return; }
     if (!saitQue("miroir")) return;
     if (!saitQue("cakey_ok")) { marquerDuNeuf("cakey", true); return; }
@@ -255,6 +258,9 @@ function sonner(nom) {
    ============================================================ */
 function demarrerActeI() {
 
+    // octobre.html?acte2 : on saute directement à l'acte II (acte2.js).
+    const raccourci = raccourciActeII();
+
     poserLeRideauTombe();
 
     if (!saitQue("ouverture")) {
@@ -275,6 +281,9 @@ function demarrerActeI() {
     // Après la vérité, Doudou attend sous la fenêtre. Sans cette
     // ligne, une partie reprise le renvoyait à l'entrée.
     if (saitQue("verite")) placerPeluche(PELUCHES.doudou, 7, 1);
+
+    // L'acte II se joue dans le même studio : il reprend la main ici.
+    if (saitQue("acte2")) demarrerActeII(raccourci);
 }
 
 
@@ -1423,6 +1432,7 @@ function laVerite() {
         { texte: "Doudou se lève — ça lui prend du temps — et il traverse tout l'appartement jusqu'à la fenêtre de gauche, pour libérer le passage." },
     ], function () {
         noter("verite");
+        donnerObjet("plume");     // il l'a gardée dans ses pattes
         // « Il se lève — ça lui prend du temps — et il traverse tout
         // l'appartement. » Pour de vrai, maintenant, et lentement.
         marcherVers(PELUCHES.doudou, 7, 1, { vitesse: 50 });
@@ -1433,44 +1443,10 @@ function laVerite() {
 
 /* ============================================================
    LA SORTIE — le pyjama Miffy
+   ============================================================
+   La scène du pyjama est maintenant dans acte2.js
+   (sortirParLaFenetre) : c'est elle qui ouvre l'acte II.
    ============================================================ */
-function sortirParLaFenetre() {
-
-    lancerDialogue([
-        { qui: "samsam", texte: "Tu y vas." },
-        { qui: "bob", texte: "Oui." },
-        { qui: "samsam", texte: "..." },
-        { texte: "Samsam commence à retirer son pyjama. Ça lui prend un temps fou." },
-        { qui: "bob", texte: "Samsam, qu'est-ce que tu fais." },
-        { qui: "samsam", texte: "Il est grand. Il est très grand. Découpé en bandes, ça fait une corde." },
-        { qui: "bob", texte: "C'est ton pyjama Miffy." },
-        { qui: "samsam", texte: "Oui." },
-        { qui: "bob", texte: "Tu ne l'as jamais quitté. Pas une seule nuit. Jamais." },
-        { qui: "samsam", texte: "Non." },
-        { qui: "samsam", texte: "Je l'aime beaucoup, ce pyjama." },
-        { qui: "samsam", texte: "..." },
-        { qui: "samsam", texte: "Mais à côté de Rosy, Bob, c'est un bout de tissu." },
-        { qui: "bob", texte: "..." },
-        { qui: "samsam", texte: "Prends-le. S'il te plaît." },
-        { qui: "samsam", texte: "C'est le seul endroit où je peux aller." },
-        { texte: "Bob prend le pyjama. Il est encore tiède." },
-        { texte: "Samsam garde la chaussette." },
-        { texte: "" },
-        { texte: "Bob pousse la fenêtre. Le froid entre d'un coup, comme de l'eau." },
-        { texte: "Au pied du lit, Cakey lève son gâteau bien haut, comme on lève un verre." },
-        { texte: "Derrière lui, tout en haut du frigo, une petite voix." },
-        { texte: "— Moin.", quand: sonner("moin") },
-        { qui: "bob", texte: "Moin." },
-        { texte: "Moin ne connaît qu'un mot. Ici, le même mot sert à dire bonjour et à dire au revoir." },
-        { texte: "" },
-        { texte: "— FIN DE L'ACTE I —" },
-        { texte: "Acte II : l'équipement. Une lumière, une arme, une armure. La corde, elle, est déjà là — elle était en pyjama." },
-        { texte: "(La suite arrive.)" },
-    ], function () {
-        prendreObjet("pyjama");
-        rafraichirObjectif();
-    });
-}
 
 
 /* ============================================================

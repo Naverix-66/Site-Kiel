@@ -16,8 +16,11 @@
    CE QUI JOUE
 
    en continu   l'ambiance de nuit, la musique (Keys Left By The
-                Door), le vent qui entre par la fenêtre ouverte —
-                d'autant plus fort que Bob en est près
+                Door) — basse, et plus basse encore pendant les
+                dialogues —, le vent qui entre par la fenêtre
+                ouverte, d'autant plus fort que Bob en est près
+   par-dessus   Mystic sounds, quand le phare s'allume (acte II) :
+                la musique se retire le temps qu'il joue
    au hasard    une mouette, au loin, de temps en temps
    Bob          ses pas feutrés, son atterrissage (ouverture)
    dialogues    un babillage pendant que le texte s'écrit, plus
@@ -66,7 +69,17 @@ const SONS = {
 
     nuit:           { fichier: "nigth_sounds.mp3", volume: 0.3 },
     vent:           { fichier: "wind_trough_window.mp3", debut: 0.3, volume: 0.45 },
-    musique:        { fichier: "Keys_Left_By_The_Door.mp3", debut: 0, fin: 55, volume: 0.28 },
+    // Evan : « la musique est un peu trop forte, on n'entend pas les
+    // autres sons ». Elle est à peine au-dessus de la nuit, et elle se
+    // pousse encore pendant les dialogues (voir preparerLesSons).
+    musique:        { fichier: "Keys_Left_By_The_Door.mp3", debut: 0, fin: 55, volume: 0.12 },
+
+    // ---- l'acte II ----
+    mystique:       { fichier: "mystic_sounds.mp3", volume: 0.45 },
+    prise:          { fichier: "click_text.mp3", debut: 0.14, duree: 0.2, volume: 0.9, vitesse: 0.55 },
+    bouchon:        { fichier: "pop_gettingItem.mp3", debut: 0.15, duree: 0.45, volume: 0.8, vitesse: 0.7 },
+    tremble:        { fichier: "closed_door.mp3", debut: 0, duree: 0.3, volume: 0.22, vitesse: 1.9 },
+    tire:           { fichier: "click_text.mp3", debut: 0.14, duree: 0.2, volume: 0.5 },
 };
 
 // La hauteur du babillage de chacun (1 = normale).
@@ -85,6 +98,8 @@ const son = {
     coupe: false,
     bavardage: null,
     bouton: null,
+    pousseMusique: null,  // la part de volume laissée à la musique
+    morceauJusquA: 0,     // un morceau joue par-dessus jusqu'à cette heure
 };
 
 
@@ -126,6 +141,15 @@ function preparerLesSons() {
         const fenetre = vec2(5.5 * TAILLE_TUILE, 0.5 * TAILLE_TUILE);
         const proche = Math.max(0, 1 - bob.pos.dist(fenetre) / (9 * TAILLE_TUILE));
         volumeDeBoucle("vent", 0.08 + 0.92 * proche);
+
+        // La musique laisse la place : aux voix pendant un dialogue, et
+        // à un morceau joué par-dessus (jouerMorceau).
+        const pousse = son.morceauJusquA > son.ctx.currentTime ? 0.2
+            : (dialogueEnCours() ? 0.65 : 1);
+        if (pousse !== son.pousseMusique && son.boucles.musique) {
+            son.pousseMusique = pousse;
+            volumeDeBoucle("musique", pousse);
+        }
 
         // Une mouette au loin, de temps en temps.
         if (time() > prochaineMouette) {
@@ -205,6 +229,15 @@ function jouerSon(nom, options) {
 
     source.start(0, debut, duree);
     return { source: source, gain: gain };
+}
+
+
+// Un morceau joué une fois, par-dessus tout : la musique se retire
+// le temps qu'il dure, puis revient d'elle-même.
+function jouerMorceau(nom) {
+    const joue = jouerSon(nom);
+    if (!joue) return;
+    son.morceauJusquA = son.ctx.currentTime + joue.source.buffer.duration;
 }
 
 

@@ -482,9 +482,11 @@ scene("appartement", (nomDeLaPiece) => {
         // il resterait bloqué sur une image de son cycle de marche.
         // Pendant l'ouverture animée, Bob est caché et c'est un
         // acteur qui joue (intro.js) : on ne pilote rien.
-        if (introEnCours()) {
+        // Même chose pendant un petit jeu (jeux.js), et une fois Bob
+        // passé par la fenêtre, à la fin de l'acte II.
+        if (introEnCours() || bobEstSorti()) {
             cacherInterfaceAction();
-        } else if (dialogueEnCours()) {
+        } else if (dialogueEnCours() || jeuEnCours()) {
             jouerAnimation(bob, "idle-" + bob.direction);
         } else {
             deplacerBob(bob);
@@ -497,7 +499,9 @@ scene("appartement", (nomDeLaPiece) => {
         // derrière les meubles situés plus bas que lui.
         trierParProfondeur(bob);
 
-        suivreAvecLaCamera(introEnCours() ? pointDeVueIntro() : bob.pos, taille);
+        const regard = introEnCours() ? pointDeVueIntro()
+            : (bobEstSorti() ? pointDeVueSortie() : bob.pos);
+        suivreAvecLaCamera(regard, taille);
     });
 
 });

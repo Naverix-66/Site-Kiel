@@ -60,6 +60,35 @@ Plus **le pétale de rose**, qui ne sert à rien. Sauf à tout.
   de Klara, rangée dans la penderie. Bob la fouille avec d'infinies précautions.
 - **La corde** — le pyjama Miffy de Samsam (fin de l'acte I). **Le nœud** : Doudou.
 
+**Codé (21/09, `js/acte2.js`, sauvegarde d'avant : tag git `avant-acte-2`)** :
+- **Ouverture** : Samsam donne son pyjama, puis tire le rideau sur lui jusqu'aux
+  oreilles (il n'a plus de pyjama — en attendant son dessin sans pyjama, on ne
+  le voit plus, mais on lui parle). Bob ouvre la fenêtre en grand, ne voit que
+  du noir ; Doudou le retient (« Je suis sorti dehors sans rien. Je suis revenu
+  avec elles », ses coutures) et prend le pyjama pour préparer la corde.
+  Carton « Acte II — L'équipement ».
+- **Chacun son objet** : Fraisy sait où est la baguette (elle a léché le riz) ;
+  Bluey a vu « le rond doré » dans le frigo quand Bob a pris la tomate ; Cakey
+  a trouvé les quatorze élastiques dans la boîte à couture, donc elle sait pour
+  le dé ; Samsam ouvre le jus trop serré sans se lever, d'une seule patte, et
+  Fraisy traverse l'appartement en quatre secondes pour le jus.
+- **Deux petits jeux** (`js/jeux.js`, on ne perd jamais) : tirer la baguette
+  sans faire tomber la pile, prendre le dé sans toucher aux aiguilles (on vise
+  la zone dorée) ; puis tirer la rallonge tous ensemble (on appuie vite).
+- **La lumière en dernier** (Bob : « si je la prends maintenant, je n'y verrai
+  plus rien pour chercher le reste »). Doudou se souvient de sa première nuit
+  ici, la veilleuse allumée. Bob la débranche : le studio tombe dans le bleu,
+  Bluey hurle, Cakey a l'idée du phare (« Pourquoi tu crois que Klara la laisse
+  allumée toutes les nuits ? » — et Bob regarde le billet d'avion). Tout le
+  monde tire la rallonge ; c'est Samsam, sans se lever, qui a le plus tiré.
+- **Le phare** s'allume à la fenêtre (vraie lumière, et Mystic sounds).
+- **Le départ** : le nœud de Doudou, l'équipement enfilé, le pétale (« Je le
+  lui rends. Comme tous les matins. »), « Tu descends avec moi, Samsam. Tu es
+  la corde. », la voix de Bluey « de quand ça va aller », le gâteau levé, Moin.
+  Bob passe par la fenêtre. Carton « Fin de l'acte II ».
+- Le gâteau levé et le « Moin » d'au revoir, qui fermaient l'acte I, sont
+  passés au vrai départ.
+
 ### Acte III — La descente *(façade, VUE DE CÔTÉ — changement de gameplay)*
 Bob passe par la fenêtre et descend en rappel la façade de l'immeuble.
 Vent de la Baltique, pluie, les fenêtres allumées des voisins, et **la cour intérieure
