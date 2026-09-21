@@ -453,6 +453,7 @@ scene("appartement", (nomDeLaPiece) => {
     dessinerFenetres(piece);
     poserMeubles(piece);
     poserLesMeublesAnimes(piece);     // les portes et le frigo (animes.js)
+    coucherKlara();                   // Klara, sous la couette (reveil.js)
     allumerLaNuit();                  // la nuit et ses lumières (lumieres.js)
     preparerLesSons();                // les sons et la musique (sons.js)
 

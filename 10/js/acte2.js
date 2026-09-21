@@ -171,7 +171,8 @@ function demarrerActeII(nouveau) {
 
     rafraichirObjectif();
 
-    if (nouveau) afficherCarton("Acte II", "L'équipement");
+    if (nouveau) afficherCarton("Acte II", "L'équipement", avertirSiBesoin);
+    else avertirSiBesoin();
 }
 
 
@@ -294,9 +295,36 @@ function sortirParLaFenetre() {
         { qui: "bob", texte: "Où est-ce que je trouve tout ça, à deux heures du matin ?" },
         { qui: "doudou", texte: "Ici. Klara a toujours ce qu'il faut, mon grand." },
         { qui: "doudou", texte: "Demande aux autres où elle le range. Ils le savent mieux que toi et moi." },
-    ], function () {
+    ].concat(avertissementDeDoudou()), function () {
+        noter("averti_bruit");
         noter("acte2");
         demarrerActeII(true);
+    });
+}
+
+
+/* ------------------------------------------------------------
+   Klara dort juste là. Doudou le dit avant que Bob ne fouille
+   quoi que ce soit : trop de bruit, et elle se réveille. Et si
+   elle se réveille, on fait ce que toutes les peluches savent
+   faire. (Voir reveil.js.)
+   ------------------------------------------------------------ */
+function avertissementDeDoudou() {
+    return [
+        { qui: "doudou", texte: "Et doucement, surtout. Klara dort juste là." },
+        { qui: "doudou", texte: "Une assiette qui tombe, un bureau qui cogne, et elle se réveille." },
+        { qui: "doudou", texte: "La première chose qu'on apprend, quand on est une peluche : si un humain se réveille, on ne bouge plus. On fait le mort." },
+        { qui: "doudou", texte: "Tout le monde ici sait le faire. Mais mieux vaut ne pas avoir à le faire, mon grand." },
+    ];
+}
+
+
+// Pour les parties déjà dans l'acte II (et octobre.html?acte2) : ceux
+// qui n'ont pas entendu Doudou l'entendent une fois.
+function avertirSiBesoin() {
+    if (saitQue("averti_bruit") || saitQue("depart")) return;
+    lancerDialogue(avertissementDeDoudou(), function () {
+        noter("averti_bruit");
     });
 }
 

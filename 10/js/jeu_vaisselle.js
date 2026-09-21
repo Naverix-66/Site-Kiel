@@ -14,15 +14,34 @@
      - un effondrement fait un bruit énorme (la jauge du sommeil de
        Klara bondit) et la baguette retombe au fond. On recommence.
 
-   On joue en faisant glisser un doigt n'importe où sur l'écran
-   (ou avec les flèches). Le doigt ne cache jamais la baguette.
+   ------------------------------------------------------------
+   LES COMMANDES (Evan : « avec la souris, la baguette ne suit pas
+   assez ; aux flèches, c'est beaucoup trop simple »)
+
+     souris / doigt   on TIENT (bouton enfoncé, ou doigt posé), et
+                      la baguette file vers le pointeur — d'autant
+                      plus vite qu'il est loin. Pointeur juste
+                      au-dessus : elle monte doucement. Pointeur en
+                      haut de l'écran : elle fonce, et tout tombe.
+     flèches          la baguette ACCÉLÈRE tant qu'on tient la
+                      touche : au bout d'une seconde, c'est trop
+                      vite. Il faut tapoter.
+
+   Une jauge « vitesse », à gauche, montre où est la limite.
 
    ------------------------------------------------------------
+   LE DESSIN
+   Toute la vaisselle est peinte en pixels, une fois, au chargement
+   (voir pixels.js) : c'est une seule image, découpée morceau par
+   morceau à l'affichage, pour que chaque morceau puisse tanguer et
+   tomber tout seul.
+
    RÉGLER
      VAISSELLE.chemin       le passage, du fond vers la surface
      VAISSELLE.vitesseMax   au-delà, la pile tangue
-   Tout est en « unités de pile » : la pile fait 300 de large, et
-   l'écran l'agrandit ou la réduit pour qu'elle tienne.
+     VAISSELLE.raideur      la souris/le doigt : plus haut = plus nerveux
+   Tout est en « unités de pile » (1 unité = 1 pixel de peinture) :
+   la pile fait 300 de large, et l'écran l'agrandit pour qu'elle tienne.
    ============================================================ */
 
 
@@ -55,10 +74,14 @@ const VAISSELLE = {
         [-200, 150, 300],
     ],
 
-    vitesseMax: 65,          // unités par seconde
-    vitesseClavier: 48,
+    vitesseMax: 65,          // unités par seconde : au-delà, la pile tangue
+    raideur: 2.5,            // souris/doigt : vitesse = écart x raideur
+    vitesseSuivi: 240,       // ... plafonnée à ça
+    clavierAccel: 55,        // flèches : l'accélération, par seconde
+    clavierMax: 170,
     rayon: 5,                // le bout de la baguette
-    longueurBaguette: 200,
+    longueurBaguette: 210,
+    margeHaut: 300,          // la cuisine, au-dessus de la surface (dans l'image du fond)
 };
 
 const TYPES_VAISSELLE = ["assiettes", "assiettes", "bol", "casserole", "couvercle", "tasse", "fourchettes"];
@@ -95,8 +118,9 @@ function hasardFixe(graine) {
 
 /* ------------------------------------------------------------
    La pile : des tranches horizontales, chacune coupée en deux par
-   le passage. À gauche et à droite, un morceau de vaisselle. Dans
-   les passages étroits, un verre borde le chemin.
+   le passage. À gauche et à droite, de la vaisselle. Dans les
+   passages étroits, un verre borde le chemin. Tout est en nombres
+   entiers : ce sont des pixels de peinture.
    ------------------------------------------------------------ */
 function empilerLaVaisselle() {
 
@@ -115,8 +139,8 @@ function empilerLaVaisselle() {
         // frôle, quand il s'en écarte.
         const c1 = passageDeLaVaisselle(haut);
         const c2 = passageDeLaVaisselle(bas);
-        const bordG = Math.min(c1.x - c1.w / 2, c2.x - c2.w / 2);
-        const bordD = Math.max(c1.x + c1.w / 2, c2.x + c2.w / 2);
+        const bordG = Math.floor(Math.min(c1.x - c1.w / 2, c2.x - c2.w / 2));
+        const bordD = Math.ceil(Math.max(c1.x + c1.w / 2, c2.x + c2.w / 2));
         const tranche = { haut: haut, h: h, morceaux: [] };
         const etroit = Math.min(c1.w, c2.w) < 42;
 
@@ -136,11 +160,7 @@ function poserMorceaux(tranche, x0, x1, cote, hasard, avecVerre) {
     if (x1 - x0 < 4) return;
 
     const morceau = function (a, b, type) {
-        return {
-            x0: a, x1: b, type: type, cote: cote,
-            teinte: hasard(),
-            chute: null,
-        };
+        return { x0: a, x1: b, type: type, cote: cote, teinte: hasard(), chute: null };
     };
     const auHasard = function () {
         return TYPES_VAISSELLE[Math.floor(hasard() * TYPES_VAISSELLE.length)];
@@ -164,7 +184,7 @@ function poserMorceaux(tranche, x0, x1, cote, hasard, avecVerre) {
     while (x1 - x > 2) {
         const type = auHasard();
         const large = type === "assiettes" || type === "casserole";
-        let l = large ? 70 + hasard() * 70 : 26 + hasard() * 22;
+        let l = Math.round(large ? 70 + hasard() * 70 : 26 + hasard() * 22);
         if (x1 - x - l < 18) l = x1 - x;
         tranche.morceaux.push(morceau(x, x + l, type));
         x += l + 1;
@@ -173,12 +193,212 @@ function poserMorceaux(tranche, x0, x1, cote, hasard, avecVerre) {
 
 
 /* ============================================================
+   LA PEINTURE — une fois, au chargement
+   ============================================================ */
+const PILE_VAISSELLE = empilerLaVaisselle();
+
+function peindreLaPile(pile) {
+    const V = VAISSELLE;
+    const t = nouvelleToile(V.L, V.H);
+    pile.forEach(function (tr) {
+        tr.morceaux.forEach(function (m) { peindreMorceau(t.ctx, m, tr.haut, tr.h); });
+    });
+    return t.toile;
+}
+
+
+function peindreMorceau(ctx, m, y, h) {
+
+    const x = m.x0;
+    const l = m.x1 - m.x0;
+    if (l < 3) return;
+
+    if (m.type === "assiettes") {
+        const n = Math.max(1, Math.floor(h / 5));
+        const ph = Math.floor(h / n);
+        const blanc = m.teinte < 0.5 ? [246, 243, 236] : [238, 235, 227];
+        for (let k = 0; k < n; k++) {
+            const yk = y + h - (k + 1) * ph;
+            boite(ctx, x, yk, l, ph, blanc, [118, 110, 102]);
+            pave(ctx, x + 2, yk + 1, l - 4, 1, [108, 148, 196]);          // le liseré bleu
+            if (ph >= 5) pave(ctx, x + 2, yk + ph - 2, l - 4, 1, [214, 207, 196]);
+            pixel(ctx, x + 3, yk + 2, [255, 255, 255]);
+        }
+
+    } else if (m.type === "bol") {
+        const fond = [236, 216, 192];
+        const contour = [128, 104, 84];
+        for (let r = 0; r < h; r++) {
+            const f = r / (h - 1);
+            const retrait = Math.round(f * f * l * 0.22);
+            const xr = x + retrait;
+            const lr = l - 2 * retrait;
+            pave(ctx, xr, y + r, lr, 1, contour);
+            if (r === 0 || r === h - 1) continue;
+            const c = (f > 0.3 && f < 0.48) ? [196, 110, 84] : (f > 0.72 ? [214, 190, 164] : fond);
+            pave(ctx, xr + 1, y + r, lr - 2, 1, c);
+        }
+        pave(ctx, x + 2, y + 1, l - 4, 1, [250, 240, 226]);
+        pave(ctx, x + Math.round(l * 0.2), y + 3, 1, Math.max(0, Math.round(h * 0.3)), [252, 244, 232]);
+
+    } else if (m.type === "casserole") {
+        boite(ctx, x, y, l, h, [70, 74, 84], [30, 32, 38]);
+        pave(ctx, x + 1, y + 1, l - 2, 2, [134, 140, 152]);
+        pave(ctx, x + 1, y + h - 3, l - 2, 1, [52, 56, 64]);
+        pave(ctx, x + Math.round(l * 0.3), y + 4, 2, Math.max(0, h - 9), [100, 106, 118]);
+        const xm = m.cote === "gauche" ? x + 4 : x + l - 6;
+        pave(ctx, xm, y + 4, 2, 2, [150, 156, 168]);
+        pave(ctx, xm, y + h - 7, 2, 2, [150, 156, 168]);
+
+    } else if (m.type === "couvercle") {
+        const cx = x + l / 2;
+        const haut = y + 3;
+        const hh = h - 3;
+        for (let r = 0; r < hh; r++) {
+            const f = (hh - r) / hh;
+            const demi = Math.max(2, Math.round((l / 2) * Math.sqrt(Math.max(0, 1 - f * f * 0.85))));
+            pave(ctx, cx - demi, haut + r, 2 * demi, 1, [104, 112, 124]);
+            const c = r < 2 ? [222, 228, 236] : (r > hh - 4 ? [148, 156, 168] : [178, 186, 196]);
+            pave(ctx, cx - demi + 1, haut + r, 2 * demi - 2, 1, c);
+        }
+        pave(ctx, x, y + h - 1, l, 1, [92, 100, 112]);
+        boite(ctx, Math.round(cx - 3), y, 6, 5, [60, 64, 72], [28, 30, 36]);
+
+    } else if (m.type === "tasse") {
+        const c = m.teinte < 0.33 ? [204, 112, 92] : (m.teinte < 0.66 ? [108, 148, 192] : [226, 188, 92]);
+        const contour = assombrir(c, 0.5);
+        const anse = 6;
+        const bx = m.cote === "gauche" ? x + anse - 1 : x;
+        const bl = l - anse + 1;
+        boite(ctx, bx, y + 1, bl, h - 1, c, contour);
+        pave(ctx, bx + 1, y + 2, bl - 2, 2, assombrir(c, 0.25));
+        pave(ctx, bx + 2, y + 5, 2, Math.max(0, h - 9), eclaircir(c, 0.4));
+        // l'anse, côté mur : un anneau
+        const ax = m.cote === "gauche" ? x : x + l - anse;
+        const ay = y + Math.round(h * 0.25);
+        const ah = Math.max(6, Math.round(h * 0.5));
+        paveArrondi(ctx, ax, ay, anse, ah, contour);
+        paveArrondi(ctx, ax + 1, ay + 1, anse - 2, ah - 2, c);
+        ctx.clearRect(ax + 2, ay + 2, anse - 4, ah - 4);
+
+    } else if (m.type === "fourchettes") {
+        for (let k = 1; k <= 3; k++) {
+            const yf = y + Math.round(k * h / 4) - 1;
+            pave(ctx, x + 1, yf - 1, l - 2, 4, [96, 102, 112]);
+            pave(ctx, x + 2, yf, l - 4, 2, [206, 212, 220]);
+            pixel(ctx, x + 3, yf, [255, 255, 255]);
+            // la tête et les dents, côté passage
+            const xt = m.cote === "gauche" ? x + l - 8 : x;
+            pave(ctx, xt, yf - 2, 8, 6, [96, 102, 112]);
+            pave(ctx, xt + 1, yf - 1, 6, 4, [206, 212, 220]);
+            const xd = m.cote === "gauche" ? xt + 3 : xt + 1;
+            ctx.clearRect(xd, yf, 4, 1);
+            ctx.clearRect(xd, yf + 2, 4, 1);
+        }
+
+    } else if (m.type === "verre") {
+        // Un verre dans un autre verre, transparent : on voit l'évier au travers.
+        pave(ctx, x + 1, y + 1, l - 2, h - 2, [190, 225, 245, 0.25]);
+        pave(ctx, x, y + 1, 1, h - 2, [228, 242, 250]);
+        pave(ctx, x + l - 1, y + 1, 1, h - 2, [228, 242, 250]);
+        pave(ctx, x + 1, y, l - 2, 1, [228, 242, 250]);
+        pave(ctx, x + 1, y + h - 3, l - 2, 3, [200, 228, 246, 0.7]);
+        pave(ctx, x + 4, y + 3, 1, h - 7, [228, 242, 250, 0.75]);
+        pave(ctx, x + l - 5, y + 3, 1, h - 7, [228, 242, 250, 0.75]);
+        pave(ctx, x + 5, y + 3, l - 10, 1, [228, 242, 250, 0.75]);
+        pave(ctx, x + 2, y + 2, 1, h - 6, [255, 255, 255, 0.9]);
+    }
+}
+
+
+// L'évier : la cuisine la nuit au-dessus, le rebord, l'acier brossé,
+// et tout au fond la flaque et la bonde. Une seule grande image.
+function peindreLEvier() {
+
+    const V = VAISSELLE;
+    const Y0 = V.margeHaut;
+    const t = nouvelleToile(V.L, V.H + Y0 + 60);
+    const ctx = t.ctx;
+
+    // la cuisine, la nuit
+    pave(ctx, 0, 0, V.L, Y0, [30, 28, 46]);
+    boite(ctx, 22, 60, 100, 128, [50, 60, 98], [18, 18, 32]);
+    pave(ctx, 71, 61, 2, 126, [18, 18, 32]);
+    pave(ctx, 23, 122, 98, 2, [18, 18, 32]);
+    disque(ctx, 98, 92, 9, [226, 230, 244]);
+    disque(ctx, 94, 89, 8, [50, 60, 98]);
+    [[40, 78], [55, 100], [36, 150], [100, 140], [60, 170], [110, 170]].forEach(function (e) { pixel(ctx, e[0], e[1], [200, 206, 236]); });
+    pave(ctx, 22, 188, 100, 3, [70, 66, 90]);
+
+    // le robinet
+    boite(ctx, 236, 140, 16, Y0 - 140, [168, 176, 188], [66, 72, 84]);
+    pave(ctx, 239, 142, 2, Y0 - 146, [226, 232, 240]);
+    boite(ctx, 192, 140, 60, 13, [168, 176, 188], [66, 72, 84]);
+    pave(ctx, 194, 142, 44, 2, [226, 232, 240]);
+    boite(ctx, 192, 151, 11, 10, [138, 146, 158], [66, 72, 84]);
+
+    // le rebord de l'évier (y = 0)
+    pave(ctx, 0, Y0 - 9, V.L, 10, [176, 184, 196]);
+    pave(ctx, 0, Y0 - 9, V.L, 1, [238, 242, 248]);
+    pave(ctx, 0, Y0 - 1, V.L, 1, [96, 102, 114]);
+
+    // l'intérieur : de l'acier brossé
+    const h = V.H + 60;
+    pave(ctx, 0, Y0, V.L, h, [92, 100, 112]);
+    for (let x = 2; x < V.L; x += 5) {
+        pave(ctx, x, Y0, 1, h, (x * 7) % 3 === 0 ? [100, 108, 120] : [86, 94, 106]);
+    }
+    pave(ctx, 0, Y0, 7, h, [64, 70, 82]);
+    pave(ctx, V.L - 7, Y0, 7, h, [64, 70, 82]);
+    pave(ctx, 7, Y0, 1, h, [124, 132, 144]);
+    pave(ctx, V.L - 8, Y0, 1, h, [52, 58, 70]);
+
+    // la flaque, et la bonde
+    const yb = Y0 + V.H;
+    for (let r = -8; r <= 8; r++) {
+        const w = Math.round(128 * Math.sqrt(1 - (r / 9) * (r / 9)));
+        pave(ctx, 150 - w, yb - 8 + r, 2 * w, 1, [130, 168, 206, 0.35]);
+    }
+    rond(ctx, 150, yb + 14, 17, [34, 38, 46], [132, 140, 152]);
+    pave(ctx, 138, yb + 13, 25, 2, [132, 140, 152]);
+    pave(ctx, 149, yb + 2, 2, 25, [132, 140, 152]);
+
+    return t.toile;
+}
+
+
+// La baguette : du bois clair, plus fine au bout, deux traits gravés.
+function peindreLaBaguette() {
+    const L = VAISSELLE.longueurBaguette;
+    const t = nouvelleToile(8, L);
+    const ctx = t.ctx;
+    for (let y = 0; y < L; y++) {
+        const w = y < 24 ? 4 : (y < 70 ? 5 : 6);
+        const x = Math.floor((8 - w) / 2);
+        pave(ctx, x, y, w, 1, [120, 84, 50]);
+        pave(ctx, x + 1, y, w - 2, 1, [226, 192, 140]);
+        if (w > 4) pixel(ctx, x + 1, y, [246, 224, 182]);
+    }
+    pave(ctx, 2, 0, 4, 1, [120, 84, 50]);
+    for (let y = 80; y < L - 20; y += 23) pave(ctx, 4, y, 1, 7, [198, 160, 110]);
+    pave(ctx, 1, L - 50, 6, 1, [150, 110, 70]);
+    pave(ctx, 1, L - 45, 6, 1, [150, 110, 70]);
+    return t.toile;
+}
+
+loadSprite("pile_vaisselle", peindreLaPile(PILE_VAISSELLE));
+loadSprite("fond_evier", peindreLEvier());
+loadSprite("baguette_sushi", peindreLaBaguette());
+
+
+/* ============================================================
    jeuDeLaVaisselle({ puis })
    ============================================================ */
 function jeuDeLaVaisselle(o) {
 
     const V = VAISSELLE;
-    const pile = empilerLaVaisselle();
+    const pile = PILE_VAISSELLE;
+    pile.forEach(function (tr) { tr.morceaux.forEach(function (m) { m.chute = null; }); });
     const yDepart = V.H - 30;
 
     const etat = {
@@ -187,15 +407,14 @@ function jeuDeLaVaisselle(o) {
         bout: vec2(passageDeLaVaisselle(yDepart).x, yDepart),
         trace: [],
         vitesse: 0,
+        vClavier: 0,
         tangue: 0,             // 0 = stable, 1 = tout s'effondre
         contact: false,
         camY: V.H - 260,
-        hauteurVue: 320,
         rates: 0,
         prochainTinte: 0,
         prochainAvertissement: 0,
-        reapparition: 1,       // l'opacité de la pile qui se reforme
-        goutte: 0,
+        reapparition: 1,
     };
 
     commencerJeu(null);
@@ -203,36 +422,33 @@ function jeuDeLaVaisselle(o) {
     const page = ouvrirPage({
         titre: "La pile de vaisselle",
         consigne: "Remonte la baguette jusqu'en haut. Tout doucement. Et ne touche surtout pas les verres.",
-        aide: "Fais glisser ton doigt n'importe où (ou les flèches). Lentement.",
-        couleurVue: [44, 50, 60],
+        aide: "Tiens la souris (ou le doigt) un peu au-dessus de la baguette : plus tu es loin, plus elle va vite. Aux flèches : tapote.",
+        couleurVue: [36, 40, 50],
         dessiner: function (g) { dessinerLaVaisselle(g, pile, etat); },
     });
 
-    direDansLaPage(page, "La baguette est tout au fond.", 2.2);
+    direDansLaPage(page, "La baguette est tout au fond. Klara dort à côté.", 2.4);
 
-    const boucle = onUpdate(function () {
+    const boucle = boucleDeJeu(function () {
 
         if (jeu.verrou > 0) jeu.verrou -= dt();
         const g = placerPage(page);
         if (surveillerLeSommeil(page)) return;
 
-        const s = echelleDeLaVaisselle(g);
-        etat.hauteurVue = g.vue.h / s;
-
         if (etat.phase === "jeu") {
-            avancerLaBaguette(etat, pile, s, page);
+            avancerLaBaguette(etat, pile, g, page);
         } else if (etat.phase === "effondrement") {
-            const t = time() - etat.depuis;
-            if (t > 1.9) {
+            if (time() - etat.depuis > 1.9) {
                 // On remet tout en place, et la baguette au fond.
                 pile.forEach(function (tr) { tr.morceaux.forEach(function (m) { m.chute = null; }); });
                 etat.bout = vec2(passageDeLaVaisselle(yDepart).x, yDepart);
                 etat.trace = [];
                 etat.tangue = 0;
                 etat.vitesse = 0;
+                etat.vClavier = 0;
                 etat.reapparition = 0;
                 etat.phase = "jeu";
-                lireGlisse();
+                jeu.pointeur.enfonce = false;
                 direDansLaPage(page, "Bob remet tout en place, assiette par assiette. On recommence.", 2.4);
             }
         } else if (etat.phase === "gagne") {
@@ -248,7 +464,8 @@ function jeuDeLaVaisselle(o) {
 
         // La caméra suit le bout de la baguette, un peu au-dessus du
         // milieu : on voit surtout ce qui reste à monter.
-        const cible = Math.max(-80, Math.min(V.H + 60 - etat.hauteurVue, etat.bout.y - etat.hauteurVue * 0.6));
+        const hu = g.vue.h / echelleDeLaVaisselle(g);
+        const cible = Math.max(-80, Math.min(V.H + 60 - hu, etat.bout.y - hu * 0.6));
         etat.camY += (cible - etat.camY) * Math.min(1, dt() * 4);
     });
 }
@@ -258,6 +475,12 @@ function echelleDeLaVaisselle(g) {
     return Math.min(g.vue.l / VAISSELLE.L, g.vue.h / 320);
 }
 
+// Où commence la pile, à l'écran (elle est centrée dans la vue).
+function origineDeLaVaisselle(g) {
+    const s = echelleDeLaVaisselle(g);
+    return vec2(g.vue.x + (g.vue.l - VAISSELLE.L * s) / 2, g.vue.y);
+}
+
 
 // Le balancement de la pile à la hauteur y (en unités).
 function balancement(etat, y) {
@@ -265,23 +488,38 @@ function balancement(etat, y) {
 }
 
 
-function avancerLaBaguette(etat, pile, s, page) {
+function avancerLaBaguette(etat, pile, g, page) {
 
     const V = VAISSELLE;
+    const s = echelleDeLaVaisselle(g);
+    const o = origineDeLaVaisselle(g);
 
-    // Ce que le joueur demande : le doigt, et les flèches.
-    // Sur un petit écran, le doigt va un peu plus vite que la pièce :
-    // on garde de la précision même quand tout est dessiné petit.
-    let d = lireGlisse().scale(1 / Math.max(s, 1.3));
-    const fleches = lireFleches();
-    if (fleches.len() > 0) d = d.add(fleches.unit().scale(V.vitesseClavier * dt()));
-    if (d.len() > 40) d = d.unit().scale(40);
+    // Ce que le joueur demande.
+    let voulue = vec2(0, 0);
+    const tenu = pointeurTenu();
+    if (tenu) {
+        // La baguette file vers le pointeur, d'autant plus vite qu'il
+        // est loin.
+        const cible = vec2((tenu.x - o.x) / s, etat.camY + (tenu.y - o.y) / s);
+        voulue = cible.sub(etat.bout).scale(V.raideur);
+        if (voulue.len() > V.vitesseSuivi) voulue = voulue.unit().scale(V.vitesseSuivi);
+        etat.vClavier = 0;
+    } else {
+        // Aux flèches, elle accélère tant qu'on tient la touche.
+        const f = lireFleches();
+        if (f.len() > 0) {
+            etat.vClavier = Math.min(V.clavierMax, etat.vClavier + V.clavierAccel * dt());
+            voulue = f.unit().scale(etat.vClavier);
+        } else {
+            etat.vClavier = 0;
+        }
+    }
 
-    // La vitesse, lissée : c'est elle que la pile ressent.
-    const v = dt() > 0 ? d.len() / dt() : 0;
-    etat.vitesse += (v - etat.vitesse) * Math.min(1, dt() * 10);
+    let d = voulue.scale(dt());
+    if (d.len() > 30) d = d.unit().scale(30);
 
     // On avance par petits pas, pour ne jamais traverser une assiette.
+    const avant = etat.bout.clone();
     const pas = Math.max(1, Math.ceil(d.len() / 2));
     let touche = false;
     for (let i = 0; i < pas; i++) {
@@ -296,6 +534,10 @@ function avancerLaBaguette(etat, pile, s, page) {
         }
         if (choc) touche = true;
     }
+
+    // La vitesse réelle, lissée : c'est elle que la pile ressent.
+    const v = dt() > 0 ? etat.bout.dist(avant) / dt() : 0;
+    etat.vitesse += (v - etat.vitesse) * Math.min(1, dt() * 10);
 
     // La trace : la baguette suit le chemin parcouru.
     const dernier = etat.trace[etat.trace.length - 1];
@@ -412,60 +654,37 @@ function effondrer(etat, pile, page, texte) {
 
 
 /* ============================================================
-   LE DESSIN
+   L'AFFICHAGE, à chaque image
    ============================================================ */
 function dessinerLaVaisselle(g, pile, etat) {
 
     const V = VAISSELLE;
     const vue = g.vue;
     const s = echelleDeLaVaisselle(g);
-    const ox = vue.x + (vue.l - V.L * s) / 2;
-    const X = function (u) { return ox + u * s; };
-    const Y = function (u) { return vue.y + (u - etat.camY) * s; };
+    const o = origineDeLaVaisselle(g);
+    const X = function (u) { return o.x + u * s; };
+    const Y = function (u) { return o.y + (u - etat.camY) * s; };
     const tChute = etat.phase === "effondrement" ? time() - etat.depuis : 0;
 
-    // ---- l'évier : de l'acier brossé ----
-    drawRect({ pos: vec2(X(0), vue.y), width: V.L * s, height: vue.h, color: rgb(92, 100, 112) });
-    for (let u = 6; u < V.L; u += 11) {
-        drawLine({ p1: vec2(X(u), vue.y), p2: vec2(X(u), vue.y + vue.h), width: 1, color: rgb(255, 255, 255), opacity: 0.05 });
-    }
-    drawRect({ pos: vec2(X(0), vue.y), width: 6 * s, height: vue.h, color: rgb(66, 72, 84) });
-    drawRect({ pos: vec2(X(V.L - 6), vue.y), width: 6 * s, height: vue.h, color: rgb(66, 72, 84) });
+    // ---- l'évier, la partie visible de la grande image ----
+    const HF = V.H + V.margeHaut + 60;
+    const q0 = Math.max(0, (etat.camY + V.margeHaut) / HF);
+    const qh = Math.min(1 - q0, vue.h / s / HF);
+    drawSprite({ sprite: "fond_evier", pos: vec2(X(0), vue.y), width: V.L * s, height: qh * HF * s, quad: quad(0, q0, 1, qh) });
 
-    // ---- au-dessus de la pile : la cuisine, la nuit ----
-    const ySurface = Y(0);
-    if (ySurface > vue.y) {
-        const h = Math.min(vue.h, ySurface - vue.y);
-        drawRect({ pos: vec2(vue.x, vue.y), width: vue.l, height: h, color: rgb(28, 26, 44) });
-        // la lune qui entre par la fenêtre de la cuisine
-        drawCircle({ pos: vec2(X(60), Y(-150)), radius: 70 * s, color: rgb(150, 170, 230), opacity: 0.08 });
-        // le robinet, et une goutte qui tombe de temps en temps
-        drawRect({ pos: vec2(X(244), Y(-150)), width: 12 * s, height: 90 * s, radius: 4 * s, color: rgb(170, 178, 190) });
-        drawRect({ pos: vec2(X(196), Y(-150)), width: 60 * s, height: 11 * s, radius: 5 * s, color: rgb(170, 178, 190) });
-        drawRect({ pos: vec2(X(196), Y(-142)), width: 9 * s, height: 10 * s, radius: 3 * s, color: rgb(140, 148, 160) });
-        const tg = (time() % 3.2) / 3.2;
-        if (tg < 0.35) {
-            drawCircle({ pos: vec2(X(200.5), Y(-128 + tg * 300)), radius: 2.2 * s, color: rgb(170, 210, 250), opacity: 0.8 });
-        }
-        // le rebord de l'évier
-        drawRect({ pos: vec2(X(-14), ySurface - 7 * s), width: (V.L + 28) * s, height: 9 * s, radius: 3 * s, color: rgb(176, 184, 196) });
-        drawLine({ p1: vec2(X(-10), ySurface - 6 * s), p2: vec2(X(V.L + 10), ySurface - 6 * s), width: 1.5, color: rgb(255, 255, 255), opacity: 0.5 });
-        // la sortie
-        const c = passageDeLaVaisselle(0);
-        drawText({ text: "SORTIE", size: Math.max(10, g.t - 4), pos: vec2(X(c.x), Y(-32)), anchor: "center", color: rgb(...COULEUR_OR) });
-        drawTriangle({
-            p1: vec2(X(c.x), Y(-22)), p2: vec2(X(c.x - 8), Y(-12)), p3: vec2(X(c.x + 8), Y(-12)),
-            color: rgb(...COULEUR_OR),
-        });
+    // une goutte qui tombe du robinet, de temps en temps
+    const tg = (time() % 3.2) / 3.2;
+    if (tg < 0.3) {
+        const yg = -150 + 10 + tg * 480;
+        if (Y(yg) > vue.y) drawRect({ pos: vec2(X(196), Y(yg)), width: 3 * s, height: 4 * s, color: rgb(170, 210, 250) });
     }
 
-    // ---- le fond : la flaque et la bonde ----
-    const yFond = Y(V.H);
-    if (yFond < vue.y + vue.h + 40) {
-        drawEllipse({ pos: vec2(X(150), Y(V.H - 8)), radiusX: 132 * s, radiusY: 10 * s, color: rgb(120, 160, 200), opacity: 0.35 });
-        drawCircle({ pos: vec2(X(150), Y(V.H + 12)), radius: 17 * s, color: rgb(34, 38, 46), outline: { width: 2, color: rgb(130, 138, 150) } });
-        drawLine({ p1: vec2(X(138), Y(V.H + 12)), p2: vec2(X(162), Y(V.H + 12)), width: 2, color: rgb(130, 138, 150) });
-        drawLine({ p1: vec2(X(150), Y(V.H)), p2: vec2(X(150), Y(V.H + 24)), width: 2, color: rgb(130, 138, 150) });
+    // la sortie
+    const ySortie = Y(-34);
+    if (ySortie > vue.y + 8) {
+        const cx = passageDeLaVaisselle(0).x;
+        drawText({ text: "SORTIE", size: Math.max(10, g.t - 4), pos: vec2(X(cx), ySortie), anchor: "center", color: rgb(...COULEUR_OR) });
+        drawTriangle({ p1: vec2(X(cx), Y(-22)), p2: vec2(X(cx - 7), Y(-13)), p3: vec2(X(cx + 7), Y(-13)), color: rgb(...COULEUR_OR) });
     }
 
     // ---- la baguette, DERRIÈRE la vaisselle ----
@@ -480,15 +699,24 @@ function dessinerLaVaisselle(g, pile, etat) {
         }
         // Elle reste plutôt verticale : c'est une baguette, pas une corde.
         direction = direction.add(vec2(0, 1.5)).unit();
-        const queue = bout.add(direction.scale(V.longueurBaguette));
-        const a = vec2(X(bout.x), Y(bout.y));
-        const b = vec2(X(queue.x), Math.min(Y(queue.y), vue.y + vue.h + 30));
-        drawLine({ p1: a, p2: b, width: 7 * s, color: rgb(140, 100, 60) });
-        drawLine({ p1: a, p2: b, width: 5 * s, color: rgb(224, 190, 138) });
-        drawLine({ p1: a, p2: b, width: 1.4 * s, color: rgb(250, 228, 186), opacity: 0.7 });
+        const angle = Math.atan2(-direction.x, direction.y) * 180 / Math.PI;
+        // On la coupe au bas de la vue (au-delà, c'est le pied de page).
+        const reste = (vue.y + vue.h - Y(bout.y)) / (s * Math.max(0.2, direction.y));
+        const longueur = Math.max(0, Math.min(V.longueurBaguette, reste));
+        if (longueur > 1) {
+            drawSprite({
+                sprite: "baguette_sushi",
+                pos: vec2(X(bout.x), Y(bout.y)),
+                anchor: "top",
+                angle: angle,
+                width: 8 * s,
+                height: longueur * s,
+                quad: quad(0, 0, 1, longueur / V.longueurBaguette),
+            });
+        }
     }
 
-    // ---- la vaisselle ----
+    // ---- la vaisselle, morceau par morceau ----
     pile.forEach(function (tr) {
         const b = balancement(etat, tr.haut);
         tr.morceaux.forEach(function (m) {
@@ -501,86 +729,69 @@ function dessinerLaVaisselle(g, pile, etat) {
                 alpha = Math.max(0, 1 - Math.max(0, tChute - 0.9) / 0.8);
             }
             const y = Y(tr.haut + dy);
-            if (y > vue.y + vue.h + 10 || y + tr.h * s < vue.y - 10) return;
-            const proche = m.type === "verre" && etat.phase === "jeu"
+            if (y > vue.y + vue.h + 10 || y + tr.h * s < vue.y - 10 || alpha <= 0.01) return;
+            const l = m.x1 - m.x0;
+            const x = X(m.x0 + b + dx);
+            drawSprite({
+                sprite: "pile_vaisselle",
+                pos: vec2(x, y),
+                width: l * s,
+                height: tr.h * s,
+                quad: quad(m.x0 / V.L, tr.haut / V.H, l / V.L, tr.h / V.H),
+                opacity: alpha,
+            });
+
+            // Un verre tout proche tremble et s'entoure de rouge.
+            if (m.type === "verre" && etat.phase === "jeu"
                 && Math.abs(etat.bout.y - (tr.haut + tr.h / 2)) < 26
-                && Math.abs(etat.bout.x - (m.x0 + m.x1) / 2) < 40;
-            dessinerMorceau(m, X(m.x0 + b + dx), y, (m.x1 - m.x0) * s, tr.h * s, alpha, proche, s);
+                && Math.abs(etat.bout.x - (m.x0 + m.x1) / 2) < 40) {
+                drawRect({
+                    pos: vec2(x + Math.sin(time() * 40) * s, y), width: l * s, height: tr.h * s,
+                    fill: false, outline: { width: 2, color: rgb(255, 120, 100) },
+                    opacity: 0.6 + 0.4 * Math.sin(time() * 12),
+                });
+            }
         });
     });
 
-    // ---- la patte de Bob, au bout ----
-    if (etat.phase !== "effondrement") {
-        const p = vec2(X(etat.bout.x), Y(etat.bout.y));
-        drawCircle({ pos: p, radius: 7 * s, color: rgb(62, 49, 40), outline: { width: 1.5, color: rgb(30, 24, 20) } });
-        drawCircle({ pos: p.add(vec2(-2 * s, 1.5 * s)), radius: 2.8 * s, color: rgb(233, 212, 186) });
+    if (etat.phase === "effondrement") return;
+
+    // ---- le fil entre le pointeur et la baguette ----
+    const tenu = pointeurTenu();
+    const bout = vec2(X(etat.bout.x), Y(etat.bout.y));
+    if (tenu) {
+        const ecart = tenu.sub(bout);
+        const n = Math.floor(ecart.len() / 8);
+        const trop = etat.vitesse > V.vitesseMax;
+        for (let i = 1; i < n; i++) {
+            const p = bout.add(ecart.scale(i / n));
+            drawRect({ pos: p.sub(vec2(1, 1)), width: 2, height: 2, color: trop ? rgb(255, 150, 120) : rgb(...COULEUR_CREME), opacity: 0.7 });
+        }
+        drawCircle({ pos: tenu, radius: 9, fill: false, outline: { width: 2, color: trop ? rgb(255, 150, 120) : rgb(...COULEUR_CREME) }, opacity: 0.8 });
     }
 
-    // ---- la hauteur parcourue, sur le bord droit ----
-    const xg = vue.x + vue.l - 14;
+    // ---- la patte de Bob, au bout ----
+    drawSprite({ sprite: "patte_de_bob", pos: bout, anchor: "center", width: 15 * s, height: 15 * s });
+
+    // ---- à droite : la hauteur parcourue ----
     const hg = vue.h - 40;
+    const xg = vue.x + vue.l - 14;
     const avance = Math.max(0, Math.min(1, 1 - etat.bout.y / V.H));
     drawRect({ pos: vec2(xg, vue.y + 20), width: 6, height: hg, radius: 3, color: rgb(255, 255, 255), opacity: 0.15 });
     drawRect({ pos: vec2(xg, vue.y + 20 + hg * (1 - avance)), width: 6, height: hg * avance, radius: 3, color: rgb(...COULEUR_OR) });
 
+    // ---- à gauche : la vitesse, et la limite ----
+    const xv = vue.x + 8;
+    const hv = Math.min(160, hg * 0.5);
+    const yv = vue.y + 20;
+    const k = Math.min(1, etat.vitesse / (V.vitesseMax * 2));
+    drawRect({ pos: vec2(xv, yv), width: 8, height: hv, radius: 4, color: rgb(255, 255, 255), opacity: 0.15 });
+    drawRect({ pos: vec2(xv, yv), width: 8, height: hv / 2, radius: 4, color: rgb(214, 84, 72), opacity: 0.25 });
+    drawRect({ pos: vec2(xv, yv + hv * (1 - k)), width: 8, height: hv * k, radius: 4, color: k > 0.5 ? rgb(236, 110, 90) : rgb(140, 196, 140) });
+    drawText({ text: "vitesse", size: Math.max(9, g.t - 6), pos: vec2(xv, yv + hv + 6), color: rgb(...COULEUR_CREME), opacity: 0.7 });
+
     // ---- la pile qui tangue : un voile rouge qui monte ----
-    if (etat.tangue > 0.25 && etat.phase === "jeu") {
+    if (etat.tangue > 0.25) {
         drawRect({ pos: vec2(vue.x, vue.y), width: vue.l, height: vue.h, color: rgb(214, 84, 72), opacity: (etat.tangue - 0.25) * 0.25 });
-    }
-}
-
-
-// Un morceau de vaisselle dans son rectangle (x, y, l, h en pixels).
-function dessinerMorceau(m, x, y, l, h, alpha, proche, s) {
-
-    if (alpha <= 0.01 || l < 2) return;
-    const contour = function (c) { return { width: 1, color: rgb(...c) }; };
-
-    if (m.type === "assiettes") {
-        const n = Math.max(1, Math.floor(h / (7 * s)));
-        const ph = h / n;
-        const blanc = m.teinte < 0.5 ? [246, 243, 236] : [238, 236, 230];
-        for (let k = 0; k < n; k++) {
-            drawRect({ pos: vec2(x, y + k * ph + 0.5), width: l, height: ph - 1, radius: Math.min(ph / 2, 4 * s), color: rgb(...blanc), opacity: alpha, outline: contour([164, 154, 144]) });
-            drawLine({ p1: vec2(x + 3, y + k * ph + 2), p2: vec2(x + l - 3, y + k * ph + 2), width: 1.3, color: rgb(116, 156, 200), opacity: alpha });
-        }
-
-    } else if (m.type === "bol") {
-        drawRect({ pos: vec2(x, y), width: l, height: h, radius: h / 2, color: rgb(234, 214, 190), opacity: alpha, outline: contour([170, 150, 130]) });
-        drawRect({ pos: vec2(x + 3, y + h * 0.38), width: Math.max(0, l - 6), height: h * 0.16, color: rgb(196, 112, 86), opacity: alpha });
-
-    } else if (m.type === "casserole") {
-        drawRect({ pos: vec2(x, y), width: l, height: h, radius: 4 * s, color: rgb(66, 70, 80), opacity: alpha, outline: contour([36, 40, 46]) });
-        drawLine({ p1: vec2(x + 3, y + 3), p2: vec2(x + l - 3, y + 3), width: 1.5, color: rgb(130, 136, 148), opacity: alpha });
-        const xr = m.cote === "gauche" ? x + 5 * s : x + l - 5 * s;
-        drawCircle({ pos: vec2(xr, y + h / 2), radius: 1.8 * s, color: rgb(150, 156, 168), opacity: alpha });
-
-    } else if (m.type === "couvercle") {
-        drawRect({ pos: vec2(x, y + h * 0.25), width: l, height: h * 0.75, radius: h * 0.37, color: rgb(178, 186, 196), opacity: alpha, outline: contour([118, 126, 138]) });
-        drawCircle({ pos: vec2(x + l / 2, y + h * 0.28), radius: h * 0.2, color: rgb(60, 64, 72), opacity: alpha });
-
-    } else if (m.type === "tasse") {
-        const c = m.teinte < 0.33 ? [200, 110, 90] : (m.teinte < 0.66 ? [110, 150, 190] : [226, 190, 96]);
-        drawRect({ pos: vec2(x, y), width: l, height: h, radius: 5 * s, color: rgb(...c), opacity: alpha, outline: contour(c.map(function (v) { return v * 0.7; })) });
-        const xa = m.cote === "gauche" ? x + 4 * s : x + l - 4 * s;
-        drawCircle({ pos: vec2(xa, y + h / 2), radius: h * 0.28, fill: false, opacity: alpha, outline: { width: 2 * s, color: rgb(...c) } });
-
-    } else if (m.type === "fourchettes") {
-        for (let k = 1; k <= 3; k++) {
-            const yf = y + k * h / 4;
-            drawLine({ p1: vec2(x + 2, yf), p2: vec2(x + l - 2, yf), width: 2 * s, color: rgb(198, 204, 212), opacity: alpha });
-            const xp = m.cote === "gauche" ? x + l - 2 : x + 2;
-            const sens = m.cote === "gauche" ? -1 : 1;
-            drawLine({ p1: vec2(xp, yf), p2: vec2(xp + sens * 7 * s, yf - 2.5 * s), width: 1, color: rgb(198, 204, 212), opacity: alpha });
-            drawLine({ p1: vec2(xp, yf), p2: vec2(xp + sens * 7 * s, yf + 2.5 * s), width: 1, color: rgb(198, 204, 212), opacity: alpha });
-        }
-
-    } else if (m.type === "verre") {
-        // Un verre dans un autre verre. Il tremble quand on approche.
-        const tremble = proche ? Math.sin(time() * 40) * 0.9 : 0;
-        const bord = proche ? [255, 150, 130] : [226, 240, 250];
-        drawRect({ pos: vec2(x + tremble, y), width: l, height: h, radius: 3 * s, color: rgb(180, 215, 240), opacity: 0.28 * alpha, outline: { width: 1.6, color: rgb(...bord) } });
-        drawRect({ pos: vec2(x + 3 * s + tremble, y + 3 * s), width: Math.max(0, l - 6 * s), height: Math.max(0, h - 6 * s), radius: 2 * s, fill: false, opacity: alpha, outline: { width: 1, color: rgb(...bord) } });
-        drawLine({ p1: vec2(x + 4 * s + tremble, y + 3 * s), p2: vec2(x + 4 * s + tremble, y + h - 3 * s), width: 1.5, color: rgb(255, 255, 255), opacity: 0.6 * alpha });
     }
 }

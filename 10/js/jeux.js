@@ -13,7 +13,7 @@
                     coince (jeuDeForce, plus bas)
 
    Ce fichier contient ce qu'ils partagent :
-     - les entrées (appuyer, faire glisser un doigt, les flèches) ;
+     - les entrées (appuyer, tenir le doigt ou la souris, les flèches) ;
      - LE SOMMEIL DE KLARA : chaque maladresse fait du bruit, une
        jauge monte, et si elle déborde, Klara se réveille
        (reveil.js) ;
@@ -38,7 +38,7 @@ const jeu = {
     verrou: 0,
     appuyer: null,        // pour appuyer depuis la console : jeu.appuyer()
     regard: null,         // ce que la caméra doit regarder, ou null
-    pointeur: { enfonce: false, dernier: null, glisse: vec2(0, 0), doigt: null },
+    pointeur: { enfonce: false, position: null, doigt: null },
 };
 
 
@@ -57,10 +57,10 @@ function regardImpose() {
    LES ENTRÉES
    ============================================================
    - un APPUI : espace, Entrée, E, un clic ou un doigt posé ;
-   - un GLISSER : le doigt (ou la souris, bouton enfoncé) qui se
-     déplace. On lit le déplacement, pas la position : le doigt
-     peut être n'importe où sur l'écran, il ne cache jamais ce
-     qu'il déplace ;
+   - un POINTEUR TENU : le doigt (ou la souris, bouton enfoncé).
+     Ce qu'on déplace SUIT le pointeur, d'autant plus vite que le
+     pointeur est loin : c'est ce qui rend le geste « analogique »
+     (Evan : avec la souris, la baguette ne suivait pas assez) ;
    - les FLÈCHES (et ZQSD, WASD), pour jouer au clavier.
    ============================================================ */
 function commencerJeu(appui) {
@@ -69,7 +69,7 @@ function commencerJeu(appui) {
     jeu.enPause = false;
     jeu.objets = [];
     jeu.ecouteurs = [];
-    jeu.pointeur = { enfonce: false, dernier: null, glisse: vec2(0, 0), doigt: null };
+    jeu.pointeur = { enfonce: false, position: null, doigt: null };
 
     // Le doigt qui vient de fermer le dialogue ne doit pas compter
     // comme un premier appui.
@@ -89,18 +89,16 @@ function commencerJeu(appui) {
     const p = jeu.pointeur;
     const poser = function (position, doigt) {
         p.enfonce = true;
-        p.dernier = position;
+        p.position = position;
         p.doigt = doigt;
         appuyer();
     };
     const bouger = function (position, doigt) {
-        if (!p.enfonce || doigt !== p.doigt || !p.dernier) return;
-        if (!jeu.enPause && jeu.verrou <= 0) p.glisse = p.glisse.add(position.sub(p.dernier));
-        p.dernier = position;
+        if (doigt !== p.doigt && p.enfonce) return;
+        p.position = position;
     };
     const lever = function () {
         p.enfonce = false;
-        p.dernier = null;
     };
 
     const e = jeu.ecouteurs;
@@ -124,15 +122,25 @@ function finirJeu() {
     jeu.actif = false;
     jeu.enPause = false;
     jeu.regard = null;
+    jeu.page = null;
 }
 
 
-// Le déplacement du doigt depuis la dernière lecture, en pixels
-// d'écran. Remis à zéro à chaque lecture.
-function lireGlisse() {
-    const g = jeu.pointeur.glisse;
-    jeu.pointeur.glisse = vec2(0, 0);
-    return g;
+// La boucle d'un jeu, à chaque image. Elle s'arrête d'elle-même
+// quand le jeu se termine (finirJeu), même si on l'a oubliée.
+function boucleDeJeu(action) {
+    const boucle = onUpdate(action);
+    jeu.ecouteurs.push(boucle);
+    return boucle;
+}
+
+
+// Le point de l'écran que le joueur tient (doigt posé, ou souris
+// bouton enfoncé), ou null. Pendant le verrou du début, rien.
+function pointeurTenu() {
+    const p = jeu.pointeur;
+    if (!p.enfonce || !p.position || jeu.verrou > 0 || jeu.enPause) return null;
+    return p.position;
 }
 
 
@@ -186,6 +194,7 @@ function faireDuBruit(quantite) {
 function surveillerLeSommeil(page) {
 
     if (jeu.enPause) return true;
+    page = page || jeu.page;
 
     // On regarde AVANT de laisser retomber : la jauge est plafonnée
     // à 1, elle n'y resterait pas une seule image sinon.
@@ -198,7 +207,7 @@ function surveillerLeSommeil(page) {
         reveillerKlara(function () {
             sommeil.bruit = 0;
             if (page) montrerLaPage(page, true);
-            jeu.pointeur.glisse = vec2(0, 0);
+            jeu.pointeur.enfonce = false;
             jeu.verrou = 0.4;
             jeu.enPause = false;
         });
@@ -299,14 +308,16 @@ function ouvrirPage(options) {
                 drawRect({ pos: vec2(g.x + 3, g.vue.y + g.vue.h), width: g.l - 6, height: g.y + g.h - (g.vue.y + g.vue.h) - 3, color: creme });
                 // la jauge du sommeil (à droite du titre, ou dessous)
                 dessinerJaugeDeSommeil(g.jauge.x, g.jauge.y, g.jauge.l, g.jauge.t);
-                // le message du moment, en bas de la vue
+                // le message du moment, en haut de la vue, sur un bandeau
+                // sombre : lisible par-dessus n'importe quoi
                 if (time() < p.messageJusqua && p.message) {
-                    const taille = g.t + 2;
-                    drawText({
-                        text: p.message, size: taille, width: g.vue.l - 24, align: "center",
-                        pos: vec2(g.vue.x + 12, g.vue.y + g.vue.h - taille * 2.4),
-                        color: rgb(...p.couleurMessage),
-                    });
+                    const taille = g.t + 1;
+                    const largeur = Math.min(g.vue.l - 40, 560);
+                    const mesure = formatText({ text: p.message, size: taille, width: largeur, align: "center" });
+                    const x = g.vue.x + (g.vue.l - largeur) / 2;
+                    const y = g.vue.y + 14;
+                    drawRect({ pos: vec2(x - 12, y - 8), width: largeur + 24, height: mesure.height + 16, radius: 8, color: rgb(...COULEUR_NUIT), opacity: 0.78 });
+                    drawText({ text: p.message, size: taille, width: largeur, align: "center", pos: vec2(x, y), color: rgb(...p.couleurMessage) });
                 }
             },
         },
@@ -337,6 +348,7 @@ function ouvrirPage(options) {
 
     p.textes = [p.titre, p.consigne, p.aide];
     placerPage(p);
+    jeu.page = p;
     return p;
 }
 
@@ -604,7 +616,7 @@ function jeuDeForce(o) {
     ]);
     panneau.textes.push(barre, jauge, etiquette);
 
-    const boucle = onUpdate(function () {
+    const boucle = boucleDeJeu(function () {
 
         if (jeu.verrou > 0) jeu.verrou -= dt();
         if (surveillerLeSommeil(null)) {
@@ -715,7 +727,7 @@ function afficherCarton(titre, sousTitre, puis) {
 
     const TENUE = 3.2;
 
-    const boucle = onUpdate(function () {
+    const boucle = boucleDeJeu(function () {
 
         if (jeu.verrou > 0) jeu.verrou -= dt();
 

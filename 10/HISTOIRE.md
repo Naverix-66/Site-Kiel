@@ -73,11 +73,22 @@ Plus **le pétale de rose**, qui ne sert à rien. Sauf à tout.
   Fraisy traverse l'appartement en quatre secondes pour le jus.
 - **Trois petits jeux** (refaits le 21/09 à la demande d'Evan : « plus durs, et
   avec une âme ») :
-  - **Le sommeil de Klara** (`js/jeux.js`, `js/reveil.js`) : chaque maladresse
-    fait du bruit, une jauge monte. Si elle déborde, Klara se réveille : tout le
-    monde court se ranger au pied du lit et fait le mort (Doudou sur place, « à
-    mon âge » ; Samsam, pour une fois, arrangé de ne pas pouvoir se lever).
-    Elle se rendort, et on reprend exactement où on en était.
+  - **Le sommeil de Klara** (`js/jeux.js`, `js/reveil.js`) : Doudou prévient au
+    début de l'acte (« Une assiette qui tombe, un bureau qui cogne, et elle se
+    réveille… si un humain se réveille, on fait le mort »). Chaque maladresse
+    fait du bruit, une jauge monte. Si elle déborde, Klara se réveille : la
+    caméra plonge sur le lit, sa forme remue sous la couette, sous-titres à son
+    nom (« …mmh ? … c'est quoi, ce bruit… … zzz »), et tout le monde court se
+    ranger au pied du lit et fait le mort (Doudou sur place, « à mon âge » ;
+    Samsam, pour une fois, arrangé de ne pas pouvoir se lever). Elle se
+    rendort, et on reprend exactement où on en était.
+  - **Klara dort dans son lit** : une forme sous la couette, jusqu'aux oreilles
+    (on ne dessine pas son visage à sa place ; un dessin d'Evan pourra la
+    remplacer).
+  - **Les dessins des jeux** sont peints en pixels au chargement (`js/pixels.js`).
+  - **Commandes** : on tient la souris / le doigt, et l'objet file vers le
+    pointeur d'autant plus vite qu'il est loin (analogique). Aux flèches, la
+    baguette accélère tant qu'on tient : il faut tapoter.
   - **La pile de vaisselle** (`js/jeu_vaisselle.js`) : l'évier vu de l'intérieur,
     une pile très haute, la baguette tout au fond. On la remonte en faisant
     glisser le doigt. Trop vite : la pile tangue, puis s'effondre (fracas, bruit
