@@ -159,17 +159,6 @@ et lumineux, ici c'est bleu, froid, immense, vertical.
   juste en dessous. On passe donc à droite, puis on retraverse à gauche.
   Vérifié par calcul : le passage le plus étroit laisse 24 px de large pour un
   Bob de 22, et tout est à portée du balancier.
-- **Un obstacle s'annonce toujours avant d'être touché** (Evan : « il faut que le
-  joueur comprenne qu'il y a des obstacles »). Dès qu'il arrive à 120 px sous les
-  pieds de Bob : il se souligne, le trait bat plus vite tant que Bob n'est pas du
-  bon côté, une flèche montre le passage, et le bandeau du haut dit « PASSE À
-  DROITE », « PASSE À GAUCHE » ou « RALENTIS ». Doudou l'annonce aussi au premier
-  mètre : « le mur n'est pas lisse ».
-- **La parabole a été redessinée** : la première version était un rond gris
-  sombre sur un mur sombre, vu de face, et Evan n'a pas reconnu ce que c'était.
-  Elle est maintenant claire, vue de biais (donc plus étroite que haute, avec son
-  creux), boulonnée au mur par un poteau visible, et son bras sort du disque avec
-  sa tête au bout — le bord de la tête tombe pile sur le bord de la collision.
 - **Le souvenir de Doudou**, sur l'appui du 1er : le train qui roule sur l'eau —
   celui de la mouette et de la crêpe. Le sac était ouvert, il y avait de l'eau
   des deux côtés, il a regardé ses pattes pendant vingt minutes, et puis les

@@ -426,92 +426,32 @@ function peindreLeFilALinge(ctx, alea) {
 }
 
 
-// Un disque plein, mais aplati : la parabole est vue de trois
-// quarts, sinon c'est un rond gris et ça ne veut rien dire.
-function disqueEtire(ctx, cx, cy, rx, ry, c) {
-    for (let dy = -ry; dy <= ry; dy++) {
-        const w = Math.floor(rx * Math.sqrt(Math.max(0, 1 - (dy * dy) / (ry * ry))) + 0.35);
-        pave(ctx, cx - w, cy + dy, 2 * w + 1, 1, c);
-    }
-}
-
-
-/* ------------------------------------------------------------
-   LA PARABOLE
-   ------------------------------------------------------------
-   Evan, en voyant la première version : « j'ai pas compris c'était
-   quoi ça ». C'était un rond gris sombre sur un mur sombre, vu
-   exactement de face — donc un rond.
-
-   Une parabole se reconnaît à trois choses, et il les faut toutes :
-   elle est CLAIRE (blanc sale) sur un mur foncé, elle est vue en
-   BIAIS (donc plus étroite que haute, et on voit le creux), et
-   elle a un BRAS qui sort du disque avec sa tête au bout.
-   ------------------------------------------------------------ */
+// Une parabole. Tout le monde en a une, personne ne la regarde,
+// et pour une peluche de soixante-dix centimètres c'est un mur.
 function peindreLaParabole(ctx) {
 
     const p = FACADE.parabole;
-    const rx = Math.round(p.r * 0.72);
-    const ry = p.r;
 
-    const coque = [156, 155, 150];
-    const bord = [196, 195, 190];
-    const creux = [116, 116, 116];
-    const fond = [86, 87, 90];
+    // Le bras et la platine, contre le mur.
+    pave(ctx, p.x + p.r - 6, p.y - 4, 14, 8, [58, 58, 62]);
+    pave(ctx, p.x + p.r + 6, p.y - 10, 5, 22, [46, 46, 50]);
+    pave(ctx, p.x + p.r + 5, p.y - 12, 7, 3, [78, 78, 84]);
 
-    // L'ombre portée sur la brique : c'est elle qui dit que ça
-    // dépasse du mur.
-    disqueEtire(ctx, p.x + 5, p.y + 5, rx, ry, [0, 0, 0, 0.38]);
+    pave(ctx, p.x - p.r - 2, p.y - p.r - 2, p.r * 2 + 4, p.r * 2 + 4, [0, 0, 0, 0.3]);
+    rond(ctx, p.x, p.y, p.r, [118, 116, 112], [74, 72, 70]);
+    rond(ctx, p.x, p.y, p.r - 5, [98, 96, 94], [84, 82, 80]);
 
-    // La platine boulonnée au mur, son poteau et le bras : c'est ce
-    // qui dit que la chose est ACCROCHÉE là, et pas dessinée dessus.
-    const px = p.x + rx + 9;
-    pave(ctx, px - 2, p.y - 26, 13, 54, [0, 0, 0, 0.4]);
-    pave(ctx, px, p.y - 24, 9, 50, [78, 78, 82]);
-    pave(ctx, px, p.y - 24, 9, 2, [116, 116, 120]);
-    pave(ctx, px, p.y + 24, 9, 2, [44, 44, 48]);
-    [-19, -19, 19, 19].forEach(function (dy, i) {
-        pixel(ctx, px + (i % 2 ? 6 : 2), p.y + dy, [162, 162, 166]);
-    });
-    pave(ctx, p.x + rx - 6, p.y - 7, 22, 12, [62, 62, 66]);
-    pave(ctx, p.x + rx - 6, p.y - 7, 22, 2, [96, 96, 100]);
-
-    // La coque.
-    disqueEtire(ctx, p.x, p.y, rx, ry, bord);
-    disqueEtire(ctx, p.x, p.y, rx - 3, ry - 3, coque);
-
-    // Le creux, en biais : clair en haut à gauche, sombre en bas.
-    disqueEtire(ctx, p.x + 2, p.y + 2, rx - 6, ry - 6, creux);
-    disqueEtire(ctx, p.x + 4, p.y + 5, rx - 9, ry - 10, fond);
-
-    // La lumière de la ville, qui tombe dedans par en haut.
-    for (let i = 0; i < rx; i++) {
-        pave(ctx, p.x - rx + 4 + i, p.y - ry + 6,
-            1, Math.max(0, ry - 8 - i * 1.3), [206, 206, 202, 0.22]);
+    // Le creux : la lumière de la ville tombe dedans par le haut.
+    for (let i = 0; i < p.r - 6; i++) {
+        pave(ctx, p.x - (p.r - 8) + i, p.y - p.r + 8,
+            1, Math.max(0, (p.r - 10) - i * 0.7), [134, 132, 128, 0.5]);
     }
 
-    // Le bras de la tête : il SORT du disque, en bas à gauche.
-    // C'est ce trait-là qui fait reconnaître une parabole.
-    // ⚠️ tx est calé pour que le bord gauche de la tête tombe
-    // exactement sur le bord du disque de collision (rayon r dans
-    // FACADE.parabole) : ce qu'on voit dépasser est exactement ce
-    // qui accroche.
-    const tx = p.x - rx - 5;
-    const ty = p.y + ry - 4;
-    trait(ctx, p.x + 2, p.y - 4, tx + 4, ty - 2, [56, 56, 58]);
-    trait(ctx, p.x + 3, p.y - 4, tx + 5, ty - 2, [128, 128, 130]);
-
-    // La tête, au bout du bras : un petit cylindre blanc qui
-    // regarde le disque.
-    pave(ctx, tx - 3, ty - 6, 11, 11, [40, 40, 42]);
-    pave(ctx, tx - 2, ty - 5, 9, 9, [178, 177, 172]);
-    pave(ctx, tx - 2, ty - 5, 9, 2, [208, 207, 202]);
-    pave(ctx, tx + 5, ty - 3, 4, 5, [60, 60, 62]);
-
-    // Deux gouttes qui pendent sous la coque : il pleut depuis
-    // le début de la nuit.
-    pave(ctx, p.x - 6, p.y + ry - 1, 1, 4, [150, 180, 210, 0.6]);
-    pave(ctx, p.x + 7, p.y + ry - 2, 1, 3, [150, 180, 210, 0.45]);
+    // Le bras de la tête, et la tête.
+    trait(ctx, p.x, p.y, p.x - p.r - 6, p.y + 12, [70, 68, 66]);
+    trait(ctx, p.x, p.y + 1, p.x - p.r - 6, p.y + 13, [52, 50, 48]);
+    pave(ctx, p.x - p.r - 12, p.y + 8, 10, 8, [138, 136, 132]);
+    pave(ctx, p.x - p.r - 12, p.y + 8, 10, 2, [168, 166, 162]);
 }
 
 
