@@ -242,6 +242,9 @@ function raccourciActeII() {
         "samsam_trouve", "samsam_couvert", "samsam_ok", "bluey_retour", "verite",
         "cakey_secret", "petale", "moin", "acte2",
     ].forEach(function (d) { memoire.drapeaux[d] = true; });
+    // Sinon une partie déjà rendue à l'acte III repartirait sur la
+    // façade au rechargement suivant (voir sceneDeDepart, octobre.js).
+    memoire.acte = 2;
     sauvegarder();
     redessinerInventaire();
 
@@ -1090,7 +1093,9 @@ function leDepart() {
     ], function () {
         noter("depart");
         rafraichirObjectif();
-        afficherCarton("Fin de l'acte II", "La descente arrive bientôt.");
+        // Et on quitte l'appartement pour de bon : la suite se
+        // joue dehors, sur la façade (acte3.js).
+        afficherCarton("Fin de l'acte II", "La façade, maintenant.", commencerActeIII);
     });
 }
 

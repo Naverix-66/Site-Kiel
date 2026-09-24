@@ -124,6 +124,39 @@ assez court pour rester une séquence tenue.
 **C'est le morceau de bravoure du jeu.** Rupture totale : le studio est crème
 et lumineux, ici c'est bleu, froid, immense, vertical.
 
+**CODÉ** (`js/facade.js` pour le décor, `js/acte3.js` pour l'acte) :
+
+- **La façade est celle de la photo d'Evan** : brique rouge sombre montée en
+  panneresses, encadrements blancs, appuis de béton, descente de gouttière entre
+  deux travées, soupiraux de cave au ras du sol, herbe haute qui cache le pied du
+  mur, et l'immeuble en retour dans l'ombre à droite. Tout est peint au
+  chargement, pixel par pixel, en couleurs de nuit — on ne pose pas un voile noir
+  sur un mur de jour. La fenêtre de Klara est la seule ouverte : lumière chaude,
+  et quatre petites têtes dedans qui regardent.
+- **Les commandes** : le pointeur est un geste analogique (plus bas que Bob = la
+  corde file, plus à droite = il se balance), ou les flèches. Même famille que les
+  deux petits jeux de l'acte II.
+- **La règle de l'acte, dite par Doudou** : « Quand ça souffle, on ne descend
+  pas. » Tant que Bob ne file pas la corde, il se colle au mur et la rafale ne le
+  prend presque pas. Les rafales s'annoncent une seconde et demie à l'avance — la
+  pluie penche avant le bruit.
+- **La sanction, décidée par Evan** : jamais de partie perdue. Bob glisse d'une
+  centaine de pixels, le nœud de Doudou tient, Samsam dit « Je te tiens », et on
+  le remonte. Il reperd de la hauteur, et jamais plus haut que le dernier appui.
+- **Les appuis de fenêtre sont les respirations** : Bob s'y pose, y marche, et
+  c'est là que la partie se range. Recharger la page ne fait pas recommencer
+  l'acte.
+- **La route** : le cordon de briques saillantes (on ralentit), la fenêtre du
+  voisin qui s'allume pile quand Bob est devant la vitre (on ne bouge plus ;
+  posé sur l'appui, il est sous la vitre, donc invisible), l'appui du 1er et le
+  souvenir de la gare de Doudou, la toile d'araignée vide (« Bonsoir. »), le
+  collier de gouttière qui fuit (trempé, il glisse plus vite), l'appui du rez et
+  la télé bleue du voisin qui ne dort pas non plus, puis **le bout de la corde :
+  il manque un étage**. Bob lâche, vise l'herbe — et pas une grille de cave.
+- **Le dernier plan** : la caméra remonte toute la façade jusqu'à la tache jaune
+  de la veilleuse, grande comme un ongle. Un cri de mouette, très haut dans un
+  arbre. Carton « Fin de l'acte III ».
+
 ### Acte IV — Le boss : **La Mouette** *(arène)*
 Kiel est un port. Les mouettes y sont énormes et sans aucune pitié.
 Son nid est **en haut d’un arbre de la cour intérieure**, plein de choses brillantes.
@@ -221,6 +254,9 @@ et un vrai jeu :
 - ~~Étage~~ → **2e étage**. La descente en rappel est validée.
 
 - **Est-ce qu'au moins une des 3 fenêtres s'ouvre ?** (a priori oui)
+- ~~La façade~~ → **photo reçue le 24/09**, peinte dans `js/facade.js`.
+  Restent inventés, à confirmer : le cordon de briques saillantes entre les deux
+  étages, le collier de gouttière qui fuit, et la toile d'araignée.
 - ~~Décor du bas~~ → **une immense cour intérieure**, avec un parc et des arbres. Le nid de la Mouette est **dans un arbre**.
 - Le plan réel de l'appartement (photo en attente) → corrige `js/pieces.js`.
 - ~~Sprites des peluches~~ → **reçus le 17/09** (Rosy, Samsam, Fraisy, Bluey,

@@ -113,13 +113,19 @@ function preparerLesSons() {
 
     try { son.coupe = localStorage.getItem(CLE_SON_COUPE) === "1"; } catch (e) { son.coupe = false; }
 
-    const debloquer = function () {
-        if (!son.ctx) demarrerAudio();
-        else if (son.ctx.state === "suspended") son.ctx.resume();
-    };
-    window.addEventListener("pointerdown", debloquer);
-    window.addEventListener("touchstart", debloquer);
-    window.addEventListener("keydown", debloquer);
+    // Chaque scène rappelle preparerLesSons (le bouton ♪ et la
+    // boucle meurent avec elle), mais les écouteurs de la fenêtre,
+    // eux, survivent : on ne les pose qu'une fois.
+    if (!son.branche) {
+        son.branche = true;
+        const debloquer = function () {
+            if (!son.ctx) demarrerAudio();
+            else if (son.ctx.state === "suspended") son.ctx.resume();
+        };
+        window.addEventListener("pointerdown", debloquer);
+        window.addEventListener("touchstart", debloquer);
+        window.addEventListener("keydown", debloquer);
+    }
 
     creerBoutonDuSon();
     onKeyPress("m", basculerLeSon);
@@ -130,6 +136,20 @@ function preparerLesSons() {
 
     onUpdate(function () {
         if (!son.ctx) return;
+
+        // La musique laisse la place : aux voix pendant un dialogue, et
+        // à un morceau joué par-dessus (jouerMorceau), et presque tout
+        // entière pendant un petit jeu : on y retient son souffle.
+        // ⚠️ AVANT le test sur Bob : à l'acte III, Bob n'est pas un
+        // objet de la scène (acte3.js le dessine lui-même), et la
+        // musique resterait bloquée au volume de la dernière phrase.
+        const pousse = son.morceauJusquA > son.ctx.currentTime ? 0.2
+            : (jeuEnCours() ? 0.15 : (dialogueEnCours() ? 0.65 : 1));
+        if (pousse !== son.pousseMusique && son.boucles.musique) {
+            son.pousseMusique = pousse;
+            volumeDeBoucle("musique", pousse);
+        }
+
         const bob = get("bob")[0];
         if (!bob) return;
 
@@ -144,16 +164,6 @@ function preparerLesSons() {
         const fenetre = vec2(5.5 * TAILLE_TUILE, 0.5 * TAILLE_TUILE);
         const proche = Math.max(0, 1 - bob.pos.dist(fenetre) / (9 * TAILLE_TUILE));
         volumeDeBoucle("vent", 0.08 + 0.92 * proche);
-
-        // La musique laisse la place : aux voix pendant un dialogue, et
-        // à un morceau joué par-dessus (jouerMorceau), et presque tout
-        // entière pendant un petit jeu : on y retient son souffle.
-        const pousse = son.morceauJusquA > son.ctx.currentTime ? 0.2
-            : (jeuEnCours() ? 0.15 : (dialogueEnCours() ? 0.65 : 1));
-        if (pousse !== son.pousseMusique && son.boucles.musique) {
-            son.pousseMusique = pousse;
-            volumeDeBoucle("musique", pousse);
-        }
 
         // Une mouette au loin, de temps en temps.
         if (time() > prochaineMouette) {
