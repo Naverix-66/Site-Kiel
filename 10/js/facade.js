@@ -62,6 +62,19 @@ const FACADE = {
 
     gouttiere: { x: 254, l: 18 },
 
+    // Ce qui dépasse du mur, et qu'il faut contourner en se
+    // balançant. acte3.js reprend ces mesures telles quelles pour
+    // savoir ce que Bob touche : un obstacle qu'on voit et un
+    // obstacle qui cogne ne doivent jamais être à deux endroits.
+    // Elles se suivent de haut en bas sans jamais se contredire :
+    // le fil ferme la gauche, le jet du collier garde la gauche
+    // fermée, puis la parabole ferme la droite. On passe donc à
+    // droite, puis on traverse à gauche.
+    jardiniere: { x: 296, l: 42, y: 428, h: 28 },
+    fil: { x0: 262, x1: 404, y: 506, creux: 16 },
+    fuite: { y: 584, portee: 158 },
+    parabole: { x: 452, y: 672, r: 30 },
+
     // Le cordon de briques saillantes entre le 2e et le 1er.
     bandeau: { y: 326, h: 10 },
 
@@ -141,6 +154,9 @@ function peindreLaFacade() {
     });
 
     peindreLaGouttiere(ctx, alea);
+    peindreLaJardiniere(ctx, alea);
+    peindreLeFilALinge(ctx, alea);
+    peindreLaParabole(ctx);
     peindreLaToileDAraignee(ctx);
     peindreLeToit(ctx);
     peindreLeSoubassement(ctx, alea);
@@ -338,6 +354,104 @@ function peindreLaGouttiere(ctx, alea) {
     pave(ctx, g.x, bas, g.l, 16, COUL_FACADE.tuyau);
     pave(ctx, g.x + g.l, bas + 8, 14, 12, COUL_FACADE.tuyau);
     pave(ctx, g.x + g.l, bas + 8, 14, 3, COUL_FACADE.tuyauClair);
+}
+
+
+/* ------------------------------------------------------------
+   LES TROIS CHOSES QUI DÉPASSENT
+   ------------------------------------------------------------
+   Elles existent pour une seule raison : obliger Bob à se
+   déplacer de gauche à droite pendant qu'il descend. Le fil
+   ferme la gauche, la parabole ferme la droite juste en dessous,
+   et la jardinière occupe le coin gauche de l'appui du 1er —
+   celui sur lequel on se pose.
+   ------------------------------------------------------------ */
+function peindreLaJardiniere(ctx, alea) {
+
+    const j = FACADE.jardiniere;
+    const terre = [46, 36, 30];
+    const pot = [104, 62, 46];
+
+    // Les fleurs d'octobre, c'est-à-dire ce qu'il en reste.
+    for (let x = j.x + 3; x < j.x + j.l - 3; x += 3) {
+        const h = 10 + alea() * 22;
+        const penche = (alea() - 0.5) * 10;
+        const c = alea() > 0.7 ? [86, 78, 44] : [48, 62, 42];
+        trait(ctx, x, j.y + 6, x + penche, j.y + 6 - h, c);
+        if (alea() > 0.86) pixel(ctx, Math.round(x + penche), Math.round(j.y + 6 - h), [140, 92, 84]);
+    }
+
+    pave(ctx, j.x, j.y + 4, j.l, 6, terre);
+    pave(ctx, j.x, j.y + 8, j.l, j.h - 8, pot);
+    pave(ctx, j.x, j.y + 8, j.l, 2, eclaircir(pot, 0.2));
+    pave(ctx, j.x, j.y + j.h - 2, j.l, 2, assombrir(pot, 0.35));
+    pave(ctx, j.x, j.y + 8, 2, j.h - 8, assombrir(pot, 0.25));
+    pave(ctx, j.x + j.l - 2, j.y + 8, 2, j.h - 8, assombrir(pot, 0.25));
+    pave(ctx, j.x - 1, j.y + j.h, j.l + 2, 3, [0, 0, 0, 0.45]);
+}
+
+
+function peindreLeFilALinge(ctx, alea) {
+
+    const f = FACADE.fil;
+    const fil = [154, 150, 142];
+
+    // Le crochet, à droite, planté dans un joint.
+    pave(ctx, f.x1, f.y + f.creux - 4, 4, 10, [64, 62, 60]);
+
+    // Le fil, qui pend : une chaînette, dessinée de proche en proche.
+    let avantX = f.x0, avantY = f.y;
+    for (let i = 1; i <= 40; i++) {
+        const k = i / 40;
+        const x = f.x0 + (f.x1 - f.x0) * k;
+        const y = f.y + Math.sin(k * Math.PI) * f.creux + k * 8;
+        trait(ctx, avantX, avantY, x, y, fil);
+        avantX = x; avantY = y;
+    }
+
+    // Une pince, deux pinces, et une chaussette que personne n'a
+    // ramassée depuis l'été.
+    [0.24, 0.52, 0.78].forEach(function (k, i) {
+        const x = Math.round(f.x0 + (f.x1 - f.x0) * k);
+        const y = Math.round(f.y + Math.sin(k * Math.PI) * f.creux + k * 8);
+        pave(ctx, x - 2, y - 1, 5, 9, i === 1 ? [126, 96, 62] : [96, 92, 88]);
+        pave(ctx, x - 2, y - 1, 5, 2, [150, 146, 140]);
+        if (i === 1) {
+            pave(ctx, x - 5, y + 8, 11, 20, [92, 96, 112]);
+            pave(ctx, x - 5, y + 8, 11, 3, [116, 120, 136]);
+            pave(ctx, x - 5, y + 24, 16, 6, [92, 96, 112]);
+            pave(ctx, x - 5, y + 28, 16, 2, [70, 74, 88]);
+        }
+    });
+}
+
+
+// Une parabole. Tout le monde en a une, personne ne la regarde,
+// et pour une peluche de soixante-dix centimètres c'est un mur.
+function peindreLaParabole(ctx) {
+
+    const p = FACADE.parabole;
+
+    // Le bras et la platine, contre le mur.
+    pave(ctx, p.x + p.r - 6, p.y - 4, 14, 8, [58, 58, 62]);
+    pave(ctx, p.x + p.r + 6, p.y - 10, 5, 22, [46, 46, 50]);
+    pave(ctx, p.x + p.r + 5, p.y - 12, 7, 3, [78, 78, 84]);
+
+    pave(ctx, p.x - p.r - 2, p.y - p.r - 2, p.r * 2 + 4, p.r * 2 + 4, [0, 0, 0, 0.3]);
+    rond(ctx, p.x, p.y, p.r, [118, 116, 112], [74, 72, 70]);
+    rond(ctx, p.x, p.y, p.r - 5, [98, 96, 94], [84, 82, 80]);
+
+    // Le creux : la lumière de la ville tombe dedans par le haut.
+    for (let i = 0; i < p.r - 6; i++) {
+        pave(ctx, p.x - (p.r - 8) + i, p.y - p.r + 8,
+            1, Math.max(0, (p.r - 10) - i * 0.7), [134, 132, 128, 0.5]);
+    }
+
+    // Le bras de la tête, et la tête.
+    trait(ctx, p.x, p.y, p.x - p.r - 6, p.y + 12, [70, 68, 66]);
+    trait(ctx, p.x, p.y + 1, p.x - p.r - 6, p.y + 13, [52, 50, 48]);
+    pave(ctx, p.x - p.r - 12, p.y + 8, 10, 8, [138, 136, 132]);
+    pave(ctx, p.x - p.r - 12, p.y + 8, 10, 2, [168, 166, 162]);
 }
 
 

@@ -1065,7 +1065,7 @@ function leDepart() {
 
     lancerDialogue([
         { qui: "doudou", texte: "Viens là, mon grand." },
-        { texte: "Doudou a fait du pyjama de Samsam une longue corde grise, avec des petites oreilles de lapin imprimées tout du long." },
+        { texte: "Doudou a fait du pyjama de Samsam une longue corde crème, avec le liseré rouge qui tourne autour tout du long, et les petits boutons encore dessus." },
         { texte: "Il en attache le bout à la poignée de la fenêtre. Un seul nœud, lent, énorme. Ses pattes tremblent. Le nœud, lui, ne tremble pas." },
         { qui: "doudou", texte: "Il tiendra. Toi, tiens-le." },
         { texte: "Bob enfile le dé à coudre. Il glisse la baguette dans l'élastique de son short. Il passe le couvercle à son bras." },

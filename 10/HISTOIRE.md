@@ -149,10 +149,23 @@ et lumineux, ici c'est bleu, froid, immense, vertical.
 - **La route** : le cordon de briques saillantes (on ralentit), la fenêtre du
   voisin qui s'allume pile quand Bob est devant la vitre (on ne bouge plus ;
   posé sur l'appui, il est sous la vitre, donc invisible), l'appui du 1er et le
-  souvenir de la gare de Doudou, la toile d'araignée vide (« Bonsoir. »), le
+  souvenir de Doudou, la toile d'araignée vide (« Bonsoir. »), le
   collier de gouttière qui fuit (trempé, il glisse plus vite), l'appui du rez et
   la télé bleue du voisin qui ne dort pas non plus, puis **le bout de la corde :
   il manque un étage**. Bob lâche, vise l'herbe — et pas une grille de cave.
+- **Trois choses dépassent du mur, et c'est ce qui fait jouer la gauche et la
+  droite** : la jardinière au coin gauche de l'appui du 1er, le fil à linge (avec
+  sa chaussette oubliée) qui ferme la gauche, et la parabole qui ferme la droite
+  juste en dessous. On passe donc à droite, puis on retraverse à gauche.
+  Vérifié par calcul : le passage le plus étroit laisse 24 px de large pour un
+  Bob de 22, et tout est à portée du balancier.
+- **Le souvenir de Doudou**, sur l'appui du 1er : le train qui roule sur l'eau —
+  celui de la mouette et de la crêpe. Le sac était ouvert, il y avait de l'eau
+  des deux côtés, il a regardé ses pattes pendant vingt minutes, et puis les
+  rails sont revenus sur la terre. « Ça se termine toujours, ces endroits-là. »
+- **La corde est vraiment le pyjama** : couleurs relevées sur la planche de
+  Samsam (tissu crème, liseré bordeaux, petits boutons), tordues en corde.
+  Et Samsam est à la fenêtre **sans son pyjama**, forcément.
 - **Le dernier plan** : la caméra remonte toute la façade jusqu'à la tache jaune
   de la veilleuse, grande comme un ongle. Un cri de mouette, très haut dans un
   arbre. Carton « Fin de l'acte III ».
@@ -256,7 +269,14 @@ et un vrai jeu :
 - **Est-ce qu'au moins une des 3 fenêtres s'ouvre ?** (a priori oui)
 - ~~La façade~~ → **photo reçue le 24/09**, peinte dans `js/facade.js`.
   Restent inventés, à confirmer : le cordon de briques saillantes entre les deux
-  étages, le collier de gouttière qui fuit, et la toile d'araignée.
+  étages, le collier de gouttière qui fuit, la toile d'araignée, la jardinière,
+  le fil à linge et la parabole.
+- **La musique du dehors** : Evan la cherche. Dès que le fichier est posé dans
+  `10/assets/sounds/dehors.mp3`, la façade le prend tout seul à la place de la
+  musique de l'appartement (SONS.dehors, `optionnel: true` : tant qu'il manque,
+  rien ne se plaint).
+- ~~Taille de Cakey~~ → **1.45** (Evan : « presque aussi grande que Samsam, de
+  loin la plus grande à part lui »). Samsam est à 1.6, Bob et Doudou à 1.0.
 - ~~Décor du bas~~ → **une immense cour intérieure**, avec un parc et des arbres. Le nid de la Mouette est **dans un arbre**.
 - Le plan réel de l'appartement (photo en attente) → corrige `js/pieces.js`.
 - ~~Sprites des peluches~~ → **reçus le 17/09** (Rosy, Samsam, Fraisy, Bluey,

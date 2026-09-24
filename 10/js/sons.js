@@ -77,6 +77,14 @@ const SONS = {
     // pousse encore pendant les dialogues (voir preparerLesSons).
     musique:        { fichier: "Keys_Left_By_The_Door.mp3", debut: 0, fin: 55, volume: 0.12 },
 
+    // ---- l'acte III ----
+    // La musique du dehors. optionnel = son absence ne se plaint pas
+    // dans la console : Evan cherche encore le morceau. Dès que le
+    // fichier est dans assets/sounds/, la façade le prend tout seul
+    // à la place de la musique de l'appartement.
+    dehors:         { fichier: "dehors.mp3", volume: 0.3, optionnel: true },
+    pluie:          { fichier: "wind_trough_window.mp3", debut: 1.2, volume: 0.2, vitesse: 1.6 },
+
     // ---- l'acte II ----
     mystique:       { fichier: "mystic_sounds.mp3", volume: 0.45 },
     prise:          { fichier: "click_text.mp3", debut: 0.14, duree: 0.2, volume: 0.9, vitesse: 0.55 },
@@ -103,6 +111,8 @@ const son = {
     bouton: null,
     pousseMusique: null,  // la part de volume laissée à la musique
     morceauJusquA: 0,     // un morceau joue par-dessus jusqu'à cette heure
+    musiqueEnCours: "musique",  // "musique" dedans, "dehors" sur la façade
+    branche: false,       // les écouteurs de la fenêtre sont posés
 };
 
 
@@ -145,9 +155,9 @@ function preparerLesSons() {
         // musique resterait bloquée au volume de la dernière phrase.
         const pousse = son.morceauJusquA > son.ctx.currentTime ? 0.2
             : (jeuEnCours() ? 0.15 : (dialogueEnCours() ? 0.65 : 1));
-        if (pousse !== son.pousseMusique && son.boucles.musique) {
+        if (pousse !== son.pousseMusique && son.boucles[son.musiqueEnCours]) {
             son.pousseMusique = pousse;
-            volumeDeBoucle("musique", pousse);
+            volumeDeBoucle(son.musiqueEnCours, pousse);
         }
 
         const bob = get("bob")[0];
@@ -186,8 +196,11 @@ function demarrerAudio() {
     // Chaque fichier une seule fois, en arrière-plan : le jeu ne
     // l'attend pas. Un son pas encore arrivé est simplement muet.
     const fichiers = [];
+    const optionnels = [];
     Object.keys(SONS).forEach(function (nom) {
-        if (fichiers.indexOf(SONS[nom].fichier) < 0) fichiers.push(SONS[nom].fichier);
+        const f = SONS[nom].fichier;
+        if (fichiers.indexOf(f) < 0) fichiers.push(f);
+        if (SONS[nom].optionnel && optionnels.indexOf(f) < 0) optionnels.push(f);
     });
 
     fichiers.forEach(function (fichier) {
@@ -199,7 +212,11 @@ function demarrerAudio() {
                 lancerLesAmbiances();
             })
             .catch(function () {
-                console.warn("Son introuvable ou illisible : " + fichier);
+                // Un son "optionnel" est un son qu'on attend encore :
+                // il ne doit pas salir la console tant qu'il manque.
+                if (optionnels.indexOf(fichier) < 0) {
+                    console.warn("Son introuvable ou illisible : " + fichier);
+                }
             });
     });
 }
@@ -208,8 +225,31 @@ function demarrerAudio() {
 // Les boucles de fond démarrent dès que leur fichier est arrivé.
 function lancerLesAmbiances() {
     demarrerBoucle("nuit");
-    demarrerBoucle("musique");
+    demarrerBoucle(son.musiqueEnCours);
     demarrerBoucle("vent", 0.08);
+}
+
+
+/* ------------------------------------------------------------
+   DEDANS / DEHORS
+   ------------------------------------------------------------
+   L'appartement a sa musique ; la façade en veut une autre, plus
+   tendue. Tant que le fichier du dehors n'est pas là, on garde
+   celle de l'appartement : on appelle donc cette fonction à
+   chaque image, et elle bascule toute seule le jour où le
+   morceau arrive.
+   ------------------------------------------------------------ */
+function musiqueDuDehors(dehors) {
+
+    if (!son.ctx) return;
+    const voulue = dehors && son.tampons[SONS.dehors.fichier] ? "dehors" : "musique";
+    if (voulue === son.musiqueEnCours && son.boucles[voulue]) return;
+    if (voulue === son.musiqueEnCours) return;
+
+    arreterBoucle(son.musiqueEnCours);
+    son.musiqueEnCours = voulue;
+    son.pousseMusique = null;
+    demarrerBoucle(voulue);
 }
 
 
@@ -450,6 +490,83 @@ function sonSynthe(nom, force) {
         g.connect(son.maitre);
         o.start(t);
         o.stop(t + 0.14);
+
+    } else if (nom === "clang") {
+        // La fonte de la descente de gouttière : trois partiels qui
+        // ne sont pas d'accord entre eux, et qui durent trop longtemps.
+        souffle(t, 0.25, 0.18 * k);
+        [392, 587, 933, 1411].forEach(function (f, i) {
+            ping(t + i * 0.004, f * (1 + (Math.random() - 0.5) * 0.02), (0.1 - i * 0.02) * k, 2.2 - i * 0.3);
+        });
+
+    } else if (nom === "grince") {
+        // Une corde tendue qui travaille : un filet de scie très bas,
+        // modulé, qui s'arrête net.
+        const o = ctx.createOscillator();
+        o.type = "sawtooth";
+        o.frequency.setValueAtTime(78, t);
+        o.frequency.linearRampToValueAtTime(112, t + 0.4);
+        const trem = ctx.createOscillator();
+        trem.type = "sine";
+        trem.frequency.value = 17;
+        const profondeur = ctx.createGain();
+        profondeur.gain.value = 18;
+        trem.connect(profondeur);
+        profondeur.connect(o.frequency);
+        const filtre = ctx.createBiquadFilter();
+        filtre.type = "lowpass";
+        filtre.frequency.value = 900;
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.07 * k, t + 0.08);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
+        o.connect(filtre);
+        filtre.connect(g);
+        g.connect(son.maitre);
+        o.start(t); trem.start(t);
+        o.stop(t + 0.5); trem.stop(t + 0.5);
+
+    } else if (nom === "vitre") {
+        ping(t, 3100, 0.07 * k, 0.5);
+        ping(t + 0.006, 4700, 0.045 * k, 0.35);
+        ping(t + 0.012, 2050, 0.03 * k, 0.6);
+
+    } else if (nom === "terre") {
+        // Un pot de terre : ça fait un bruit mat, et ça se vide un peu.
+        souffle(t, 0.35, 0.22 * k);
+        const o = ctx.createOscillator();
+        o.type = "triangle";
+        o.frequency.setValueAtTime(130, t);
+        o.frequency.exponentialRampToValueAtTime(55, t + 0.18);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.2 * k, t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
+        o.connect(g); g.connect(son.maitre);
+        o.start(t); o.stop(t + 0.3);
+
+    } else if (nom === "rafale") {
+        // Le souffle qui monte, tient, et s'en va : deux secondes et
+        // demie de bruit filtré qui balaye les aigus.
+        const duree = 2.6;
+        const n = Math.floor(ctx.sampleRate * duree);
+        const tampon = ctx.createBuffer(1, n, ctx.sampleRate);
+        const d = tampon.getChannelData(0);
+        for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
+        const source = ctx.createBufferSource();
+        source.buffer = tampon;
+        const filtre = ctx.createBiquadFilter();
+        filtre.type = "bandpass";
+        filtre.Q.value = 1.4;
+        filtre.frequency.setValueAtTime(420, t);
+        filtre.frequency.linearRampToValueAtTime(1500, t + 1.1);
+        filtre.frequency.linearRampToValueAtTime(380, t + duree);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.16 * k, t + 0.9);
+        g.gain.setValueAtTime(0.16 * k, t + 1.5);
+        g.gain.linearRampToValueAtTime(0, t + duree);
+        source.connect(filtre); filtre.connect(g); g.connect(son.maitre);
+        source.start(t);
     }
 }
 

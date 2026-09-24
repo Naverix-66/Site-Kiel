@@ -131,8 +131,9 @@ const PERSONNAGES = {
     cakey: {
         nom: "Cakey",
         role: "la fête",
-        description: "Doudou assez grande, entre Bob et Samsam. Tient toujours un "
-            + "gâteau d'anniversaire dans les pattes, et ne le pose jamais.",
+        description: "Presque aussi grande que Samsam : de loin la plus grande de "
+            + "toutes les peluches après lui. Tient toujours un gâteau "
+            + "d'anniversaire dans les pattes, et ne le pose jamais.",
         traits: ["extrêmement gentille", "attentionnée", "heureuse",
             "de loin la plus positive", "hyper sociale", "drôle", "adore les fêtes"],
         voix: "Chaleureuse, rapide quand elle est contente, c'est-à-dire presque tout "
@@ -145,7 +146,9 @@ const PERSONNAGES = {
             + "⚠️ SON OPTIMISME N'EST PAS DE LA NAÏVETÉ. Elle voit très bien quand ça "
             + "va mal, et elle choisit le bon côté exprès, pour les autres. Une fois, "
             + "elle oublie de sourire, et elle s'en rend compte.",
-        taille: 1.3,
+        // Evan : « Cakey est presque aussi grande que Samsam, c'est de
+        // loin la plus grande à part lui. » (Samsam est à 1.6.)
+        taille: 1.45,
         couleurPlaceholder: [196, 156, 222],
     },
 

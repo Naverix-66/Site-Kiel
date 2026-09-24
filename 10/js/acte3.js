@@ -98,6 +98,66 @@ const CORDE = {
 };
 
 
+/* ------------------------------------------------------------
+   CE QUI DÉPASSE DU MUR
+   ------------------------------------------------------------
+   Les mesures viennent de facade.js : ce qu'on voit et ce qui
+   cogne sont le même objet, décrit une seule fois.
+
+   La descente n'est donc plus une ligne droite : le fil à linge
+   ferme la gauche, la parabole ferme la droite juste en dessous,
+   et il faut passer de l'un à l'autre en se balançant.
+   ------------------------------------------------------------ */
+const SAILLIES = [
+    { nom: "gouttiere", x0: -999, x1: CORDE.gauche, y0: 40, y1: 880 },
+    { nom: "mur", x0: CORDE.droite, x1: 9999, y0: 40, y1: 880 },
+    {
+        // Un cordon de briques, on ne se le prend pas dans le ventre :
+        // ce sont les PIEDS qui accrochent dessus, et seulement si on
+        // descend trop vite. D'où la boîte réduite (pieds: true).
+        nom: "bandeau", vitesseMax: 26, pieds: true,
+        x0: -999, x1: 9999,
+        y0: FACADE.bandeau.y - 6, y1: FACADE.bandeau.y + FACADE.bandeau.h + 6,
+    },
+    {
+        nom: "jardiniere",
+        x0: FACADE.jardiniere.x, x1: FACADE.jardiniere.x + FACADE.jardiniere.l,
+        y0: FACADE.jardiniere.y - 12, y1: FACADE.jardiniere.y + FACADE.jardiniere.h,
+    },
+    {
+        nom: "fil",
+        x0: FACADE.fil.x0, x1: FACADE.fil.x1 + 4,
+        y0: FACADE.fil.y - 4, y1: FACADE.fil.y + FACADE.fil.creux + 14,
+    },
+    {
+        nom: "parabole",
+        cx: FACADE.parabole.x, cy: FACADE.parabole.y, r: FACADE.parabole.r,
+    },
+];
+
+
+// Ce que ça fait quand il touche : un bruit, une secousse, et
+// quelqu'un qui crie d'en haut.
+const REACTIONS = {
+    gouttiere: { son: "clang", force: 1, secousse: 12, qui: "bluey", texte: "LE TUYAU !! IL A TOUCHÉ LE TUYAU !!" },
+    mur: { son: "tok", force: 1, secousse: 7, qui: "cakey", texte: "Doucement, Bob !" },
+    bandeau: { son: "tok", force: 1, secousse: 8, qui: "doudou", texte: "Trop vite, mon grand." },
+    jardiniere: { son: "terre", force: 1, secousse: 8, qui: "fraisy", texte: "C'ÉTAIT DE LA TERRE ? IL Y AVAIT QUOI DEDANS ?" },
+    fil: { son: "grince", force: 1, secousse: 9, qui: "bluey", texte: "LA CHAUSSETTE !! IL Y AVAIT UNE CHAUSSETTE !!" },
+    parabole: { son: "clang", force: 0.8, secousse: 11, qui: "doudou", texte: "Il faut passer à gauche de ce truc-là." },
+    fenetre: { son: "vitre", force: 1, secousse: 9, qui: "cakey", texte: "Oh !" },
+};
+
+
+// Les deux appuis de fenêtre où Bob peut se poser, et la part de
+// l'appui qui reste libre : la jardinière occupe le coin gauche
+// du premier, la parabole interdit la droite du second.
+const APPUIS = [
+    { etage: 1, y: 456, x0: 350, x1: 442 },
+    { etage: 2, y: 716, x0: 298, x1: 442 },
+];
+
+
 const descente = {
 
     etat: "corde",        // corde | appui | glisse | remonte | chute | sol
@@ -122,6 +182,7 @@ const descente = {
 
     trempe: 0,            // il est mouillé jusqu'à cette heure
     secousse: 0,
+    prochainGrince: 0,
 
     moments: {},          // les moments déjà joués
     voix: [],             // les cris venus d'en haut
@@ -143,6 +204,12 @@ const descente = {
 scene("facade", function () {
 
     charger();
+
+    // Samsam a donné son pyjama à la fin de l'acte II : il est au
+    // bout de la corde de Bob. Il ne peut donc pas l'avoir encore
+    // sur le dos à la fenêtre (APPARENCES, moteur.js).
+    APPARENCES.samsam = "samsam_sans_pyjama";
+
     preparerLesSons();
     preparerInventaire();
     brancherLeDoigt();
@@ -244,6 +311,12 @@ function remettreLaDescente() {
     descente.vAngle = 0;
     descente.appui = null;
     descente.fini = false;
+    descente.reprise = 0;
+    descente.trempe = 0;
+    descente.fenetre = { allumee: 0, jusqua: 0, ouverte: false };
+    descente.fuite = { prochaine: 0, jusqua: 0 };
+    descente.vent = { force: 0, cible: 0, prochaine: 0, annonce: 0, jusqua: 0, dose: 0 };
+    descente.voix = [];
     descente.aide = time() + 16;
 
     const repere = memoire.drapeaux.descente_appui;
@@ -257,6 +330,10 @@ function remettreLaDescente() {
     // On a déjà entendu le bout de la corde : le mot "lâcher" doit
     // revenir tout seul si on recharge la page ici.
     if (descente.moments.bout) descente.moments.pretALacher = true;
+
+    // ...et la gouttière qui fuit ne s'arrête pas de fuir parce
+    // qu'on a rechargé la page.
+    if (descente.moments.fuite) descente.fuite.prochaine = time() + 2;
 
     if (saitQue("descente_finie")) {
         descente.etat = "sol";
@@ -303,7 +380,9 @@ function majLeVent() {
         v.jusqua = t + 1.5 + 2.6 + Math.random() * 1.4;
         v.prochaine = v.jusqua + 7 + Math.random() * 7;
         v.dose = Math.random() > 0.5 ? 1 : -1;
-        if (typeof jouerSon === "function") jouerSon("vent", { volume: 0.5 });
+        // Le souffle qui monte : il arrive une seconde et demie
+        // avant la rafale, c'est lui l'avertissement.
+        if (typeof sonSynthe === "function") sonSynthe("rafale", 1);
     }
 
     const dansLaRafale = t > v.annonce && t < v.jusqua;
@@ -386,8 +465,14 @@ function majSurLaCorde() {
     const L = Math.max(40, descente.longueur);
     const file = descente.vitesse > 6;
 
+    // ⚠️ Le vent n'a pas la même prise selon qu'on file ou qu'on se
+    // tient : collé au mur, Bob lui offre le quart de sa surface.
+    // Sans ça, la règle de Doudou serait un mensonge — on se ferait
+    // pousser dans la gouttière en ne bougeant pas.
+    const prise = file ? 1 : 0.22;
+
     let acc = -(CORDE.pesanteur / L) * Math.sin(descente.angle);
-    acc += (descente.vent.force / L) * Math.cos(descente.angle);
+    acc += (descente.vent.force * prise / L) * Math.cos(descente.angle);
     acc += (ordre.cote * CORDE.poussee / L);
 
     descente.vAngle += acc * dt();
@@ -404,17 +489,9 @@ function majSurLaCorde() {
     if (time() < descente.reprise) return;
 
     // ---- ce qu'il touche ----
-    if (descente.x - CORDE.rayon < CORDE.gauche) {
-        glisser("gouttiere");
-        return;
-    }
-    if (descente.x + CORDE.rayon > CORDE.droite) {
-        glisser("mur");
-        return;
-    }
-    if (traverse(dessus, descente.y, FACADE.bandeau.y - 4, FACADE.bandeau.y + FACADE.bandeau.h + 6)
-        && descente.vitesse > CORDE.lent) {
-        glisser("bandeau");
+    const touche = ceQueBobTouche();
+    if (touche) {
+        glisser(touche);
         return;
     }
     if (descente.fuite && time() < descente.fuite.jusqua && jetDEau(descente.x, descente.y)) {
@@ -429,23 +506,45 @@ function majSurLaCorde() {
 }
 
 
-// Est-ce qu'on est passé de a à b en franchissant la bande ?
-function traverse(a, b, haut, bas) {
-    const pa = a + CORDE.pieds;
-    const pb = b + CORDE.pieds;
-    return (pa < bas && pb > haut);
+/* ------------------------------------------------------------
+   CE QUE BOB TOUCHE
+   ------------------------------------------------------------
+   Sa boîte est plus petite que son dessin : on préfère toujours
+   un obstacle qui pardonne un pixel à un obstacle qui accroche
+   dans le vide.
+   ------------------------------------------------------------ */
+function ceQueBobTouche() {
+
+    const x0 = descente.x - 11;
+    const x1 = descente.x + 11;
+
+    for (let i = 0; i < SAILLIES.length; i++) {
+        const s = SAILLIES[i];
+        if (s.vitesseMax !== undefined && descente.vitesse <= s.vitesseMax) continue;
+
+        const y0 = descente.y + (s.pieds ? 12 : -10);
+        const y1 = descente.y + (s.pieds ? 26 : 24);
+
+        if (s.r) {
+            // le point de la boîte le plus proche du centre du disque
+            const px = Math.max(x0, Math.min(s.cx, x1));
+            const py = Math.max(y0, Math.min(s.cy, y1));
+            if (Math.hypot(s.cx - px, s.cy - py) < s.r) return s.nom;
+        } else if (x1 > s.x0 && x0 < s.x1 && y1 > s.y0 && y0 < s.y1) {
+            return s.nom;
+        }
+    }
+    return null;
 }
 
 
 function appuiSousLesPieds(avant, apres) {
 
-    const travee = FACADE.travees[FACADE.traveeDeKlara];
-    for (let i = 1; i < FACADE.appuis.length; i++) {
-        const y = FACADE.appuis[i];
-        if (avant + CORDE.pieds <= y && apres + CORDE.pieds >= y) {
-            if (descente.x > travee.x + 4 && descente.x < travee.x + travee.l - 4) {
-                return { y: y, x0: travee.x - 3, x1: travee.x + travee.l + 3, etage: i };
-            }
+    for (let i = 0; i < APPUIS.length; i++) {
+        const a = APPUIS[i];
+        if (avant + CORDE.pieds <= a.y && apres + CORDE.pieds >= a.y
+            && descente.x > a.x0 + 6 && descente.x < a.x1 - 6) {
+            return a;
         }
     }
     return null;
@@ -521,15 +620,10 @@ function glisser(raison) {
     descente.secousse = 0.7;
     descente.reprise = time() + 1.2;
 
-    if (typeof sonSynthe === "function") {
-        sonSynthe(raison === "gouttiere" ? "fracas" : "tok", raison === "gouttiere" ? 0.8 : 1);
-    }
-    if (typeof shake === "function") shake(raison === "gouttiere" ? 12 : 7);
-
-    if (raison === "gouttiere") crierDEnHaut("bluey", "LE TUYAU !! IL A TOUCHÉ LE TUYAU !!");
-    else if (raison === "bandeau") crierDEnHaut("doudou", "Trop vite, mon grand.");
-    else if (raison === "fenetre") crierDEnHaut("cakey", "Oh !");
-    else crierDEnHaut("bluey", "BOB !!");
+    const r = REACTIONS[raison] || REACTIONS.mur;
+    if (typeof sonSynthe === "function") sonSynthe(r.son, r.force);
+    if (typeof shake === "function") shake(r.secousse);
+    crierDEnHaut(r.qui, r.texte);
 }
 
 
@@ -579,8 +673,9 @@ function majLaRemontee() {
    LE JET D'EAU DU COLLIER QUI FUIT
    ------------------------------------------------------------ */
 function jetDEau(x, y) {
-    const g = FACADE.gouttiere;
-    return y > 626 && y < 660 && x < 430 && x > g.x;
+    const f = FACADE.fuite;
+    return y > f.y - 10 && y < f.y + 30
+        && x > FACADE.gouttiere.x && x < FACADE.gouttiere.x + f.portee;
 }
 
 
@@ -600,7 +695,7 @@ function lacherLaCorde() {
     descente.etat = "chute";
     descente.chuteX = Math.cos(descente.angle) * descente.vAngle * descente.longueur;
     descente.chuteY = 30;
-    if (typeof jouerSon === "function") jouerSon("vent", { volume: 0.8 });
+    if (typeof sonSynthe === "function") sonSynthe("rafale", 0.8);
 }
 
 
@@ -673,13 +768,21 @@ function majLesMoments() {
         surLAppuiDuPremier();
     }
 
+    if (y > 470 && !descente.moments.fil && !momentJoue("fil")) {
+        crierDEnHaut("cakey", "Un fil à linge, Bob ! Il part du tuyau et il tient toute la gauche.");
+    }
+
     if (y > 536 && !descente.moments.araignee && !momentJoue("araignee")) {
         lAraignee();
     }
 
-    if (y > 600 && !descente.moments.fuite && !momentJoue("fuite")) {
-        crierDEnHaut("bob", "Le tuyau perd de l'eau, en bas.");
-        descente.fuite.prochaine = time() + 1.5;
+    if (y > 548 && !descente.moments.fuite && !momentJoue("fuite")) {
+        crierDEnHaut("bob", "Le tuyau perd de l'eau, juste en dessous.");
+        descente.fuite.prochaine = time() + 1.2;
+    }
+
+    if (y > 616 && !descente.moments.parabole && !momentJoue("parabole")) {
+        crierDEnHaut("doudou", "La grande soucoupe grise, à droite. On passe à gauche d'elle, mon grand.");
     }
 
     if (descente.etat === "appui" && descente.appui && descente.appui.etage === 2
@@ -771,11 +874,15 @@ function surLAppuiDuPremier() {
         { texte: "Tout en haut, la fenêtre de Klara est déjà petite. La tache jaune de la veilleuse tient dans une patte." },
         { qui: "bluey", texte: "IL EST À LA MOITIÉ !! IL EST À LA MOITIÉ !!" },
         { qui: "cakey", texte: "On te voit, Bob !" },
-        { qui: "doudou", texte: "La nuit où je suis arrivé, il y avait un rebord comme celui-là, dans une gare." },
-        { qui: "doudou", texte: "Je m'y suis assis aussi. J'ai regardé en bas, et j'ai trouvé que c'était très loin." },
-        { qui: "doudou", texte: "Et puis quelqu'un m'a ramassé, et on est arrivés." },
-        { qui: "bob", texte: "Elle t'a ramassé." },
-        { qui: "doudou", texte: "Elle m'a ramassé." },
+        { qui: "doudou", texte: "Tu te souviens du train qui va à la mer, mon grand ? Celui qui roule sur l'eau." },
+        { qui: "bob", texte: "Celui de la mouette et de la crêpe." },
+        { qui: "doudou", texte: "Celui-là. J'étais dans le sac, et le sac était ouvert." },
+        { qui: "doudou", texte: "D'un côté il y avait de l'eau. De l'autre côté il y avait de l'eau. Et le train n'avançait pas." },
+        { qui: "doudou", texte: "J'ai regardé mes pattes pendant vingt minutes." },
+        { qui: "doudou", texte: "Et puis les rails sont revenus sur la terre, tout le monde est descendu, et elle riait déjà." },
+        { qui: "doudou", texte: "Ça se termine toujours, ces endroits-là. Celui-ci aussi." },
+        { qui: "bob", texte: "..." },
+        { qui: "bob", texte: "Merci, Doudou." },
     ]);
 }
 
@@ -989,25 +1096,50 @@ function dessinerLaFenetreDeKlara() {
     drawRect({ pos: vec2(x - 5, y), width: 6, height: h, color: rgb(138, 136, 130) });
     drawRect({ pos: vec2(x + l - 1, y), width: 6, height: h, color: rgb(138, 136, 130) });
 
-    // Ceux qui regardent. Ils sont loin, et de dos on ne verrait
-    // rien : on les dessine de face, petits, dans l'encadrement.
+    // Ceux qui regardent. Ils ne sont pas DEBOUT sur le rebord :
+    // ils sont dans la pièce, accoudés à la fenêtre. On les dessine
+    // donc les pieds plus bas que l'appui, et on repeint l'appui
+    // par-dessus : il ne reste que ce qui dépasse, c'est-à-dire
+    // leurs têtes — et la taille de chacun se lit d'un coup d'œil.
+    //
+    // Samsam est le plus grand (1,6), Cakey juste derrière (1,45,
+    // Evan : « de loin la plus grande, à part Samsam »), et Bluey
+    // saute pour voir quelque chose.
+    const sol = y + h + 17;
     const monde = [
-        { cle: "doudou", dx: 0.18, taille: 30 },
-        { cle: "cakey", dx: 0.44, taille: 28 },
-        { cle: "bluey", dx: 0.66, taille: 22 },
-        { cle: "fraisy", dx: 0.84, taille: 20 },
+        { cle: "samsam", dx: 0.60 },
+        { cle: "cakey", dx: 0.34 },
+        { cle: "doudou", dx: 0.17 },
+        { cle: "fraisy", dx: 0.78 },
+        { cle: "bluey", dx: 0.88, saute: true },
     ];
+
     monde.forEach(function (p, i) {
-        const bouge = Math.sin(time() * 2 + i) * 1.2;
+        const taille = 44 * (PERSONNAGES[p.cle] ? PERSONNAGES[p.cle].taille : 1);
+        const bouge = p.saute
+            ? -Math.max(0, Math.sin(time() * 3.1)) * 9
+            : Math.sin(time() * 2 + i) * 1.2;
         drawSprite({
             sprite: apparenceDe(p.cle),
             frame: 0,
-            pos: vec2(x + l * p.dx, y + h - 2 + bouge),
-            width: p.taille,
-            height: p.taille,
+            pos: vec2(x + l * p.dx, sol + bouge),
+            width: taille,
+            height: taille,
             anchor: "bot",
-            opacity: 0.92,
+            opacity: 0.95,
         });
+    });
+
+    // La traverse basse et l'appui, repeints par-dessus, découpés
+    // dans le mur lui-même : aucune chance que ça se voie.
+    const bande = y + h;
+    drawSprite({
+        sprite: "facade_mur",
+        pos: vec2(travee.x - 12, bande),
+        width: travee.l + 24,
+        height: 42,
+        quad: quad((travee.x - 12) / FACADE.L, bande / FACADE.H,
+            (travee.l + 24) / FACADE.L, 42 / FACADE.H),
     });
 }
 
@@ -1021,8 +1153,8 @@ function dessinerLaFuite() {
     const k = Math.min(1, (f.jusqua - time()) / 0.3);
     for (let i = 0; i < 26; i++) {
         const a = i / 26;
-        const x = g.x + g.l + a * 150;
-        const y = 634 + a * a * 26 + Math.sin(time() * 20 + i) * 2;
+        const x = g.x + g.l + a * FACADE.fuite.portee;
+        const y = FACADE.fuite.y + a * a * 26 + Math.sin(time() * 20 + i) * 2;
         drawRect({
             pos: vec2(x, y),
             width: 5,
@@ -1034,8 +1166,24 @@ function dessinerLaFuite() {
 }
 
 
-// La corde : le pyjama de Samsam, gris, avec ses oreilles de
-// lapin imprimées tout du long (voir le départ, acte2.js).
+/* ------------------------------------------------------------
+   LA CORDE, C'EST LE PYJAMA DE SAMSAM
+   ------------------------------------------------------------
+   Et le pyjama de Samsam, sur sa planche, est CRÈME avec un
+   liseré rouge sombre et des petits boutons rouges (Evan : « le
+   design de la corde ne matche pas du tout le pyjama Miffy »).
+   On le tord en corde : le tissu fait des segments clairs, et le
+   liseré tourne autour, une fois d'un côté, une fois de l'autre.
+   ------------------------------------------------------------ */
+// Relevées directement sur assets/peluches/samsam_anim.png, puis
+// baissées d'un tiers : dehors, il fait nuit.
+//   tissu  #F3EDD7      liseré #6C1D33      rose  #AE8181
+const CREME = [175, 171, 155];
+const CREME_CLAIR = [201, 194, 172];
+const CREME_OMBRE = [133, 125, 110];
+const ROUGE_PYJAMA = [116, 36, 56];
+const ROSE_PYJAMA = [168, 122, 120];
+
 function dessinerLaCordeDeSamsam() {
 
     if (descente.etat === "chute" || descente.etat === "sol") {
@@ -1043,52 +1191,66 @@ function dessinerLaCordeDeSamsam() {
         return;
     }
 
-    const a = FACADE.ancre;
+    const a = vec2(FACADE.ancre.x, FACADE.ancre.y);
     const mains = vec2(
-        descente.x - Math.sin(descente.angle) * 18,
-        descente.y - Math.cos(descente.angle) * 18
+        descente.x - Math.sin(descente.angle) * CORDE.bras,
+        descente.y - Math.cos(descente.angle) * CORDE.bras
     );
 
-    drawLine({ p1: vec2(a.x, a.y), p2: mains, width: 3.2, color: rgb(104, 106, 116) });
-    drawLine({
-        p1: vec2(a.x - 0.6, a.y), p2: vec2(mains.x - 0.6, mains.y),
-        width: 1, color: rgb(142, 144, 154), opacity: 0.7,
+    peindreLaCorde(a, mains);
+
+    // Le nœud de Doudou, à la poignée : un seul, lent, énorme.
+    drawCircle({ pos: a, radius: 5, color: rgb(...CREME_OMBRE) });
+    drawCircle({ pos: a.add(vec2(-0.5, -0.5)), radius: 3.6, color: rgb(...CREME) });
+    drawCircle({ pos: a.add(vec2(-1.4, -1.4)), radius: 1.6, color: rgb(...CREME_CLAIR) });
+    drawRect({
+        pos: a.add(vec2(-5, -1)), width: 10, height: 2,
+        color: rgb(...ROUGE_PYJAMA), opacity: 0.8,
     });
-
-    // Les oreilles, une tous les vingt-six pixels.
-    const total = mains.dist(vec2(a.x, a.y));
-    const dir = mains.sub(vec2(a.x, a.y)).unit();
-    const cote = vec2(-dir.y, dir.x);
-    for (let d = 22; d < total - 6; d += 26) {
-        const p = vec2(a.x, a.y).add(dir.scale(d));
-        [-1, 1].forEach(function (s) {
-            drawEllipse({
-                pos: p.add(cote.scale(s * 2.4)),
-                radiusX: 1.1, radiusY: 2.6,
-                angle: Math.atan2(dir.y, dir.x) * 180 / Math.PI + s * 22,
-                color: rgb(206, 206, 212), opacity: 0.75,
-            });
-        });
-    }
-
-    // Le nœud de Doudou, à la poignée.
-    drawCircle({ pos: vec2(a.x, a.y), radius: 4.5, color: rgb(120, 122, 132) });
-    drawCircle({ pos: vec2(a.x - 1, a.y - 1), radius: 2, color: rgb(158, 160, 168) });
 }
 
 
 function dessinerLeBoutQuiPend() {
-    const a = FACADE.ancre;
-    const bout = a.y + CORDE.longueur;
-    drawLine({ p1: vec2(a.x, a.y), p2: vec2(a.x, bout), width: 3.2, color: rgb(104, 106, 116) });
-    for (let d = 22; d < CORDE.longueur - 6; d += 26) {
-        [-1, 1].forEach(function (s) {
-            drawEllipse({
-                pos: vec2(a.x + s * 2.4, a.y + d),
-                radiusX: 1.1, radiusY: 2.6, angle: s * 22,
-                color: rgb(206, 206, 212), opacity: 0.75,
-            });
+    const a = vec2(FACADE.ancre.x, FACADE.ancre.y);
+    peindreLaCorde(a, vec2(a.x, a.y + CORDE.longueur));
+}
+
+
+function peindreLaCorde(a, b) {
+
+    const total = b.dist(a);
+    if (total < 2) return;
+    const dir = b.sub(a).unit();
+    const cote = vec2(-dir.y, dir.x);
+    const pas = 7;
+
+    // Le tissu, tordu : un segment sur deux est dans son ombre.
+    for (let d = 0; d < total; d += pas) {
+        const p1 = a.add(dir.scale(d));
+        const p2 = a.add(dir.scale(Math.min(total, d + pas)));
+        const clair = Math.floor(d / pas) % 2 === 0;
+        drawLine({ p1: p1, p2: p2, width: 3.6, color: rgb(...(clair ? CREME : CREME_OMBRE)) });
+        drawLine({
+            p1: p1.add(cote.scale(-1.1)), p2: p2.add(cote.scale(-1.1)),
+            width: 1, color: rgb(...CREME_CLAIR), opacity: clair ? 0.85 : 0.45,
         });
+    }
+
+    // Le liseré rouge, qui tourne autour du tissu.
+    for (let d = 3; d < total - 3; d += pas * 2) {
+        const s = (Math.floor(d / (pas * 2)) % 2 === 0) ? 1 : -1;
+        drawLine({
+            p1: a.add(dir.scale(d)).add(cote.scale(s * 1.5)),
+            p2: a.add(dir.scale(d + pas)).add(cote.scale(-s * 1.5)),
+            width: 1.4, color: rgb(...ROUGE_PYJAMA), opacity: 0.9,
+        });
+    }
+
+    // Et ses petits boutons, tous les trente pixels.
+    for (let d = 16; d < total - 6; d += 30) {
+        const p = a.add(dir.scale(d));
+        drawCircle({ pos: p, radius: 1.8, color: rgb(...ROUGE_PYJAMA) });
+        drawCircle({ pos: p.add(vec2(-0.5, -0.5)), radius: 0.8, color: rgb(...ROSE_PYJAMA) });
     }
 }
 
@@ -1364,9 +1526,20 @@ function majLeSonDeLaFacade() {
 
     if (typeof volumeDeBoucle !== "function" || !son.ctx) return;
 
+    // La musique du dehors dès qu'Evan aura posé son fichier dans
+    // assets/sounds/dehors.mp3 ; celle de l'appartement en attendant.
+    if (typeof musiqueDuDehors === "function") musiqueDuDehors(true);
+
     const fort = rafaleEnCours() ? 1 : 0.45;
     volumeDeBoucle("vent", fort);
     volumeDeBoucle("nuit", 0.4);
+
+    // La corde travaille quand elle file : elle grince, d'autant
+    // plus souvent qu'on descend vite.
+    if (descente.etat === "corde" && descente.vitesse > 12 && time() > descente.prochainGrince) {
+        descente.prochainGrince = time() + 1.1 - descente.vitesse / CORDE.vitesseMax * 0.5;
+        if (typeof sonSynthe === "function") sonSynthe("grince", 0.35);
+    }
 }
 
 
