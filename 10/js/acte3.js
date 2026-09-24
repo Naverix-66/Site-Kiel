@@ -115,25 +115,74 @@ const SAILLIES = [
         // Un cordon de briques, on ne se le prend pas dans le ventre :
         // ce sont les PIEDS qui accrochent dessus, et seulement si on
         // descend trop vite. D'où la boîte réduite (pieds: true).
-        nom: "bandeau", vitesseMax: 26, pieds: true,
+        nom: "bandeau", vitesseMax: 26, pieds: true, lent: true,
         x0: -999, x1: 9999,
         y0: FACADE.bandeau.y - 6, y1: FACADE.bandeau.y + FACADE.bandeau.h + 6,
     },
     {
-        nom: "jardiniere",
+        nom: "jardiniere", cote: 1,
         x0: FACADE.jardiniere.x, x1: FACADE.jardiniere.x + FACADE.jardiniere.l,
         y0: FACADE.jardiniere.y - 12, y1: FACADE.jardiniere.y + FACADE.jardiniere.h,
     },
     {
-        nom: "fil",
+        nom: "fil", cote: 1,
         x0: FACADE.fil.x0, x1: FACADE.fil.x1 + 4,
         y0: FACADE.fil.y - 4, y1: FACADE.fil.y + FACADE.fil.creux + 14,
     },
     {
-        nom: "parabole",
+        nom: "parabole", cote: -1,
         cx: FACADE.parabole.x, cy: FACADE.parabole.y, r: FACADE.parabole.r,
     },
 ];
+
+
+/* ------------------------------------------------------------
+   DIRE AU JOUEUR QU'IL Y A QUELQUE CHOSE
+   ------------------------------------------------------------
+   Evan : « il faut que le joueur comprenne qu'il y a des obstacles
+   et qu'il faut les éviter. » Un obstacle qu'on découvre en le
+   percutant n'est pas un obstacle, c'est un piège. Donc, dès qu'il
+   arrive à cent vingt pixels sous les pieds de Bob :
+
+     - il se souligne à l'écran, et le trait bat plus fort tant
+       que Bob n'est pas encore du bon côté ;
+     - le bandeau du haut dit quoi faire, en trois mots ;
+     - et quelqu'un d'en haut l'avait déjà dit avec des vraies
+       phrases (voir majLesMoments).
+   ------------------------------------------------------------ */
+function hautDe(s) { return s.r ? s.cy - s.r : s.y0; }
+function basDe(s) { return s.r ? s.cy + s.r : s.y1; }
+
+
+function saillieQuiArrive() {
+
+    if (descente.etat !== "corde" && descente.etat !== "appui") return null;
+
+    let choisie = null;
+    for (let i = 0; i < SAILLIES.length; i++) {
+        const s = SAILLIES[i];
+        if (!s.cote && !s.lent) continue;          // la gouttière et le mur : ce sont les bords
+        if (descente.y + 26 < hautDe(s) - 120) continue;   // encore trop loin
+        if (descente.y > basDe(s)) continue;               // déjà passé
+        if (!choisie || hautDe(s) < hautDe(choisie)) choisie = s;
+    }
+    return choisie;
+}
+
+
+// Vrai tant que Bob n'est pas encore tiré d'affaire.
+function pasEncoreDegage(s) {
+    if (s.lent) return descente.vitesse > s.vitesseMax;
+    if (s.cote > 0) return descente.x - 11 < (s.r ? s.cx + s.r : s.x1);
+    return descente.x + 11 > (s.r ? s.cx - s.r : s.x0);
+}
+
+
+function consigneDeLaSaillie(s) {
+    if (!s) return "";
+    if (s.lent) return "RALENTIS";
+    return s.cote > 0 ? "PASSE À DROITE →" : "← PASSE À GAUCHE";
+}
 
 
 // Ce que ça fait quand il touche : un bruit, une secousse, et
@@ -236,6 +285,7 @@ scene("facade", function () {
         dessinerLesLumieresDeLaFacade();
         dessinerLaFenetreDeKlara();
         dessinerLaFuite();
+        dessinerLaSaillieQuiArrive();
         dessinerLaCordeDeSamsam();
         dessinerBobDehors();
         dessinerLaPluie();
@@ -811,6 +861,7 @@ function lesPremiersMots() {
         { qui: "doudou", texte: "La corde tient, mon grand. Le reste, c'est toi." },
         { qui: "doudou", texte: "Quand ça souffle, on ne descend pas. On se colle, et on attend." },
         { qui: "doudou", texte: "Le vent s'en va toujours avant nous." },
+        { qui: "doudou", texte: "Et le mur n'est pas lisse. Il y a des choses qui dépassent, en dessous. On ne passe pas au travers : on passe à côté." },
         { qui: "bob", texte: "..." },
         { qui: "bob", texte: "Samsam ?" },
         { qui: "samsam", texte: "Je suis là. Tout du long." },
@@ -1167,6 +1218,62 @@ function dessinerLaFuite() {
 
 
 /* ------------------------------------------------------------
+   L'OBSTACLE QUI ARRIVE, SOULIGNÉ
+   ------------------------------------------------------------ */
+function dessinerLaSaillieQuiArrive() {
+
+    const s = saillieQuiArrive();
+    if (!s) return;
+
+    const urgent = pasEncoreDegage(s);
+    const battement = 0.5 + Math.sin(time() * (urgent ? 7 : 3)) * 0.5;
+
+    // Le cordon de briques tient toute la largeur : on ne le
+    // contourne pas, on le souligne sur toute la vue.
+    if (s.lent) {
+        const demiL = width() / (2 * zoomDeLaFacade());
+        const cam = getCamPos();
+        drawRect({
+            pos: vec2(cam.x - demiL, s.y0), width: demiL * 2, height: s.y1 - s.y0,
+            color: rgb(236, 158, 96),
+            opacity: (urgent ? 0.1 + battement * 0.12 : 0.05),
+        });
+        return;
+    }
+
+    const force = urgent ? 0.45 + battement * 0.4 : 0.2 + battement * 0.12;
+    const couleur = urgent ? rgb(236, 158, 96) : rgb(214, 206, 180);
+
+    if (s.r) {
+        drawCircle({
+            pos: vec2(s.cx, s.cy), radius: s.r + 3,
+            fill: false, outline: { color: couleur, width: 2 }, opacity: force,
+        });
+    } else {
+        drawRect({
+            pos: vec2(s.x0 - 3, hautDe(s) - 3),
+            width: (s.x1 - s.x0) + 6, height: (s.y1 - s.y0) + 6,
+            fill: false, outline: { color: couleur, width: 2 }, opacity: force,
+        });
+    }
+
+    // La flèche du côté par où ça passe, posée au ras de l'obstacle.
+    if (urgent) {
+        const y = (hautDe(s) + basDe(s)) / 2;
+        const bord = s.cote > 0
+            ? (s.r ? s.cx + s.r : s.x1) + 14
+            : (s.r ? s.cx - s.r : s.x0) - 14;
+        drawTriangle({
+            p1: vec2(bord + s.cote * 7, y),
+            p2: vec2(bord - s.cote * 5, y - 7),
+            p3: vec2(bord - s.cote * 5, y + 7),
+            color: rgb(236, 158, 96), opacity: 0.35 + battement * 0.45,
+        });
+    }
+}
+
+
+/* ------------------------------------------------------------
    LA CORDE, C'EST LE PYJAMA DE SAMSAM
    ------------------------------------------------------------
    Et le pyjama de Samsam, sur sa planche, est CRÈME avec un
@@ -1407,15 +1514,19 @@ function majLInterfaceDeLaDescente() {
 
     // ---- la rafale (et, tout à la fin, le mot qu'on attend) ----
     const fige = (rafaleEnCours() || descente.fenetre.allumee) && !peutLacher();
+    const saillie = saillieQuiArrive();
     let motRafale = "";
     if (peutLacher()) motRafale = pointeurEstTactile() ? "TOUCHER POUR LÂCHER" : "CLIC OU ESPACE : LÂCHER";
     else if (descente.fenetre.allumee) motRafale = "NE BOUGE PLUS";
     else if (rafaleAnnoncee()) motRafale = "UNE RAFALE ARRIVE";
     else if (rafaleEnCours()) motRafale = "NE BOUGE PLUS";
+    else if (saillie && pasEncoreDegage(saillie)) motRafale = consigneDeLaSaillie(saillie);
     ui.rafale.text = motRafale;
     ui.rafale.textSize = Math.round(echelleInterface() * 1.15);
     ui.rafale.pos = vec2(width() / 2, 64);
-    ui.rafale.color = fige ? rgb(232, 120, 110) : rgb(...COULEUR_OR);
+    const consigne = !fige && !peutLacher() && saillie && pasEncoreDegage(saillie);
+    ui.rafale.color = fige ? rgb(232, 120, 110)
+        : (consigne ? rgb(236, 158, 96) : rgb(...COULEUR_OR));
     ui.rafale.opacity = cache || !motRafale ? 0 : 0.7 + Math.sin(time() * 9) * 0.3;
 
     // ---- les voix d'en haut ----
