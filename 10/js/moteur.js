@@ -193,6 +193,61 @@ TENUES.forEach(function (tenue) {
     loadSprite("portrait_" + tenue, "assets/peluches/portraits/" + tenue + ".png");
 });
 
+/* ------------------------------------------------------------
+   LA MOUETTE (acte III bis / acte IV)
+   ------------------------------------------------------------
+   Le seul personnage du jeu qui n'est pas une peluche : des
+   plumes, pas de coutures, et un œil qui ne cligne pas. Sa
+   planche ne suit donc pas le gabarit des peluches — elle a ses
+   propres poses, et surtout TOUTES SES CASES SONT À LA MÊME
+   ÉCHELLE : ailes fermées elle est plus petite que Bob, ailes
+   ouvertes elle fait presque deux fois sa hauteur en largeur.
+   C'est tout le personnage qui tient dans cet écart, donc on ne
+   redimensionne jamais une pose séparément.
+
+   ⚠️ Elle regarde à DROITE sur toute la planche (sauf le cri, de
+   trois quarts face) : c'est flipX qui la tourne vers la gauche.
+
+   Refaite par outils/refaire_peluches.ps1, qui passe d'abord sa
+   planche par carrer_planche.ps1 (elle arrive en 2816 x 1536).
+   ------------------------------------------------------------ */
+const ANIMS_MOUETTE = {
+    "posee": 0,        // debout, ailes fermées
+    "jacasse": 1,      // debout, bec ouvert vers le ciel
+    "picore": 2,       // penchée, bec au sol, l'air de rien
+    "sonnee": 3,       // bec coincé, ailes en désordre
+
+    "marche": { from: 4, to: 7, loop: true, speed: 7 },
+    "vol": { from: 8, to: 11, loop: true, speed: 9 },
+
+    "pique": 12,       // ailes repliées en V, en diagonale
+    "cri": 13,         // trois quarts face, ailes grandes ouvertes
+    "coup_aile": 14,   // une aile qui balaie
+    "emporte": 15,     // en vol, quelque chose de mou dans le bec
+};
+
+loadSprite("mouette", "assets/peluches/mouette_anim.png", {
+    sliceX: 4,
+    sliceY: 4,
+    anims: ANIMS_MOUETTE,
+});
+
+/* Sa taille à l'écran, et il faut la calculer, pas la deviner.
+
+   Bob est dessiné dans une case de 116 px où il n'occupe que 90 px.
+   À l'acte III sa case fait 56 px (CORDE.hauteurBob), donc sa VRAIE
+   hauteur à l'écran est 56 x 90/116 ≈ 43 px.
+
+   La mouette fait 60 cm contre ses 70 : 43 x 60/70 ≈ 37 px. Et elle
+   occupe 77 px dans une case de 176.
+
+   D'où : debout, ailes fermées, ELLE EST PLUS PETITE QUE LUI — et
+   c'est exactement ce qui doit surprendre le joueur la première fois
+   qu'elle se pose. Elle n'est terrifiante que quand elle ouvre. */
+const HAUTEUR_MOUETTE = 37;
+const CASE_MOUETTE = Math.round(HAUTEUR_MOUETTE * 176 / 77);
+
+
 const APPARENCES = {};
 
 // La planche (et le portrait) que porte ce personnage en ce moment.

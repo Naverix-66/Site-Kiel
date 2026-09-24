@@ -53,7 +53,7 @@ $CASTING = @(
     @{ cle = "rosy";   fichier = "rosy";   taille = 0.9; apercu = "rosy_planche_2d-removebg-preview.png" },
     @{ cle = "doudou"; fichier = "doudou"; taille = 1.0; apercu = "doudou_planche_2d-removebg-preview.png" },
     @{ cle = "fraisy"; fichier = "fraisy"; taille = 0.8; apercu = "fraisy_planche_2d-removebg-preview (1).png" },
-    @{ cle = "cakey";  fichier = "cackey"; taille = 1.3; apercu = "cackey_planche_2d-removebg-preview.png" },
+    @{ cle = "cakey";  fichier = "cackey"; taille = 1.45; apercu = "cackey_planche_2d-removebg-preview.png" },
     @{ cle = "samsam"; fichier = "samsam"; taille = 1.6; apercu = "samsam_planche_2d-removebg-preview.png" },
     # Samsam après avoir donné son pyjama (acte II) : une TENUE, pas un
     # personnage — voir TENUES dans js\moteur.js.
@@ -202,6 +202,24 @@ public static class OutilsPeluches
             b.Save(sortie, ImageFormat.Png);
         }
     }
+
+    // Efface tout ce qui est franchement vert. Sert à la planche de
+    // la mouette, où deux cases ont des touffes d'herbe dessinées au
+    // sol : elle n'a aucun vert sur elle (blanc, gris, noir, bec
+    // jaune, pattes roses), donc le filtre ne peut pas la mordre.
+    public static int SansVert(string chemin)
+    {
+        int efface = 0;
+        int l, h;
+        var p = Lire(chemin, out l, out h);
+        for (int i = 0; i < l * h; i++)
+        {
+            int bl = p[i * 4], g = p[i * 4 + 1], r = p[i * 4 + 2], a = p[i * 4 + 3];
+            if (a > 0 && g > r + 10 && g > bl + 10) { p[i * 4 + 3] = 0; efface++; }
+        }
+        Ecrire(p, l, h, chemin);
+        return efface;
+    }
 }
 '@
 
@@ -286,6 +304,39 @@ $veilleuse = Join-Path $travail "veilleuse_icone.png"
 PlancheHD $lampeBlanc $lampe $CASE_ICONE $veilleuse @("-Grille", "1", "-ChaqueCase") | Out-Null
 [OutilsPeluches]::CollerCase((Join-Path $dossierUi "objets.png"), 3, 0, 0, $veilleuse)
 "   veilleuse (lampe.png) -> case 0"
+
+
+# ---- 4. LA MOUETTE -------------------------------------------
+#  Elle n'est pas dans $CASTING : ce n'est pas une peluche, elle n'a
+#  ni portrait ni gabarit de marche, et sa planche demande deux
+#  traitements que les autres n'ont pas.
+#
+#  1. Elle arrive en 2816 x 1536 (cases de 704 x 384) et planche_hd
+#     déduit la case de la seule LARGEUR : il faut d'abord la remettre
+#     au carré, sans rien déformer (carrer_planche.ps1).
+#  2. Deux de ses cases ont des touffes d'herbe dessinées au sol. Elle
+#     n'a pas un seul pixel vert sur elle, donc on les efface à la
+#     couleur : c'est sans risque et ça évite de retoucher à la main.
+#
+#  -Hauteur 77 = 0,85 (60 cm contre les 70 de Bob) x 45 x FINESSE.
+"4. La mouette"
+$mouetteJpg = Join-Path $dossierPeluches "mouette_planche_2d.jpg"
+if (Test-Path $mouetteJpg) {
+    $outilCarre = Join-Path $PSScriptRoot "carrer_planche.ps1"
+    $carre = Join-Path $travail "mouette_carre.png"
+    $carreApercu = Join-Path $travail "mouette_carre_apercu.png"
+
+    & $outilCarre -Entree $mouetteJpg -Sortie $carre -Fond blanc | Out-Null
+    & $outilCarre -Entree (Join-Path $dossierPeluches "mouette_planche_2d-removebg-preview.png") `
+        -Sortie $carreApercu -Fond transparent | Out-Null
+
+    $sortieMouette = Join-Path $dossierPeluches "mouette_anim.png"
+    PlancheHD $carre $carreApercu 77 $sortieMouette | Out-Null
+    $verts = [OutilsPeluches]::SansVert($sortieMouette)
+    "   mouette_anim.png (herbe effacee : $verts pixels)"
+} else {
+    "   (planche de la mouette absente, on passe)"
+}
 
 ""
 "Terminé. Images de contrôle agrandies dans : $travail"

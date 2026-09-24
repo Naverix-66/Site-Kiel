@@ -282,6 +282,15 @@ et un vrai jeu :
 - ~~Sprites des peluches~~ → **reçus le 17/09** (Rosy, Samsam, Fraisy, Bluey,
   Doudou, Cakey + les icônes d'objets), convertis par `outils/refaire_peluches.ps1`.
   **Samsam sans pyjama** et **la vraie veilleuse** (lampe.png) reçus le 21/09.
+  **La mouette reçue le 24/09** : seize poses (posée, jacasse, picore, sonnée,
+  marche, vol, piqué, cri ailes grandes ouvertes, coup d'aile, elle emporte
+  quelque chose de mou), toutes à la MÊME échelle — ailes fermées elle est plus
+  petite que Bob, ailes ouvertes elle fait presque deux fois sa hauteur en
+  largeur, et tout le personnage tient dans cet écart. Ce n'est pas une
+  peluche : des plumes, pas une couture, et elle ne sourit jamais.
+  Sa planche arrivait en 2816 x 1536, donc en cases NON carrées, ce que
+  `planche_hd.ps1` ne sait pas découper : `outils/carrer_planche.ps1` la remet
+  au carré sans rien déformer, juste avant.
   Manque : **Moin** (il n'existe qu'en texte).
 - La vraie couleur des rideaux de Klara (le rideau tombé est crème pour l'instant).
 - ~~Cakey appâte la mouette avec son gâteau~~ → **NON, décidé par Evan.**
