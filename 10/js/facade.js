@@ -593,4 +593,8 @@ function salirLeMur(ctx, alea) {
 }
 
 
-loadSprite("facade_mur", peindreLaFacade());
+// On garde la toile : l'acte IV la redessine en plus petit, au fond
+// de la cour, pour que le mur que Bob vient de descendre soit encore
+// là derrière lui (voir js/cour.js).
+const TOILE_FACADE = peindreLaFacade();
+loadSprite("facade_mur", TOILE_FACADE);

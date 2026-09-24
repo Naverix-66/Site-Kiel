@@ -41,6 +41,7 @@
 const inventaire = {
     ui: null,
     lignes: [],
+    aDroite: false,    // l'acte IV la met à droite (voir placerInventaire)
 };
 
 
@@ -145,11 +146,17 @@ function placerInventaire() {
         haut = bas.y + 8;
     }
 
+    // À l'acte IV, la liste passe à DROITE : le coin haut-gauche de
+    // l'arène est occupé par la fenêtre de Klara, et c'est la seule
+    // chose de l'écran qu'on n'a pas le droit de cacher.
     lignes.forEach(function (l, i) {
         const y = haut + i * (l.hauteur + 4);
-        l.fond.pos = vec2(INVENTAIRE_MARGE, y);
-        if (l.image) l.image.pos = vec2(INVENTAIRE_MARGE + 5, y + 3);
-        l.etiquette.pos = vec2(l.xTexte, y + (l.hauteur - l.taille) / 2 - 1);
+        const x = inventaire.aDroite
+            ? width() - INVENTAIRE_MARGE - l.fond.width
+            : INVENTAIRE_MARGE;
+        l.fond.pos = vec2(x, y);
+        if (l.image) l.image.pos = vec2(x + 5, y + 3);
+        l.etiquette.pos = vec2(x + (l.xTexte - INVENTAIRE_MARGE), y + (l.hauteur - l.taille) / 2 - 1);
     });
 }
 

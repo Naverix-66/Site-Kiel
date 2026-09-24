@@ -520,6 +520,7 @@ function installerStudio() {
     charger();
     creerObjectif();
     preparerInteractions();
+    inventaire.aDroite = false;
     preparerInventaire();
 
     installerCasting(CASTING_STUDIO);

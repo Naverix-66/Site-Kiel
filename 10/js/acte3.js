@@ -211,6 +211,7 @@ scene("facade", function () {
     APPARENCES.samsam = "samsam_sans_pyjama";
 
     preparerLesSons();
+    inventaire.aDroite = false;
     preparerInventaire();
     brancherLeDoigt();
 
@@ -956,7 +957,9 @@ function toucherLeSol() {
     }
 
     lancerDialogue(finDeLaDescente(grille), function () {
-        afficherCarton("Fin de l'acte III", "La mouette n'est plus très loin.");
+        // Et on quitte la façade : la suite se joue dans la cour,
+        // au pied du grand arbre (acte4.js).
+        afficherCarton("Fin de l'acte III", "La cour, maintenant.", commencerActeIV);
     });
 }
 
