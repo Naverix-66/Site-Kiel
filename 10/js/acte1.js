@@ -1545,11 +1545,22 @@ function leTapis() {
         return;
     }
 
+    /* ⚠️ C'EST ICI QUE SE JOUE TOUTE LA FIN DU JEU.
+       Evan : « en amont, on doit mieux comprendre que la rose est
+       pour Klara, sur la table de nuit ». Il avait raison : le geste
+       existait depuis le début, mais on ne le nommait nulle part, et
+       à l'épilogue on ne comprenait pas pourquoi Bob traversait la
+       pièce pour poser une pétale sur un meuble. Il le dit ici, la
+       première fois qu'il la ramasse, et on n'y revient qu'au nid. */
     lancerDialogue([
         { texte: "Le grand tapis blanc, celui qui fait la moitié de la pièce." },
         { texte: "Par terre, au milieu, une pétale de rose." },
-        { qui: "bob", texte: "Elle en perd tout le temps." },
-        { texte: "Il le ramasse sans y penser une seconde." },
+        { qui: "bob", texte: "Le bouquet en perd tout le temps." },
+        { texte: "Il la ramasse sans y penser une seconde. Ça fait quatre ans qu'il fait ce geste-là." },
+        { qui: "bob", texte: "Je la poserai sur sa table de nuit avant qu'elle ouvre les yeux. Comme tous les matins." },
+        { qui: "bob", texte: "Elle croit que c'est le bouquet qui les met là." },
+        { qui: "bob", texte: "..." },
+        { qui: "bob", texte: "C'est un peu le bouquet, aussi." },
     ], function () {
         noter("petale");
         prendreObjet("petale");

@@ -256,6 +256,7 @@ function installerEpilogue() {
     // La chambre est froide et bleue : sa veilleuse est encore dans
     // l'herbe de la cour. C'est le seul trou qui reste à boucher.
     if (!saitQue("epi_veilleuse")) changerDeNuit("nuit_sans_veilleuse", 0);
+    assombrirLeStudio();
 
     // Partie rechargée après la rentrée : la fenêtre est déjà fermée,
     // donc plus de vent. Sans ça, le froid revenait tout seul.
@@ -289,6 +290,44 @@ function bullesEpilogue() {
     if (!saitQue("epi_gateau")) { marquerDuNeuf("cakey", true); return; }
     if (!saitQue("epi_veilleuse")) return;     // c'est la fenêtre : pas de bulle
     if (!saitQue("epi_elastique")) { marquerDuNeuf("rosy", true); return; }
+}
+
+
+/* ------------------------------------------------------------
+   LE STUDIO SANS SA VEILLEUSE
+   ------------------------------------------------------------
+   Evan : « le studio, quand Bob revient, n'est plus plongé dans
+   le noir ». Le voile « nuit sans veilleuse » de l'acte II ne
+   suffisait pas : il enlève la lampe de la table de nuit, mais il
+   laisse toutes les autres lumières, et la pièce reste presque
+   claire. Ici, la seule lumière de la maison est tombée dans
+   l'herbe d'une cour, douze mètres plus bas.
+
+   Alors on ajoute un voile par-dessus, et il ne s'en va qu'au
+   moment où Bob rebranche la veilleuse — en même temps que le
+   fondu de changerDeNuit, pour que la pièce redevienne jaune d'un
+   seul mouvement.
+   ------------------------------------------------------------ */
+function assombrirLeStudio() {
+
+    if (saitQue("epi_veilleuse")) return;
+
+    const voileFroid = add([
+        rect(width(), height()),
+        pos(0, 0),
+        fixed(),
+        z(Z_NUIT + 1),
+        color(8, 12, 34),
+        opacity(0.46),
+    ]);
+
+    voileFroid.onUpdate(function () {
+        voileFroid.width = width();
+        voileFroid.height = height();
+        if (!saitQue("epi_veilleuse")) return;
+        voileFroid.opacity -= dt() * 0.16;
+        if (voileFroid.opacity <= 0) destroy(voileFroid);
+    });
 }
 
 

@@ -141,11 +141,17 @@ const COMBAT = {
        La veilleuse de Klara, descendue au bout de la rallonge. Son
        faisceau balaie l'herbe : c'est LUI qui est dangereux, pas
        la lampe. */
-    lampe: { x: 392, y: 296 },
-    cordon: { x: 90, y: 74 },      // d'où sort la rallonge, dans la fenêtre
+    /* ⚠️ Evan : « la lampe ne doit pas pendre comme ça au milieu du
+       vide ». Elle était accrochée à rien, avec un fil en diagonale
+       qui traversait tout l'écran. Maintenant la rallonge sort du
+       coin de la fenêtre, passe par-dessus l'appui, et la lampe pend
+       À LA VERTICALE contre le mur, comme une baladeuse de chantier.
+       C'est son FAISCEAU qui balaie la cour, pas elle. */
+    lampe: { ancreX: 112, ancreY: 168, fil: 132 },
+    cordon: { x: 95, y: 112 },     // le coin bas-droit de la fenêtre
     rayonLumiere: 58,
     periodeFaisceau: 11,           // secondes pour un aller-retour
-    amplitudeFaisceau: 300,
+    amplitudeFaisceau: 250,
     piquesDuPhare: 4,              // après quoi elle s'en prend à la lampe
 
     /* ---- AU SOL (phase 3) ----
@@ -156,11 +162,16 @@ const COMBAT = {
     marcheOiseau: 54,
     approche: 46,         // à quelle distance elle s'arrête pour crier
     porteeAile: 68,       // la portée de son coup d'aile
-    fente: 24,            // ce qu'elle gagne en se fendant dessus
-    menace: 0.55,         // le cri, avant le coup : le temps de réagir
+    fente: 18,            // ce qu'elle gagne en se fendant dessus
+    // ⚠️ Evan : « impossible de passer derrière la mouette, elle
+    // frappe un peu trop vite ». Son cri dure maintenant 0,85 s au
+    // lieu de 0,55 : à 78 px/s, ça laisse 66 px pour la contourner,
+    // soit largement de quoi passer son aile de 68. Et elle met un
+    // tiers de temps en plus à se retourner derrière soi.
+    menace: 0.85,         // le cri, avant le coup : le temps de réagir
     balaie: 0.26,
     titube: 1.3,          // son déséquilibre — la fenêtre pour frapper
-    tourne: 0.4,          // le temps qu'elle met à faire demi-tour
+    tourne: 0.55,         // le temps qu'elle met à faire demi-tour
     coupsPourLaFin: 3,    // trois coups de baguette dans tout l'acte
 };
 
@@ -197,7 +208,9 @@ const combat = {
     secousse: 0,
     aube: 0,              // 0 = nuit noire, 1 = le jour se lève
     fenetre: 1,           // la lumière de la fenêtre de Klara (0 = éteinte)
+    lampe: { balance: 0, depuis: 0 },   // son balancement quand on tape dedans
     lampeTombee: null,    // { x } dès que la rallonge casse
+    scene: null,          // la scène animée en cours (voir jouerLaScene)
     plumes: [],
     moments: {},
     bouton: { tenu: false, id: null, centre: vec2(0, 0), verbe: "", chaud: 0 },
@@ -248,6 +261,8 @@ scene("cour", function () {
         if (combat.etat === "saisie") majLaSaisie();
         if (combat.etat === "envol") majLEnvol();
         if (combat.etat === "retour") majLeRetour();
+        majLaScene();
+        majLaLampeQuiPend();
         majLesPlumes();
         majLaCameraDeLaCour();
         majLInterfaceDuCombat();
@@ -375,7 +390,10 @@ function remettreLeCombat() {
     // L'aube et la lampe dépendent de là où on en est.
     combat.aube = Math.min(0.75, (combat.phase - 1) * 0.16);
     combat.fenetre = combat.phase >= 2 ? 0 : 1;
+    combat.lampe = { balance: 0, depuis: 0 };
     combat.lampeTombee = combat.phase >= 3 ? { x: 205 } : null;
+    combat.scene = null;
+    combat.bob.grimpe = false;
 
     combat.etat = "attente";
 
@@ -588,6 +606,228 @@ function majBob() {
 }
 
 
+/* ============================================================
+   LES SCÈNES ANIMÉES
+   ============================================================
+   Evan : « fais des animations pour l'acte 4 — peut-être je vois
+   juste pas à cause du texte ». Il voyait juste : trois moments
+   importants n'existaient QU'EN TEXTE. Bob qui n'arrive pas à
+   grimper, la mouette qui lui prend le dé sur la tête, et la lampe
+   qu'elle casse.
+
+   Une scène, c'est un nom et une horloge. Elle tourne dans le
+   onUpdate MÊME PENDANT LE DIALOGUE, et les répliques la
+   rattrapent avec leur champ « quand ». Le texte ne raconte plus
+   ce qui s'est passé : il commente ce qui est en train de se
+   passer.
+   ============================================================ */
+function jouerLaScene(nom) {
+    combat.scene = { nom: nom, debut: time(), etape: 0 };
+}
+
+
+function tempsDeLaScene() {
+    return combat.scene ? time() - combat.scene.debut : 0;
+}
+
+
+// Un pas d'animation qui ne se déclenche qu'une fois, quand
+// l'horloge de la scène dépasse « quand ».
+function auMoment(quand, faire) {
+    const s = combat.scene;
+    if (!s || s.etape > quand) return false;
+    if (tempsDeLaScene() < quand) return false;
+    s.etape = quand + 0.0001;
+    if (faire) faire();
+    return true;
+}
+
+
+function majLaScene() {
+    const s = combat.scene;
+    if (!s || !s.nom) return;
+    if (s.nom === "grimpe") majLaSceneDeLArbre();
+    else if (s.nom === "de") majLaSceneDuDe();
+    else if (s.nom === "lampe") majLaSceneDeLaLampe();
+}
+
+
+/* ------------------------------------------------------------
+   1. BOB N'ARRIVE PAS À GRIMPER
+   ------------------------------------------------------------
+   Trois tentatives, de plus en plus haut, et trois chutes sur les
+   fesses. C'est la seule démonstration de tout l'acte : l'arbre ne
+   se grimpe pas, et on ne le redira plus jamais.
+   ------------------------------------------------------------ */
+function majLaSceneDeLArbre() {
+
+    const b = combat.bob;
+    const s = combat.scene;
+    // Sur l'écorce, pas à côté : il doit grimper DEVANT le tronc.
+    const pied = COUR.arbre.x - COUR.arbre.largeur / 2 + 16;
+
+    // Il traverse la cour jusqu'au tronc.
+    if (s.marche) {
+        const reste = pied - b.x;
+        if (Math.abs(reste) > 4) {
+            b.vers = reste > 0 ? 1 : -1;
+            b.marche = true;
+            b.x += b.vers * COMBAT.marche * 2.4 * dt();
+            return;
+        }
+        b.marche = false;
+        b.vers = 1;
+        s.marche = false;
+    }
+
+    /* ⚠️ Un essai demandé PENDANT la traversée attend son tour.
+       Sinon son chrono démarrait au clic du joueur, il s'écoulait
+       pendant que Bob marchait encore, et l'escalade était déjà finie
+       quand il arrivait à l'arbre : on ne voyait rien du tout. */
+    if (s.prochainEssai != null && !s.essai) {
+        s.essai = { debut: time(), hauteur: s.prochainEssai, tombe: false };
+        s.prochainEssai = null;
+        if (typeof sonSynthe === "function") sonSynthe("grince", 0.3);
+    }
+
+    // Une tentative : il monte en 0,6 s, il tient un instant, il
+    // retombe en 0,25 s. « hauteur » change à chaque essai.
+    if (!s.essai) return;
+    const t = time() - s.essai.debut;
+    if (t < 0.6) {
+        b.y = COUR.sol - s.essai.hauteur * (t / 0.6);
+        b.grimpe = true;
+    } else if (t < 0.85) {
+        b.y = COUR.sol - s.essai.hauteur;
+    } else if (t < 1.1) {
+        b.y = COUR.sol - s.essai.hauteur * (1 - (t - 0.85) / 0.25);
+    } else {
+        if (!s.essai.tombe) {
+            s.essai.tombe = true;
+            b.y = COUR.sol;
+            b.grimpe = false;
+            b.sonne = time() + 0.5;      // il reste sur les fesses
+            secouer(0.2);
+            if (typeof sonSynthe === "function") sonSynthe("terre", 0.5);
+            lacherDesPlumes(b.x, COUR.sol - 6, 3, 0.3);
+        }
+        b.y = COUR.sol;
+    }
+}
+
+
+function bobVaAuTronc() {
+    combat.scene.marche = true;
+}
+
+
+function bobEssayeDeGrimper(hauteur) {
+    return function () {
+        if (!combat.scene) return;
+        combat.scene.essai = null;
+        combat.scene.prochainEssai = hauteur;
+    };
+}
+
+
+function bobRevientDeLArbre() {
+    if (combat.scene) {
+        combat.scene.essai = null;
+        combat.scene.prochainEssai = null;
+    }
+    combat.bob.grimpe = false;
+    combat.bob.y = COUR.sol;
+}
+
+
+/* ------------------------------------------------------------
+   2. ELLE LUI PREND LE DÉ SUR LA TÊTE
+   ------------------------------------------------------------ */
+function majLaSceneDuDe() {
+
+    const o = combat.oiseau;
+    const b = combat.bob;
+    const t = tempsDeLaScene();
+
+    if (t < 1.2) {                       // elle sort du nid et se fige
+        o.etat = "fige";
+        o.x += ((b.x + 30) - o.x) * Math.min(1, dt() * 2.8);
+        o.y += (COMBAT.altitude - o.y) * Math.min(1, dt() * 2.8);
+        o.vers = -1;
+        return;
+    }
+    if (!combat.scene.pique) return;     // on attend la bonne réplique
+
+    const p = time() - combat.scene.pique;
+    if (p < 0.45) {                      // elle tombe sur sa tête
+        o.etat = "pique";
+        const k = p / 0.45;
+        o.x = combat.scene.dep.x + (b.x + 10 - combat.scene.dep.x) * k;
+        o.y = combat.scene.dep.y + (b.y - 36 - combat.scene.dep.y) * k;
+        return;
+    }
+    if (!combat.scene.pris) {
+        combat.scene.pris = true;
+        perdreLeDe();
+        secouer(0.35);
+        lacherDesPlumes(b.x, b.y - 44, 5, 0.6);
+    }
+    o.etat = "emporte";                  // elle remonte avec
+    o.x += (COUR.nid.x - o.x) * Math.min(1, dt() * 1.7);
+    o.y += ((COUR.nid.y + 34) - o.y) * Math.min(1, dt() * 1.7);
+    o.vers = 1;
+}
+
+
+function elleViseLaTete() {
+    combat.scene.dep = { x: combat.oiseau.x, y: combat.oiseau.y };
+    combat.scene.pique = time();
+    if (typeof sonSynthe === "function") sonSynthe("rafale", 0.5);
+}
+
+
+/* ------------------------------------------------------------
+   3. ELLE CASSE LA LAMPE
+   ------------------------------------------------------------ */
+function majLaSceneDeLaLampe() {
+
+    const o = combat.oiseau;
+    const t = tempsDeLaScene();
+    const L = positionDeLaLampe();
+
+    if (t < 1.4) {                       // elle remonte et se fige au-dessus
+        o.etat = "fige";
+        o.x += ((L.x + 46) - o.x) * Math.min(1, dt() * 1.8);
+        o.y += ((L.y - 54) - o.y) * Math.min(1, dt() * 1.8);
+        o.vers = -1;
+        return;
+    }
+
+    const c = combat.scene.coup;
+    if (!c) { o.etat = "fige"; return; }
+
+    const p = time() - c;
+    if (p < 0.35) {                      // elle fond sur la lampe
+        o.etat = "pique";
+        o.x += (L.x - o.x) * Math.min(1, dt() * 9);
+        o.y += (L.y - o.y) * Math.min(1, dt() * 9);
+        return;
+    }
+    o.etat = "vol";                      // elle tourne autour en attendant
+    o.x += ((L.x + 60) - o.x) * Math.min(1, dt() * 2);
+    o.y += ((L.y - 40) - o.y) * Math.min(1, dt() * 2);
+    o.vers = -1;
+}
+
+
+function elleTapeLaLampe() {
+    combat.scene.coup = time();
+    combat.lampe.balance = 1;
+    combat.lampe.depuis = time();
+    coupSurLaLampe();
+}
+
+
 // Est-ce qu'il y a quelque chose à parer, là, maintenant ? Sert au
 // poids du couvercle (majBob) : on ne fatigue jamais pendant une
 // attaque.
@@ -624,6 +864,38 @@ function xDuFaisceau() {
 
 function laLampeEstEnLAir() {
     return combat.phase === 2 && !combat.lampeTombee;
+}
+
+
+/* Où est la lampe, maintenant. Un pendule tout bête accroché sous
+   l'appui de la fenêtre : au repos elle pend droit, et quand la
+   mouette tape dedans elle part en arrière et revient, de moins en
+   moins fort. */
+function positionDeLaLampe() {
+
+    if (combat.lampeTombee) {
+        return { x: combat.lampeTombee.x, y: COUR.sol - 5, angle: 0 };
+    }
+
+    const L = COMBAT.lampe;
+    const l = combat.lampe;
+    let angle = 0;
+    if (l && l.balance > 0) {
+        const t = time() - l.depuis;
+        angle = Math.sin(t * 5.4) * l.balance * 0.55 * Math.exp(-t * 0.5);
+    }
+    return {
+        x: L.ancreX + Math.sin(angle) * L.fil,
+        y: L.ancreY + Math.cos(angle) * L.fil,
+        angle: angle,
+    };
+}
+
+
+function majLaLampeQuiPend() {
+    const l = combat.lampe;
+    if (!l || l.balance <= 0) return;
+    l.balance = Math.max(0, l.balance - dt() * 0.42);
 }
 
 
@@ -689,6 +961,24 @@ function majLOiseau() {
             return;
 
         case "pique":
+            /* ⚠️ Evan : « si Bob attire la mouette sur lui et relâche
+               le bouclier, elle ne change pas d'itinéraire ».
+               À la phase 1, c'est LA règle : elle ne corrige jamais.
+               Mais à la phase 2, la règle n'est plus la même — elle va
+               vers CE QUI BRILLE. Si le couvercle se referme en plein
+               vol, ce n'est plus lui le plus brillant, et elle repart
+               vers la lampe. Le joueur peut donc l'appeler, puis
+               changer d'avis, tant qu'elle a encore de la hauteur. */
+            if (combat.phase === 2 && o.viseLeCouvercle && !b.couvercle
+                && o.y < COUR.sol - 90) {
+                o.viseLeCouvercle = false;
+                o.cible = xDuFaisceau();
+                const vers = vec2(o.cible - o.x, COUR.sol - o.y).unit();
+                o.vx = vers.x * COMBAT.vitessePique;
+                o.vy = vers.y * COMBAT.vitessePique;
+                o.vers = o.vx < 0 ? -1 : 1;
+                if (typeof sonSynthe === "function") sonSynthe("grince", 0.35);
+            }
             o.x += o.vx * dt();
             o.y += o.vy * dt();
             if (contactDuPique()) return;
@@ -785,6 +1075,11 @@ function verrouillerEtPiquer() {
     // sur cette ligne. Le cercle au sol se fige en même temps, et
     // c'est ce qui donne au joueur sa demi-seconde pour sortir.
     o.cible = Math.max(COUR.marche.gauche, Math.min(COUR.marche.droite, cibleProbable()));
+
+    // On retient POURQUOI elle a choisi là : si c'est le couvercle qui
+    // l'a attirée et qu'il se referme, elle changera d'avis en vol
+    // (voir le cas "pique", plus haut).
+    o.viseLeCouvercle = combat.bob.couvercle;
 
     const arrivee = combat.bob.couvercle ? COUR.sol - 40 : COUR.sol;
     const d = vec2(o.cible - o.x, arrivee - o.y).unit();
@@ -1139,13 +1434,18 @@ function premierDong() {
 function lOuvertureDeLaCour() {
 
     combat.etat = "scene";
+    jouerLaScene("grimpe");
     lancerDialogue([
         { texte: "L'herbe est trempée et elle sent la terre. Au-dessus, la cour est immense, et elle est vide." },
         { texte: "Le grand arbre est là, à vingt pas. Tout en haut, dans la première fourche, il y a un tas de brindilles qui accroche la lumière par endroits." },
         { qui: "bob", texte: "Rosy." },
-        { texte: "Bob attrape l'écorce. Il monte de trois pattes. L'écorce est mouillée." },
+        { texte: "Bob traverse la cour et attrape l'écorce.", quand: bobVaAuTronc },
+        { texte: "Il monte de trois pattes. L'écorce est mouillée.", quand: bobEssayeDeGrimper(22) },
         { texte: "Il redescend sur les fesses." },
-        { texte: "Il recommence. Il monte un peu plus haut. Il redescend de la même façon." },
+        { texte: "Il recommence. Il monte un peu plus haut.", quand: bobEssayeDeGrimper(38) },
+        { texte: "Il redescend de la même façon." },
+        { texte: "Une troisième fois, pour être sûr.", quand: bobEssayeDeGrimper(30) },
+        { texte: "Non.", quand: bobRevientDeLArbre },
         { qui: "doudou", texte: "Mon grand." },
         { qui: "doudou", texte: "Quand j'ai traversé, je n'ai pas marché une seule fois." },
         { qui: "doudou", texte: "On m'a porté tout le long. Dans un sac, dans un train, dans des bras." },
@@ -1159,6 +1459,10 @@ function lOuvertureDeLaCour() {
         { qui: "bluey", texte: "MOI JE VOIS MIEUX QUE TOUT LE MONDE !!" },
         { qui: "doudou", texte: "Alors regarde bien, Bluey. Et dis-lui tout ce que tu vois." },
     ], function () {
+        combat.scene = null;
+        combat.bob.grimpe = false;
+        combat.bob.y = COUR.sol;
+        combat.bob.sonne = 0;
         passerALaPhase(1);
         combat.etat = "jeu";
         combat.oiseau.jusqua = time() + 2.2;
@@ -1170,13 +1474,15 @@ function lOuvertureDeLaCour() {
 function elleEmporteLeDe() {
 
     figerLeCombat();
+    jouerLaScene("de");
     lancerDialogue([
         { texte: "Elle repart en l'air, et elle se fige encore une fois. Mais cette fois elle ne regarde pas Bob." },
         { texte: "Elle regarde ce qui brille sur sa tête." },
         { qui: "bluey", texte: "ELLE REGARDE TA TÊTE !! BOB !! ELLE REGARDE TA TÊTE !!" },
         { qui: "doudou", texte: "La dame qui était assise en face, à Sylt. Elle avait ses lunettes de soleil posées sur les cheveux." },
         { qui: "doudou", texte: "Elles brillaient. C'est là que la mouette a regardé en premier." },
-        { texte: "Le dé à coudre part avec elle. On l'entend tomber dans le nid, tout en haut, avec un bruit de petite monnaie.", quand: perdreLeDe },
+        { texte: "Elle tombe.", quand: elleViseLaTete },
+        { texte: "Le dé à coudre part avec elle. On l'entend tomber dans le nid, tout en haut, avec un bruit de petite monnaie." },
         { texte: "Bob est tête nue. La cour est plus froide d'un coup." },
         { qui: "bob", texte: "Il est là-haut, maintenant." },
         { qui: "bob", texte: "Tout ce qu'elle me prend est là-haut." },
@@ -1233,9 +1539,13 @@ function leRideauDuPhare() {
         // comptes à rebours ce qu'il leur restait avant la scène. Si
         // on règle o.jusqua avant lui, il l'écrase avec la vieille
         // valeur et elle repique à la seconde où la boîte se ferme.
+        combat.scene = null;          // la scène du dé a fini son travail
         reprendreLeCombat();
         passerALaPhase(2);
         combat.piquesPhare = 0;
+        combat.oiseau.etat = "nid";
+        combat.oiseau.x = COUR.nid.x;
+        combat.oiseau.y = COUR.nid.y + 34;
         combat.oiseau.jusqua = time() + 2;
         combat.aide = time() + 20;
     });
@@ -1258,12 +1568,13 @@ function allumerLaLampe() {
 function laRallongeCasse() {
 
     figerLeCombat();
+    jouerLaScene("lampe");
     lancerDialogue([
         { texte: "Elle remonte, elle se fige — et cette fois le rond dans l'herbe ne l'intéresse plus du tout." },
         { texte: "Elle regarde la lampe." },
         { qui: "cakey", texte: "oh." },
         { qui: "bluey", texte: "ELLE VA SUR LA LAMPE !! ELLE VA SUR LA LAMPE !!" },
-        { texte: "Le bec tape le verre. La lampe part en arrière, revient, tape le mur.", quand: coupSurLaLampe },
+        { texte: "Le bec tape le verre. La lampe part en arrière, revient, tape le mur.", quand: elleTapeLaLampe },
         { texte: "Le fil tient. Il grince.", quand: grincementDuFil },
         { texte: "Puis il ne tient plus." },
         { texte: "La veilleuse tombe. Elle fait trois mètres, elle rebondit une fois dans l'herbe haute, et elle s'arrête sur le flanc.", quand: laLampeTombe },
@@ -1295,6 +1606,8 @@ function grincementDuFil() {
 
 function laLampeTombe() {
     combat.lampeTombee = { x: 205 };
+    combat.lampe.balance = 0;
+    combat.scene = null;          // la scène animée a fini son travail
     secouer(0.5);
     if (typeof sonSynthe === "function") sonSynthe("fracas", 0.55);
 }
@@ -1695,15 +2008,21 @@ function majLeRetour() {
     if (r.etape === "prise") {
         // Il se balance au bout du pyjama, et il monte. Pas parce
         // qu'il grimpe : parce qu'on le tire.
+        /* ⚠️ Evan : « Bob et Rosy remontent jusqu'au ciel ». Ils
+           montaient jusqu'à cent pixels au-dessus du décor, en
+           traversant tout ce qui n'est pas l'immeuble. Ils s'arrêtent
+           maintenant À LA FENÊTRE, là où Samsam tire — c'est là qu'ils
+           vont, et c'est là que le fondu doit commencer. */
         const p = (time() - r.prise);
         const balance = Math.sin(p * 3.4) * Math.max(0, 22 - p * 9);
+        const arrivee = FENETRE_DE_LOIN.y + FENETRE_DE_LOIN.h;
         b.x = COUR.corde.x + balance;
-        b.y = COUR.corde.bout + 4 - Math.max(0, (p - 1.8)) * 200;
+        b.y = Math.max(arrivee, COUR.corde.bout + 4 - Math.max(0, (p - 1.8)) * 150);
 
         o.x += (COUR.L + 140 - o.x) * Math.min(1, dt() * 0.7);
         o.y -= 34 * dt();
 
-        if (b.y < -80) {
+        if (b.y <= arrivee) {
             r.etape = "monte";
             r.t = time();
         }
@@ -1857,17 +2176,19 @@ function dessinerBobDansLaCour() {
     // Frame 0 = de face (il se cache derrière le couvercle),
     // frame 2 = de profil, 12..15 = la marche de profil.
     let frame = 2;
-    if (time() < b.sonne) frame = 0;
+    if (b.grimpe) frame = 1;                 // de dos, agrippé à l'écorce
+    else if (time() < b.sonne) frame = 0;
     else if (b.couvercle) frame = 0;
     else if (b.marche) frame = 12 + Math.floor(time() * 8) % 4;
 
-    const angle = time() < b.sonne ? 16 * b.vers : 0;
+    const angle = (time() < b.sonne && !b.grimpe) ? 16 * b.vers : 0;
 
     // Son ombre : elle le décolle du décor. Sans elle, il a l'air
     // collé sur l'image. Dès qu'il quitte le sol, elle disparaît —
     // une ombre sous des pieds qui pendent à trois mètres, c'est ce
     // qui casse le mieux une illusion.
-    if (b.y >= COUR.sol - 2 && combat.etat !== "retour" && combat.etat !== "envol") {
+    if (b.y >= COUR.sol - 2 && !b.grimpe
+        && combat.etat !== "retour" && combat.etat !== "envol") {
         drawEllipse({
             pos: vec2(b.x, b.y + 3), radiusX: 13, radiusY: 4,
             color: rgb(0, 0, 0), opacity: 0.3,
@@ -2124,23 +2445,29 @@ function dessinerLaLampe() {
         return;
     }
 
-    const L = COMBAT.lampe;
+    const A = COMBAT.lampe;
     const c = COMBAT.cordon;
+    const L = positionDeLaLampe();
     const xSol = xDuFaisceau();
 
-    // La rallonge : de la fenêtre à la lampe, avec du mou.
-    const creux = 26;
-    for (let i = 0; i < 24; i++) {
-        const t0 = i / 24, t1 = (i + 1) / 24;
+    /* La rallonge. Deux morceaux, et c'est ce qui la rend crédible :
+       un bout mou qui sort du coin de la fenêtre et passe par-dessus
+       l'appui, puis le fil TENDU qui descend droit jusqu'à la lampe.
+       Quand elle se balance, c'est ce deuxième morceau qui pivote. */
+    for (let i = 0; i < 10; i++) {
+        const t0 = i / 10, t1 = (i + 1) / 10;
         const p = function (t) {
             return vec2(
-                c.x + (L.x - c.x) * t,
-                c.y + (L.y - c.y) * t + Math.sin(t * Math.PI) * creux
+                c.x + (A.ancreX - c.x) * t,
+                c.y + (A.ancreY - c.y) * t + Math.sin(t * Math.PI) * 7
             );
         };
-        const a = p(t0), b = p(t1);
-        drawLine({ p1: a, p2: b, width: 1.5, color: rgb(28, 26, 30) });
+        drawLine({ p1: p(t0), p2: p(t1), width: 1.5, color: rgb(28, 26, 30) });
     }
+    drawLine({
+        p1: vec2(A.ancreX, A.ancreY), p2: vec2(L.x, L.y - 8),
+        width: 1.5, color: rgb(28, 26, 30),
+    });
 
     // Le faisceau : un cône de la lampe jusqu'à la tache au sol.
     drawTriangle({
