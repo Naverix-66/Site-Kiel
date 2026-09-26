@@ -241,8 +241,13 @@ scene("cour", function () {
             majLOiseau();
             majLesMomentsDuCombat();
         }
-        if (combat.etat === "retour") majLeRetour();
+        // ⚠️ Ces trois-là tournent MÊME PENDANT un dialogue. Evan :
+        // « on a du mal à comprendre juste avec le texte ». Alors le
+        // décor bouge pendant qu'on lit, et le texte ne fait plus que
+        // commenter ce qu'on est en train de voir.
+        if (combat.etat === "saisie") majLaSaisie();
         if (combat.etat === "envol") majLEnvol();
+        if (combat.etat === "retour") majLeRetour();
         majLesPlumes();
         majLaCameraDeLaCour();
         majLInterfaceDuCombat();
@@ -1451,24 +1456,81 @@ function casserLaBaguette() {
    ------------------------------------------------------------ */
 function elleLEmporte() {
 
-    // "envol" : le seul état où le décor bouge pendant qu'on lit. La
-    // cour s'éloigne SOUS le texte, ce qui fait que le joueur sent
-    // qu'il monte au lieu qu'on lui dise.
-    combat.etat = "envol";
+    /* ⚠️ ON MONTRE D'ABORD, ON PARLE APRÈS.
+       Première version : le dialogue démarrait tout de suite et
+       racontait un enlèvement qu'on ne voyait pas. Evan : « on a du
+       mal à comprendre juste avec le texte, ça fait un peu histoire à
+       comprendre ». Maintenant il y a deux secondes de silence où elle
+       se ramasse, fond sur lui et décolle — et le texte n'arrive que
+       quand la cour est déjà en train de rétrécir. */
+    combat.etat = "saisie";
+    combat.saisie = time();
+    combat.saisiePrise = false;
+    combat.oiseau.etat = "cri";
+    combat.bob.vers = combat.oiseau.x > combat.bob.x ? 1 : -1;
+    if (typeof objectif === "function") objectif("");
+}
+
+
+function majLaSaisie() {
+
     const o = combat.oiseau;
-    o.etat = "emporte";
-    combat.bob.vers = -1;
+    const b = combat.bob;
+    const t = time() - combat.saisie;
+
+    // 1. elle se ramasse, ailes grandes ouvertes, et elle crie
+    if (t < 0.6) {
+        o.etat = "cri";
+        o.vers = b.x > o.x ? 1 : -1;
+        return;
+    }
+
+    // 2. elle fond sur lui
+    if (t < 1.05) {
+        o.etat = "pique";
+        const cote = o.x > b.x ? 1 : -1;
+        o.x += ((b.x + 12 * cote) - o.x) * Math.min(1, dt() * 10);
+        return;
+    }
+
+    // 3. le bec se referme : secousse, plumes, cri
+    if (!combat.saisiePrise) {
+        combat.saisiePrise = true;
+        o.etat = "emporte";
+        o.x = b.x + 12;
+        // 26 px au-dessus de l'herbe : Bob pend 25 px sous elle, donc
+        // il part exactement de là où il était. Sans ça, il s'enfonçait
+        // d'un demi-corps dans la pelouse avant de décoller.
+        o.y = COUR.sol - 26;
+        secouer(0.8);
+        lacherDesPlumes(b.x, COUR.sol - 30, 16, 1.1);
+        if (typeof sonSynthe === "function") sonSynthe("rafale", 0.8);
+        if (typeof jouerSon === "function") jouerSon("mouette", { volume: 0.7 });
+    }
+
+    // 4. le sol s'en va — et SEULEMENT LÀ on se met à parler
+    if (t > 1.9) {
+        combat.etat = "envol";
+        parlerPendantLEnvol();
+    }
+}
+
+
+function parlerPendantLEnvol() {
 
     lancerDialogue([
-        { texte: "Le bec se referme sur son épaule. Pas sur son bras : sur la couture de son épaule, celle que Klara a recousue deux fois." },
-        { texte: "Et le sol s'en va." },
+        // ⚠️ Klara n'a JAMAIS recousu personne (Evan). Celui qui répare,
+        // ici, c'est Doudou — il a une aiguille plantée dans le bras
+        // depuis le premier jour, et c'est lui qui recoud le pyjama de
+        // Samsam à l'épilogue.
+        { texte: "Le bec s'est refermé sur son épaule. Pas sur son bras : sur la couture de son épaule, celle que Doudou a reprise deux fois." },
         { qui: "bob", texte: "!!" },
-        { texte: "La cour rétrécit en dessous de lui. L'herbe haute, la veilleuse couchée qui brille, les vélos bleus, la plaque d'égout. Tout devient petit." },
+        { texte: "Là, en dessous : l'herbe haute, la veilleuse couchée qui brille, les vélos bleus, la plaque d'égout. Tout ça rétrécit." },
         { texte: "Bob ne se débat pas. Il attrape le bec à deux pattes, et il tient." },
         { qui: "bob", texte: "...c'est ça." },
         { qui: "bob", texte: "C'est ça, le chemin." },
         { texte: "Le mur passe à côté d'eux. Quelque part là-dedans, il y a une longue corde crème avec un liseré rouge, et un nœud fait par un très vieil ours." },
-        { texte: "Elle monte encore. L'arbre arrive. Et l'odeur arrive avec : de la brindille, de la vase, et quelque chose de sucré." },
+        { texte: "Elle vire vers l'arbre. L'odeur arrive avant le nid : de la brindille, de la vase, et quelque chose de sucré." },
         { qui: "bob", texte: "Rosy ?" },
     ], function () {
         combat.phase = 4;
@@ -1517,11 +1579,17 @@ function commencerLeRetour() {
     combat.aube = Math.max(combat.aube, 0.62);
     combat.fenetre = 0;
     combat.lampeTombee = { x: 205 };
+    /* Même règle qu'à la saisie : le vol commence TOUT DE SUITE, en
+       silence. On les voit sortir du nid et descendre le long du mur
+       pendant deux secondes et demie, et le dialogue ne s'ouvre
+       qu'après — pendant que ça continue de bouger. */
     combat.retour = {
-        etape: "depart",
-        t: 0,
+        etape: "vol",
+        t: time(),
         passages: 0,
         fenetreOuverte: false,
+        parle: false,
+        silenceJusqua: time() + 2.6,
         prise: 0,
         voile: 0,
     };
@@ -1537,10 +1605,15 @@ function commencerLeRetour() {
     b.y = COUR.nid.y + 44;
 
     if (typeof objectif === "function") objectif("");
+    if (typeof jouerSon === "function") jouerSon("mouette", { volume: 0.5 });
+}
+
+
+function parlerPendantLeRetour() {
 
     lancerDialogue([
-        { texte: "Elle les prend tous les deux. Rosy dans le bec, Bob accroché au bec." },
-        { texte: "Elle sort du nid, et elle ne monte pas : elle descend en longeant le mur, lentement, comme si elle savait exactement où elle va." },
+        { texte: "Elle les tient tous les deux. Rosy dans le bec, Bob accroché au bec." },
+        { texte: "Et elle ne monte pas : elle descend, en longeant le mur, lentement, comme si elle savait exactement où elle va." },
         { qui: "rosy", texte: "Bob— Bob, elle—" },
         { qui: "bob", texte: "Je sais." },
         { qui: "bob", texte: "Regarde le mur, Rosy. Pas en bas. Le mur." },
@@ -1549,8 +1622,6 @@ function commencerLeRetour() {
         { qui: "samsam", texte: "JE L'AI. JE LA TIENS DES DEUX PATTES." },
         { qui: "samsam", texte: "QUAND TU PASSES, TU ATTRAPES." },
     ], function () {
-        combat.retour.etape = "vol";
-        combat.retour.t = time();
         combat.aide = time() + 30;
         if (typeof objectif === "function") objectif("Attrape la corde au passage.");
     });
@@ -1565,16 +1636,29 @@ function majLeRetour() {
 
     const r = combat.retour;
     if (!r) return;
-    if (dialogueEnCours() || jeuEnCours()) return;
+    if (jeuEnCours()) return;
+
+    // ⚠️ On NE s'arrête PAS pendant un dialogue : le vol continue sous
+    // le texte, sinon on lit un vol immobile. Seule la fenêtre de
+    // prise reste fermée tant que quelqu'un parle (voir plus bas), pour
+    // qu'on n'attrape pas la corde par mégarde en passant une réplique.
+    const parle = dialogueEnCours();
 
     const o = combat.oiseau;
     const b = combat.bob;
 
     if (r.etape === "vol") {
 
+        // Le silence du début : on regarde, on ne lit pas encore.
+        if (!r.parle && !parle && time() > r.silenceJusqua) {
+            r.parle = true;
+            parlerPendantLeRetour();
+            return;
+        }
+
         // Un va-et-vient de l'arbre au mur, sur 8 secondes, qui
         // descend un peu à chaque passage.
-        const p = (time() - r.t) / 4.4;
+        const p = (time() - r.t) / 3.4;   // un passage devant la corde toutes les 6,8 s
         const k = 0.5 - Math.cos(p * Math.PI) * 0.5;   // 0 -> 1 -> 0, sans fin
         const droite = COUR.nid.x;
         const gauche = COUR.corde.x + 4;
@@ -1589,7 +1673,10 @@ function majLeRetour() {
         b.y = o.y + 22;
 
         // La fenêtre : quand il passe à portée du bout de la corde.
-        const aPortee = Math.abs(b.x - COUR.corde.x) < 46
+        // Fermée tant qu'on parle : on ne la rate pas parce qu'on
+        // lisait, et on ne l'attrape pas en passant une réplique.
+        const aPortee = r.parle && !parle
+            && Math.abs(b.x - COUR.corde.x) < 46
             && Math.abs(b.y - COUR.corde.bout) < 56;
 
         if (aPortee && !r.fenetreOuverte) {
@@ -1978,6 +2065,7 @@ function dessinerLOiseau() {
     else if (o.etat === "sol") frame = 3;
     else if (o.etat === "remonte") frame = 8 + Math.floor(time() * 9) % 4;
     else if (o.etat === "emporte") frame = 15;
+    else if (o.etat === "cri") frame = 13;             // ailes grandes ouvertes
 
     // Son ombre sur l'herbe : elle arrive TOUJOURS avant elle, et
     // c'est ce qui rend le piqué lisible même sans regarder en haut.
@@ -2134,13 +2222,28 @@ function dessinerLaLampeCouchee() {
    Quand ils décrochent la veilleuse (phase 2), elle s'éteint. À
    partir de là, la façade est un mur noir avec un trou noir.
    ------------------------------------------------------------ */
+/* ⚠️ LE DÉCALAGE DE 40 PIXELS.
+   Evan : « y'a un décalage entre la fenêtre et les doudous ». Il n'y
+   en avait pas entre les doudous et la fenêtre : il y en avait entre
+   la fenêtre PEINTE et le rectangle allumé qu'on posait dessus.
+
+   peindreLaFacadeDeLoin (cour.js) ne colle pas la façade en haut de
+   la toile : elle la pose de façon que l'herbe tombe sur COUR.sol,
+   donc elle commence à COUR.sol - hauteur, soit 40 px plus bas. Ce
+   décalage manquait ici, et tout ce qu'on dessinait « dans la
+   fenêtre » flottait 40 px au-dessus d'elle.
+
+   On le recalcule donc exactement comme cour.js, à partir des mêmes
+   nombres : deux repères qui doivent coïncider ne se règlent jamais
+   séparément. */
 const FENETRE_DE_LOIN = (function () {
     const f = COUR.facade;
     const t = FACADE.travees[FACADE.traveeDeKlara];
     const e = f.echelle;
+    const hautDeLaFacade = COUR.sol - Math.round((FACADE.herbe - f.depuisY) * e);
     return {
         x: f.x + (t.x + 6 - f.depuisX) * e,
-        y: (FACADE.baies[0] + 6 - f.depuisY) * e,
+        y: hautDeLaFacade + (FACADE.baies[0] + 6 - f.depuisY) * e,
         l: (t.l - 12) * e,
         h: (FACADE.hauteurBaie - 15) * e,
     };
@@ -2170,18 +2273,25 @@ function dessinerLaFenetreDeLoin() {
         }
     }
 
-    // Eux. Le plus grand derrière, le plus petit qui saute devant.
-    // Éteinte, on ne voit plus que leurs silhouettes — et c'est pire.
-    const sol = w.y + w.h + 8;
+    /* Eux. Le plus grand derrière, le plus petit qui saute devant.
+       Éteinte, on ne voit plus que leurs silhouettes — et c'est pire.
+
+       ⚠️ Evan : « y'a un décalage entre la fenêtre et les doudous ».
+       Le trou fait 64 px de large : à cinq là-dedans, il suffit de
+       deux ou trois pixels de trop pour que Bluey et Fraisy montent
+       sur le cadre. On les resserre, on les rapetisse — et surtout on
+       repeint les montants par-dessus (voir plus bas), pour qu'aucun
+       débordement ne soit plus possible, quoi qu'on change ici. */
+    const sol = w.y + w.h + 4;
     const monde = [
-        { cle: "samsam", dx: 0.60 },
-        { cle: "cakey", dx: 0.34 },
+        { cle: "samsam", dx: 0.38 },
+        { cle: "cakey", dx: 0.62 },
         { cle: "doudou", dx: 0.15 },
         { cle: "fraisy", dx: 0.80 },
-        { cle: "bluey", dx: 0.92, saute: true },
+        { cle: "bluey", dx: 0.91, saute: true },
     ];
     monde.forEach(function (p, i) {
-        const taille = 19 * (PERSONNAGES[p.cle] ? PERSONNAGES[p.cle].taille : 1);
+        const taille = 17 * (PERSONNAGES[p.cle] ? PERSONNAGES[p.cle].taille : 1);
         const bouge = p.saute
             ? -Math.max(0, Math.sin(time() * 3.1)) * 5
             : Math.sin(time() * 2 + i) * 0.8;
@@ -2197,14 +2307,27 @@ function dessinerLaFenetreDeLoin() {
         drawSprite(dessin);
     });
 
-    // On repeint l'appui par-dessus leurs pieds, découpé dans le
-    // décor lui-même : ils sont DANS la pièce, accoudés au rebord.
-    const bande = w.y + w.h;
-    drawSprite({
-        sprite: "cour_fond",
-        pos: vec2(w.x - 8, bande), width: w.l + 16, height: 22,
-        quad: quad((w.x - 8) / COUR.L, bande / COUR.H, (w.l + 16) / COUR.L, 22 / COUR.H),
-    });
+    /* On repeint le CADRE par-dessus eux, découpé dans le décor
+       lui-même : l'appui sous leurs pieds, et les deux montants de
+       chaque côté. C'est un vrai masque — ils sont DANS le trou, et
+       plus rien ne peut en sortir.
+
+       Découper dans « cour_fond » plutôt que de peindre des
+       rectangles : la brique, le béton et leurs ombres sont déjà là,
+       au bon endroit et à la bonne couleur. Un rectangle posé dessus
+       se verrait au premier coup d'œil. */
+    const morceauDuDecor = function (x, y, l, h) {
+        drawSprite({
+            sprite: "cour_fond",
+            pos: vec2(x, y), width: l, height: h,
+            quad: quad(x / COUR.L, y / COUR.H, l / COUR.L, h / COUR.H),
+        });
+    };
+
+    morceauDuDecor(w.x - 10, w.y + w.h, w.l + 20, 22);   // l'appui
+    morceauDuDecor(w.x - 10, w.y - 6, 10, w.h + 8);      // le montant gauche
+    morceauDuDecor(w.x + w.l, w.y - 6, 10, w.h + 8);     // le montant droit
+    morceauDuDecor(w.x - 10, w.y - 8, w.l + 20, 4);      // le linteau
 }
 
 

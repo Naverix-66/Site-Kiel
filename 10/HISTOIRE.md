@@ -326,6 +326,19 @@ et pas de vous deux, exprès : c'est à Evan de dire ça.
 ⚠️ **La photo va dans `10/assets/photos/nous.jpg`.** Rien d'autre à faire.
 
 ---
+## Trois choses qu'on n'écrit jamais autrement
+
+1. **« UNE pétale de rose »**, au féminin, partout. C'est l'usage d'Evan, et le
+   jeu parle sa langue.
+2. **Klara n'a jamais recousu personne.** Celui qui répare, c'est Doudou.
+3. **La pétale va sur la table de nuit de Klara, tous les matins.** Bob ramasse
+   celles que son bouquet perd sur le grand tapis blanc, et il en repose une
+   avant qu'elle ouvre les yeux. Elle croit que c'est le bouquet qui les met là.
+   Ça fait quatre ans. Le geste se dit à voix haute deux fois — au départ
+   (acte II) et dans le nid — et jamais une troisième.
+
+---
+
 ## Le casting
 
 Voir `js/personnages.js` pour les voix — le contrat d'écriture de chacun.
@@ -345,6 +358,11 @@ face et lui a pris la sienne. Klara a tellement ri qu'elle a dû se tenir à Eva
 C'est la private joke, et c'est aussi la clé de l'acte I.
 
 **Il n'est pas froid.** Vieux, lent, tendre. Il appelle Bob « mon grand ».
+
+**C'EST LUI QUI RECOUD.** Il a une aiguille plantée dans le bras depuis le
+premier jour. Il refait les coutures de tout le monde — l'épaule de Bob, le
+pyjama de Samsam à l'épilogue. ⚠️ **Klara n'a jamais recousu personne** (Evan) :
+aucun personnage ne doit jamais dire le contraire.
 
 **Règle d'écriture :** Doudou ne répond jamais directement à une question.
 Il répond par un souvenir. Et on ne surligne JAMAIS ce qu'il représente —

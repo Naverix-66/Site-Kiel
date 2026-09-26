@@ -134,7 +134,7 @@ const STYLES_IDLE = {
    LES OBJETS
    ============================================================ */
 const OBJETS = {
-    petale: { nom: "Un pétale de rose" },
+    petale: { nom: "Une pétale de rose" },
     plume: { nom: "Une plume blanche" },
     tomate: { nom: "Une tomate" },
     chaussette: { nom: "Une chaussette en laine" },
@@ -1547,7 +1547,7 @@ function leTapis() {
 
     lancerDialogue([
         { texte: "Le grand tapis blanc, celui qui fait la moitié de la pièce." },
-        { texte: "Par terre, au milieu, un pétale de rose." },
+        { texte: "Par terre, au milieu, une pétale de rose." },
         { qui: "bob", texte: "Elle en perd tout le temps." },
         { texte: "Il le ramasse sans y penser une seconde." },
     ], function () {

@@ -113,6 +113,7 @@ const son = {
     morceauJusquA: 0,     // un morceau joue par-dessus jusqu'à cette heure
     musiqueEnCours: "musique",  // "musique" dedans, "dehors" sur la façade
     branche: false,       // les écouteurs de la fenêtre sont posés
+    fenetreFermee: false, // l'épilogue la referme : plus un souffle
 };
 
 
@@ -122,6 +123,10 @@ const son = {
 function preparerLesSons() {
 
     try { son.coupe = localStorage.getItem(CLE_SON_COUPE) === "1"; } catch (e) { son.coupe = false; }
+
+    // Une scène neuve : la fenêtre est ouverte jusqu'à preuve du
+    // contraire. C'est l'épilogue qui la referme (epilogue.js).
+    son.fenetreFermee = false;
 
     // Chaque scène rappelle preparerLesSons (le bouton ♪ et la
     // boucle meurent avec elle), mais les écouteurs de la fenêtre,
@@ -171,9 +176,16 @@ function preparerLesSons() {
         }
 
         // Le vent : plus fort près de la fenêtre ouverte (cases 4 à 6).
-        const fenetre = vec2(5.5 * TAILLE_TUILE, 0.5 * TAILLE_TUILE);
-        const proche = Math.max(0, 1 - bob.pos.dist(fenetre) / (9 * TAILLE_TUILE));
-        volumeDeBoucle("vent", 0.08 + 0.92 * proche);
+        // Sauf une fois : à l'épilogue, Bob la referme, et le froid
+        // s'arrête d'un coup. C'est le premier silence de la nuit, et
+        // il doit s'entendre.
+        if (son.fenetreFermee) {
+            volumeDeBoucle("vent", 0);
+        } else {
+            const fenetre = vec2(5.5 * TAILLE_TUILE, 0.5 * TAILLE_TUILE);
+            const proche = Math.max(0, 1 - bob.pos.dist(fenetre) / (9 * TAILLE_TUILE));
+            volumeDeBoucle("vent", 0.08 + 0.92 * proche);
+        }
 
         // Une mouette au loin, de temps en temps.
         if (time() > prochaineMouette) {

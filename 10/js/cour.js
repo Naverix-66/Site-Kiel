@@ -52,7 +52,12 @@ const COUR = {
     // Le bout du pyjama de Samsam. Bob mesure 43 px : sa tête est
     // donc à 427, et la corde s'arrête 44 px plus haut. Il la voit
     // pendant tout le combat. Il ne peut pas l'atteindre.
-    corde: { x: 65, bout: 383 },
+    //
+    // ⚠️ haut : elle part de l'APPUI de la fenêtre de Klara, parce
+    // qu'elle est nouée à la poignée. Elle partait du toit de
+    // l'immeuble et traversait la vitre de part en part, juste
+    // devant ceux qui regardent.
+    corde: { x: 65, haut: 116, bout: 383 },
 
     marche: { gauche: 52, droite: 706 },
 
@@ -258,7 +263,7 @@ function peindreLaFacadeDeLoin(ctx) {
     // dessiné ICI, dans le décor, parce que c'est ce qu'il est
     // pendant tout l'acte : du décor. Jusqu'à la dernière minute.
     const cx = COUR.corde.x;
-    for (let y = COUR.sol - h; y < COUR.corde.bout; y += 6) {
+    for (let y = COUR.corde.haut; y < COUR.corde.bout; y += 6) {
         const clair = Math.floor(y / 6) % 2 === 0;
         pave(ctx, cx, y, 2, 6, clair ? [150, 146, 132] : [112, 106, 94]);
         if (Math.floor(y / 6) % 4 === 0) pixel(ctx, cx, y + 2, [104, 40, 52]);

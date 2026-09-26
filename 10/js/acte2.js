@@ -1069,9 +1069,14 @@ function leDepart() {
         { texte: "Il en attache le bout à la poignée de la fenêtre. Un seul nœud, lent, énorme. Ses pattes tremblent. Le nœud, lui, ne tremble pas." },
         { qui: "doudou", texte: "Il tiendra. Toi, tiens-le." },
         { texte: "Bob enfile le dé à coudre. Il glisse la baguette dans l'élastique de son short. Il passe le couvercle à son bras." },
-        { qui: "cakey", texte: "Et le pétale, Bob ? Il sert à quoi ?" },
+        { qui: "cakey", texte: "Et la pétale, Bob ? Elle sert à quoi ?" },
         { qui: "bob", texte: "À rien." },
-        { qui: "bob", texte: "Je le lui rends. Comme tous les matins." },
+        // « Je le lui rends » ne disait pas à qui, et personne ne
+        // devinait. C'est le geste secret du jeu : on le nomme ici, une
+        // fois, et on le rappelle au nid.
+        { qui: "bob", texte: "Elle va sur la table de nuit de Klara. Avant qu'elle se réveille." },
+        { qui: "cakey", texte: "comme tous les matins." },
+        { qui: "bob", texte: "Comme tous les matins." },
         { qui: "samsam", texte: "Bob." },
         { qui: "samsam", texte: "Pardon de ne pas pouvoir descendre avec toi." },
         { qui: "bob", texte: "Tu descends avec moi, Samsam. Tu es la corde." },

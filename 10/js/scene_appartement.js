@@ -488,7 +488,13 @@ scene("appartement", (nomDeLaPiece) => {
         if (introEnCours() || bobEstSorti()) {
             cacherInterfaceAction();
         } else if (dialogueEnCours() || jeuEnCours()) {
-            jouerAnimation(bob, "idle-" + bob.direction);
+            // ...sauf quand une scène le fait marcher elle-même : à
+            // l'épilogue, Bob traverse deux mètres pour aller fermer
+            // la fenêtre PENDANT qu'on lit (voir bobVaVers,
+            // epilogue.js). Le remettre en idle à chaque image le
+            // ferait glisser sur place, sans bouger une patte.
+            const scripte = typeof bobMarcheToutSeul === "function" && bobMarcheToutSeul();
+            if (!scripte) jouerAnimation(bob, "idle-" + bob.direction);
         } else {
             deplacerBob(bob);
             majInteractions(bob);

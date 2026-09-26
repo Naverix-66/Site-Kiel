@@ -669,7 +669,7 @@ const CHOSES_DU_NID = [
         verbe: function () {
             if (!nid.petale) return null;
             if (nid.etape !== "repris") return null;
-            return "Reprendre le pétale";
+            return "Reprendre la pétale";
         },
         action: reprendreLePetale,
     },
@@ -827,7 +827,9 @@ function trouverRosy() {
     lancerDialogue([
         { texte: "Elle est entière. C'est la première chose que Bob vérifie, et c'est la seule qui compte." },
         { texte: "Elle a un fil de fer autour d'une patte et autour du ventre. Un fil fin, tourné trois fois, du genre qu'on serre autour d'un bouquet pour que les tiges tiennent ensemble." },
-        { texte: "Sa rose est posée à côté d'elle, dans les brindilles. Elle l'a gardée." },
+        // Rosy tient sa rose sur sa planche : on ne la lui enlève pas, et
+        // on n'en peint pas une deuxième par terre (Evan).
+        { texte: "Elle tient toujours sa rose. Les deux pattes serrées dessus, comme depuis le début." },
         { qui: "rosy", texte: "Bob ?" },
         { qui: "rosy", texte: "Bob, tu es— qu'est-ce que tu fais ic—" },
         { qui: "rosy", texte: "Est-ce que tout le monde va bien ? Est-ce que Bluey a dormi ? Il ne dort jamais quand il y a du bruit." },
@@ -904,7 +906,7 @@ function couperLeFil() {
         { qui: "rosy", texte: "Continue, Bob." },
         { texte: "Le bois mord le métal. Le fil se tord. Bob appuie encore.", quand: grincerLeFil },
         { texte: "Et le fil casse.", quand: casserLeFil },
-        { texte: "Rosy se lève. Elle se tient debout dans un nid de mouette, à douze mètres du sol, et la première chose qu'elle fait, c'est ramasser sa rose." },
+        { texte: "Rosy se lève. Elle se tient debout dans un nid de mouette, à douze mètres du sol, sa rose toujours dans les pattes." },
         { qui: "rosy", texte: "..." },
         { qui: "rosy", texte: "Bob. Ta baguette est cassée." },
         { qui: "bob", texte: "Oui." },
@@ -957,8 +959,10 @@ function parlerARosyDansLeNid() {
 
     lancerDialogue([
         { qui: "rosy", texte: "Ta couture d'épaule a lâché un peu. On la refera." },
-        { qui: "rosy", texte: "Enfin — Klara la refera. Elle la refait toujours." },
-        { qui: "bob", texte: "Elle la refait toujours." },
+        // Klara ne recoud personne : c'est Doudou qui répare, depuis
+        // toujours, avec l'aiguille qu'il garde plantée dans le bras.
+        { qui: "rosy", texte: "Enfin — Doudou la refera. Il les refait toutes." },
+        { qui: "bob", texte: "Il les refait toutes." },
     ]);
 }
 
@@ -984,9 +988,9 @@ function elleRevient() {
         { texte: "Bob n'a plus de baguette. Le couvercle ne sert à rien ici : il n'y a pas la place de le lever." },
         { qui: "bob", texte: "..." },
         { texte: "Alors Bob fait la seule chose qui lui reste. Il fouille dans son short." },
-        { texte: "Et il sort un pétale de rose." },
+        { texte: "Et il sort une pétale de rose." },
     ], function () {
-        if (typeof objectif === "function") objectif("Il ne reste que le pétale.");
+        if (typeof objectif === "function") objectif("Il ne reste que la pétale.");
         nid.aide = time() + 12;
         offrirLePetale();
     });
@@ -1004,14 +1008,14 @@ function poserLaMouetteDuNid() {
 function offrirLePetale() {
 
     lancerDialogue([
-        { texte: "C'est un pétale de rose rouge. Il est un peu écorné sur un bord, parce qu'il a fait toute la nuit dans la poche d'un ours." },
-        { texte: "Bob le pose par terre, entre elle et lui, sur les brindilles.", quand: poserLePetale },
+        { texte: "C'est une pétale de rose rouge. Elle est un peu écornée sur un bord, parce qu'elle a fait toute la nuit dans la poche d'un ours." },
+        { texte: "Bob la pose par terre, entre elle et lui, sur les brindilles.", quand: poserLePetale },
         { qui: "bob", texte: "Tiens." },
-        { qui: "bob", texte: "Il brille pas. Mais il est doux, et tu n'en as pas." },
-        { texte: "Elle regarde le pétale. Elle le regarde longtemps." },
+        { qui: "bob", texte: "Elle brille pas. Mais elle est douce, et tu n'en as pas." },
+        { texte: "Elle regarde la pétale. Elle la regarde longtemps." },
         { texte: "Puis elle recule d'un pas, sur le côté, et le bord du nid est libre." },
         { qui: "rosy", texte: "Bob." },
-        { qui: "rosy", texte: "C'était le mien." },
+        { qui: "rosy", texte: "C'était celle de ce matin." },
         { qui: "bob", texte: "Je sais." },
         { qui: "bob", texte: "Viens." },
     ], function () {
@@ -1038,15 +1042,23 @@ function reprendreLePetale() {
 
     lancerDialogue([
         { texte: "Bob s'arrête au bord du nid." },
-        { texte: "Il regarde le pétale posé dans les brindilles. Il regarde la mouette. Il revient sur ses pas." },
+        { texte: "Il regarde la pétale posée dans les brindilles. Il regarde la mouette. Il revient sur ses pas." },
         { qui: "rosy", texte: "Bob, non—" },
-        { texte: "Il se baisse et il ramasse le pétale.", quand: ramasserLePetale },
+        { texte: "Il se baisse et il ramasse la pétale.", quand: ramasserLePetale },
         { texte: "Elle est à trente centimètres. Elle pourrait fermer le bec une fois et ce serait fini." },
         { texte: "Elle ne bouge pas." },
         { qui: "bob", texte: "Pardon." },
-        { qui: "bob", texte: "Il n'est pas à moi." },
-        { qui: "bob", texte: "Je le rapporte à quelqu'un chaque matin. Ça fait quatre ans." },
-        { qui: "bob", texte: "Je peux pas m'arrêter maintenant." },
+        { qui: "bob", texte: "Elle n'est pas à moi." },
+        // ⚠️ C'EST ICI QU'ON EXPLIQUE LA PÉTALE, et nulle part ailleurs.
+        // Evan : « j'ai pas compris qu'il fallait mettre la pétale sur
+        // la table de nuit, pourquoi ?? ». Il avait raison : le geste
+        // existait depuis l'acte I (le tapis blanc, « elle en perd tout
+        // le temps »), mais personne ne l'avait jamais dit à voix haute.
+        { qui: "bob", texte: "Klara en perd tout le temps. Son bouquet en laisse tomber une ou deux par nuit, sur le grand tapis blanc." },
+        { qui: "bob", texte: "Tous les matins je les ramasse, et j'en pose une sur sa table de nuit avant qu'elle ouvre les yeux." },
+        { qui: "bob", texte: "Elle croit que c'est le bouquet qui les met là." },
+        { qui: "bob", texte: "Ça fait quatre ans." },
+        { qui: "bob", texte: "Je vais pas m'arrêter ce matin." },
         { texte: "Elle penche la tête de l'autre côté." },
         { texte: "Et elle regarde ailleurs. Vers la mer, vers les grues, vers le ciel qui est en train de devenir gris clair." },
         { qui: "rosy", texte: "..." },
@@ -1266,21 +1278,17 @@ function dessinerRosy() {
     const tremble = r.libre || !r.tremble ? 0
         : Math.max(0, 1 - (time() - r.tremble) / 8) * Math.sin(time() * 18) * 0.7;
 
+    // ⚠️ flipX comme pour Bob : < 0. Elle le SUIT, elle ne lui fait pas
+    // face — avec le test inversé, elle marchait à reculons.
     drawSprite({
         sprite: "rosy", frame: frame,
         pos: vec2(x + tremble, NID.sol),
         width: t, height: t, anchor: "bot",
-        flipX: r.libre ? nid.bob.vers > 0 : false,
+        flipX: r.libre ? nid.bob.vers < 0 : false,
     });
 
-    // Sa rose, posée à côté d'elle tant qu'elle est prise.
-    if (!r.libre) {
-        drawEllipse({ pos: vec2(x + 20, NID.sol - 3), radiusX: 5, radiusY: 3, color: rgb(150, 44, 54) });
-        drawLine({
-            p1: vec2(x + 20, NID.sol - 2), p2: vec2(x + 32, NID.sol - 1),
-            width: 1.5, color: rgb(58, 78, 48),
-        });
-    }
+    // ⚠️ PAS de rose peinte par terre : elle en tient déjà une sur sa
+    // planche, et il ne peut pas y en avoir deux (Evan).
 
     // LE FIL DE FER. Trois tours, et on voit qu'il serre.
     if (nid.fil > 0) {
@@ -1320,29 +1328,12 @@ function dessinerBobDansLeNid() {
         width: 56, height: 56, anchor: "bot", flipX: b.vers < 0,
     });
 
-    // Le dé sur sa tête, et le couvercle à son bras : on voit ses
-    // affaires revenir une par une, sans une ligne de texte.
-    if (aObjet("de")) {
-        drawRect({ pos: vec2(b.x - 4, b.y - 46), width: 8, height: 7, color: rgb(178, 172, 160) });
-        drawRect({ pos: vec2(b.x - 4, b.y - 46), width: 8, height: 2, color: rgb(214, 210, 200) });
-    }
-    if (aObjet("couvercle")) {
-        drawEllipse({
-            pos: vec2(b.x + 12 * b.vers, b.y - 20), radiusX: 4, radiusY: 9,
-            color: rgb(172, 174, 178),
-        });
-        drawEllipse({
-            pos: vec2(b.x + 12 * b.vers, b.y - 20), radiusX: 2, radiusY: 6,
-            color: rgb(206, 208, 212),
-        });
-    }
-    if (aObjet("baguette_cassee")) {
-        drawLine({
-            p1: vec2(b.x + 7 * b.vers, b.y - 25),
-            p2: vec2(b.x + 13 * b.vers, b.y - 29),
-            width: 2.5, color: rgb(216, 192, 148),
-        });
-    }
+    /* ⚠️ ON NE PEINT RIEN DANS SES PATTES ICI.
+       Evan : « j'aime pas que Bob ait ses armes dans les mains dans le
+       nid, c'est moche ». Il a raison : des ellipses et des traits
+       posés à la main par-dessus une planche dessinée, ça se voit tout
+       de suite, et ça ne ressemble à rien. Ses affaires, on les suit
+       dans l'inventaire, à gauche — c'est fait pour ça. */
 }
 
 

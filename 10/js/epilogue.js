@@ -59,7 +59,7 @@ const MOT_DE_LA_FIN = [
     "",
     "La fenêtre était fermée.",
     "Le pyjama de Samsam était recousu, un peu de travers.",
-    "Et il y avait un pétale de rose sur sa table de nuit,",
+    "Et il y avait une pétale de rose sur sa table de nuit,",
     "comme tous les matins.",
     "",
     "Elle n'a rien remarqué.",
@@ -227,6 +227,10 @@ function installerEpilogue() {
     // rentrer. Sans cette ligne, la scène le laisse figé et caché.
     if (typeof acte2 !== "undefined") acte2.sorti = false;
 
+    // Et il ne marche plus tout seul : une scène quittée en plein
+    // déplacement scripté laisserait le drapeau levé pour toujours.
+    bobScripte = false;
+
     installerCasting(CASTING_EPILOGUE);
     installerDecor(DECOR_EPILOGUE);
     preparerLaVie();
@@ -240,6 +244,10 @@ function installerEpilogue() {
     // La chambre est froide et bleue : sa veilleuse est encore dans
     // l'herbe de la cour. C'est le seul trou qui reste à boucher.
     if (!saitQue("epi_veilleuse")) changerDeNuit("nuit_sans_veilleuse", 0);
+
+    // Partie rechargée après la rentrée : la fenêtre est déjà fermée,
+    // donc plus de vent. Sans ça, le froid revenait tout seul.
+    if (saitQue("epi_arrive")) son.fenetreFermee = true;
 
     // La musique de l'appartement revient. Celle du dehors s'arrête
     // avec la nuit du dehors.
@@ -260,7 +268,7 @@ function objectifEpilogue() {
     if (!saitQue("epi_gateau")) return "Il ne manque plus personne.";
     if (!saitQue("epi_veilleuse")) return "Quelque chose a tapé contre la vitre.";
     if (!saitQue("epi_elastique")) return "Le 8 octobre a commencé.";
-    return "Il reste le pétale.";
+    return "La pétale de ce matin n'est pas encore posée.";
 }
 
 
@@ -273,15 +281,64 @@ function bullesEpilogue() {
 
 
 /* ============================================================
+   FAIRE MARCHER BOB PENDANT QU'ON LIT
+   ============================================================
+   Evan : « quand Bob ferme la fenêtre, on fait une petite
+   animation de lui qui bouge vers la fenêtre, et on coupe le
+   bruit du vent. » Il a raison : « Bob la ferme » écrit dans une
+   boîte de dialogue, ce n'est pas une action, c'est un résumé.
+
+   scene_appartement.js remet Bob en posture d'attente à chaque
+   image pendant un dialogue — d'où le drapeau, qu'il consulte.
+   ============================================================ */
+let bobScripte = false;
+
+function bobMarcheToutSeul() {
+    return bobScripte;
+}
+
+
+function bobVaVers(tuileX, tuileY, duree, quandFini) {
+
+    const bob = get("bob")[0];
+    if (!bob) { if (quandFini) quandFini(); return; }
+
+    const depart = bob.pos;
+    const arrivee = vec2(tuileX * TAILLE_TUILE, tuileY * TAILLE_TUILE);
+    const ecart = arrivee.sub(depart);
+    const debut = time();
+
+    bobScripte = true;
+    bob.direction = Math.abs(ecart.x) > Math.abs(ecart.y)
+        ? "cote" : (ecart.y < 0 ? "haut" : "bas");
+    bob.flipX = bob.direction === "cote" && ecart.x < 0;
+    jouerAnimation(bob, "marche-" + bob.direction);
+
+    const pas = onUpdate(function () {
+        const k = Math.min(1, (time() - debut) / duree);
+        bob.pos = depart.add(ecart.scale(k));
+        if (k < 1) return;
+        pas.cancel();
+        bobScripte = false;
+        jouerAnimation(bob, "idle-" + bob.direction);
+        if (quandFini) quandFini();
+    });
+}
+
+
+/* ============================================================
    1. LA RENTRÉE
    ============================================================ */
 function laRentree() {
 
     // Bob et Rosy arrivent sur le rebord. La caméra est donc là, et
     // on voit toute la pièce derrière eux.
+    // Il atterrit SUR LE PARQUET, à deux pas du rebord : il lui reste
+    // donc un chemin à faire pour aller la fermer, et on le verra le
+    // faire.
     const bob = get("bob")[0];
     if (bob) {
-        bob.pos = vec2(5.5 * TAILLE_TUILE, 2.2 * TAILLE_TUILE);
+        bob.pos = vec2(5.5 * TAILLE_TUILE, 3.6 * TAILLE_TUILE);
         bob.direction = "bas";
         jouerAnimation(bob, "idle-bas");
         if (bob.ombre) { bob.ombre.hidden = false; bob.ombre.opacity = 0.28; }
@@ -297,8 +354,11 @@ function laRentree() {
         { qui: "rosy", texte: "Est-ce que quelqu'un a froid ? Bluey, tu as les oreilles gelées." },
         { qui: "bluey", texte: "JE M'EN FICHE DE MES OREILLES !!" },
         { texte: "Doudou est assis contre le mur, sous la fenêtre. Il tient un bout de pyjama et une aiguille, et il n'a pas levé les yeux." },
-        { qui: "doudou", texte: "Ferme la fenêtre, mon grand." },
-        { texte: "Bob la ferme. Le froid s'arrête d'un coup, et c'est la première fois de toute la nuit." },
+        { qui: "doudou", texte: "Ferme la fenêtre, mon grand.", quand: bobVaALaFenetre },
+        { texte: "Bob monte sur le rebord. Les deux battants sont grands ouverts depuis minuit." },
+        { texte: "Il pousse le premier. Il pousse le deuxième.", quand: fermerLaFenetreDeKlara },
+        { texte: "Et le froid s'arrête. D'un coup, comme on coupe le son." },
+        { texte: "C'est la première fois de toute la nuit.", quand: bobRedescendDuRebord },
         { qui: "doudou", texte: "Voilà." },
         { texte: "Sur le lit, la bosse sous la couette n'a pas bougé d'un centimètre. Klara dort depuis le début et elle n'a rien entendu." },
         { qui: "bob", texte: "Elle n'a rien entendu ?" },
@@ -317,6 +377,26 @@ function laRentree() {
         rafraichirObjectif();
         if (typeof jouerSon === "function") jouerSon("revelation", { volume: 0.5 });
     });
+}
+
+
+function bobVaALaFenetre() {
+    bobVaVers(5.5, 1.9, 1.1);
+}
+
+
+function fermerLaFenetreDeKlara() {
+    // Le vent s'arrête ICI, sur cette réplique-là, et pas une seconde
+    // avant : c'est le seul moment du jeu où le silence est un
+    // évènement.
+    son.fenetreFermee = true;
+    if (typeof volumeDeBoucle === "function") volumeDeBoucle("vent", 0);
+    if (typeof jouerSon === "function") jouerSon("porteFerme", { volume: 0.5 });
+}
+
+
+function bobRedescendDuRebord() {
+    bobVaVers(5.5, 3.4, 0.9);
 }
 
 
@@ -521,7 +601,7 @@ function rosyALaFin() {
         { qui: "rosy", texte: "Et je me suis dit que le 8, une crêpe, c'était—" },
         { qui: "bob", texte: "Rosy." },
         { qui: "bob", texte: "Attends." },
-        { texte: "Bob fouille dans la poche de son short. Il en sort d'abord le pétale, qu'il remet. Puis autre chose." },
+        { texte: "Bob fouille dans la poche de son short. Il en sort d'abord la pétale, qu'il remet. Puis autre chose." },
         { texte: "Un élastique à cheveux. Rouge foncé, avec un liseré doré, un peu plus petit que les autres.", quand: sortirLElastique },
         { qui: "bob", texte: "Ça fait trois semaines que je l'ai." },
         { qui: "bob", texte: "Je l'ai demandé à Cakey. Je lui ai dit : un joli." },
@@ -539,8 +619,16 @@ function rosyALaFin() {
         { qui: "bob", texte: "Oui, mais c'était quand même aujourd'hui." },
         { texte: "Rosy prend l'élastique. Elle met ses oreilles en arrière avec, très sérieusement, comme quelqu'un qui fait quelque chose d'important.", quand: donnerLElastique },
         { qui: "fraisy", texte: "OH." },
-        { qui: "fraisy", texte: "oh. oh oh oh. Bluey. BLUEY. regarde pas." },
-        { qui: "bluey", texte: "POURQUOI ?!" },
+        { qui: "fraisy", texte: "oh. oh oh oh." },
+        // Evan : « pourquoi Bluey ne regarde pas, j'ai pas compris ? »
+        // Parce que Fraisy trouve que ce moment-là ne les regarde pas.
+        // C'était dit en une demi-phrase ; maintenant c'est dit.
+        { qui: "fraisy", texte: "Bluey. BLUEY. tourne-toi." },
+        { qui: "bluey", texte: "POURQUOI JE ME TOURNE ?!" },
+        { qui: "fraisy", texte: "parce que ce moment-là, il est pas pour nous. il est pour eux deux." },
+        { qui: "bluey", texte: "..." },
+        { qui: "bluey", texte: "...d'accord." },
+        { texte: "Bluey se tourne vers le mur. Il met même ses pattes sur ses yeux, ce que personne ne lui avait demandé." },
         { qui: "doudou", texte: "Viens par là, Bluey. Je vais te raconter un train qui roule sur la mer." },
         { qui: "bluey", texte: "...un train qui roule sur la MER ?!" },
         { qui: "doudou", texte: "Sur la mer. Vingt minutes. Il n'y a que de l'eau des deux côtés." },
@@ -571,7 +659,7 @@ function donnerLElastique() {
    ============================================================ */
 function verbeTableDeNuitALaFin() {
     if (!saitQue("epi_elastique")) return "La table de nuit";
-    if (aObjet("petale")) return "Poser le pétale";
+    if (aObjet("petale")) return "Poser la pétale";
     return "La table de nuit";
 }
 
@@ -581,7 +669,7 @@ function laTableDeNuitALaFin() {
     if (!saitQue("epi_elastique") || !aObjet("petale")) {
         lancerDialogue([
             { texte: "La table de nuit de Klara. Sa veilleuse, un verre d'eau à moitié plein, et un livre ouvert à l'envers sur une page qu'elle n'a pas fini de lire." },
-            { texte: "Il y a un rond plus clair dans la poussière, à gauche de la veilleuse. C'est là que va le pétale, tous les matins." },
+            { texte: "Il y a un rond plus clair dans la poussière, à gauche de la veilleuse. C'est là que va la pétale, tous les matins." },
         ]);
         return;
     }
@@ -591,7 +679,7 @@ function laTableDeNuitALaFin() {
         { texte: "Sa veilleuse est chaude. Le verre d'eau est à moitié plein. Le livre est retourné sur une page qu'elle finira demain." },
         { texte: "Il y a un rond plus clair dans la poussière, à gauche de la veilleuse." },
         { qui: "bob", texte: "..." },
-        { texte: "Bob sort le pétale de rose. Il est écorné sur un bord. Il a fait toute la nuit dehors, il est passé dans le bec d'une mouette, et il est revenu." },
+        { texte: "Bob sort la pétale de rose. Elle est écornée sur un bord. Elle a fait toute la nuit dehors, elle est passée dans le bec d'une mouette, et elle est revenue." },
         { texte: "Bob le pose dans le rond.", quand: poserLePetaleALaFin },
         { texte: "Il l'oriente. Il recule d'un pas pour vérifier. Il le tourne encore un peu." },
         { qui: "bob", texte: "Voilà." },
@@ -820,8 +908,9 @@ scene("fin", function () {
     // Tenir l'écran (ou une touche) fait défiler plus vite. On ne peut
     // pas SAUTER : c'est la seule chose du jeu qu'on ne peut pas
     // passer, et c'est voulu.
-    onTouchStart(function () { FIN.doigt = true; });
-    onTouchEnd(function () { FIN.doigt = false; });
+    onTouchStart(function (p) { if (!toucheLeRetour(p)) FIN.doigt = true; });
+    onTouchEnd(function (p) { FIN.doigt = false; if (toucheLeRetour(p)) revenirAuCalendrier(); });
+    onMouseRelease(function () { if (toucheLeRetour(mousePos())) revenirAuCalendrier(); });
 
     onUpdate(function () {
         setCamScale(1);
@@ -884,6 +973,46 @@ function construireLeTexteDeLaFin() {
         anchor("center"), fixed(), z(Z_INTERFACE + 62),
         color(...COULEUR_CREME), opacity(0),
     ]);
+
+    /* La porte de sortie (Evan). Elle n'apparaît qu'avec la dernière
+       carte : avant, il n'y a rien à quitter, et une flèche visible
+       pendant le texte serait une invitation à ne pas le lire. */
+    FIN.ui.fondRetour = add([
+        rect(10, 10, { radius: 8 }),
+        pos(0, 0), anchor("left"), fixed(), z(Z_INTERFACE + 61),
+        color(...COULEUR_NUIT), opacity(0),
+    ]);
+    FIN.ui.retour = add([
+        text("<  Le calendrier", { size: 15 }),
+        pos(0, 0), anchor("left"), fixed(), z(Z_INTERFACE + 62),
+        color(...COULEUR_CREME), opacity(0),
+    ]);
+}
+
+
+// Le rectangle cliquable de la flèche, ou null tant qu'elle n'est pas
+// là. Un seul calcul, lu par le dessin ET par le clic : les deux ne
+// peuvent pas se désaccorder.
+function zoneDuRetour() {
+    const ui = FIN.ui;
+    if (!ui || !ui.retour || ui.retour.opacity < 0.5) return null;
+    const f = ui.fondRetour;
+    return {
+        x: f.pos.x, y: f.pos.y - f.height / 2,
+        l: f.width, h: f.height,
+    };
+}
+
+
+function toucheLeRetour(p) {
+    const z = zoneDuRetour();
+    if (!z || !p) return false;
+    return p.x >= z.x && p.x <= z.x + z.l && p.y >= z.y && p.y <= z.y + z.h;
+}
+
+
+function revenirAuCalendrier() {
+    try { location.href = "../index.html"; } catch (e) { /* tant pis */ }
 }
 
 
@@ -939,6 +1068,16 @@ function majLeTexteDeLaFin() {
     ui.petit.textSize = Math.max(12, Math.min(17, Math.round(width() / 44)));
     ui.petit.pos = vec2(width() / 2, height() / 2 + ui.grand.textSize * 0.9);
     ui.petit.opacity = k * 0.75;
+
+    // La flèche de retour, en bas à gauche, une fois tout dit.
+    const apparu = Math.max(0, Math.min(1, (k - 0.55) / 0.45));
+    ui.retour.textSize = Math.max(13, Math.min(17, Math.round(width() / 48)));
+    ui.retour.pos = vec2(24, height() - 36);
+    ui.retour.opacity = apparu * 0.9;
+    ui.fondRetour.pos = vec2(14, height() - 36);
+    ui.fondRetour.width = (ui.retour.width || 120) + 30;
+    ui.fondRetour.height = (ui.retour.height || 18) + 18;
+    ui.fondRetour.opacity = apparu * 0.55;
 }
 
 
