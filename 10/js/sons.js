@@ -77,12 +77,25 @@ const SONS = {
     // pousse encore pendant les dialogues (voir preparerLesSons).
     musique:        { fichier: "Keys_Left_By_The_Door.mp3", debut: 0, fin: 55, volume: 0.12 },
 
-    // ---- l'acte III ----
-    // La musique du dehors. optionnel = son absence ne se plaint pas
-    // dans la console : Evan cherche encore le morceau. Dès que le
-    // fichier est dans assets/sounds/, la façade le prend tout seul
-    // à la place de la musique de l'appartement.
-    dehors:         { fichier: "dehors.mp3", volume: 0.3, optionnel: true },
+    /* ---- l'acte III, la cour, le nid ----
+       La musique du DEHORS, déposée par Evan le 27/09. La façade, la
+       cour et le nid la prennent tout seuls à la place de celle de
+       l'appartement (musiqueDuDehors, plus bas).
+
+       ⚠️ fin: 172 et pas 181. Le morceau fait 3 min 01, et ses six
+       dernières secondes sont un fondu de sortie : en bouclant sur
+       toute la durée, on entendait la musique mourir puis repartir,
+       six fois par partie. Mesuré seconde par seconde : à 172 s le
+       niveau est exactement celui du début (0,047 contre 0,043), donc
+       le raccord ne s'entend pas.
+
+       ⚠️ volume: 0,15 et pas 0,3. Les deux morceaux ont le même
+       niveau à l'enregistrement (RMS 0,20 tous les deux) : à 0,3, le
+       dehors aurait été deux fois et demie plus fort que le dedans —
+       et Evan avait déjà dit que la musique couvrait tout. Un quart
+       au-dessus de l'appartement suffit à ce qu'on sente le
+       changement. */
+    dehors:         { fichier: "Patterns_On_The_Glass.mp3", debut: 0, fin: 172, volume: 0.15 },
     pluie:          { fichier: "wind_trough_window.mp3", debut: 1.2, volume: 0.2, vitesse: 1.6 },
 
     // ---- l'acte II ----

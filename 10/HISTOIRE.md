@@ -360,9 +360,11 @@ C'est la private joke, et c'est aussi la clé de l'acte I.
 **Il n'est pas froid.** Vieux, lent, tendre. Il appelle Bob « mon grand ».
 
 **C'EST LUI QUI RECOUD.** Il a une aiguille plantée dans le bras depuis le
-premier jour. Il refait les coutures de tout le monde — l'épaule de Bob, le
-pyjama de Samsam à l'épilogue. ⚠️ **Klara n'a jamais recousu personne** (Evan) :
-aucun personnage ne doit jamais dire le contraire.
+premier jour, et c'est lui qui refait le pyjama de Samsam à l'épilogue.
+⚠️ **Klara n'a jamais recousu personne** (Evan), et ⚠️ **Bob n'a jamais été
+décousu** : pas de couture, pas de réparation, pas de cicatrice sur lui. Il est
+entier, et il l'est resté toute la nuit. Les seules marques du jeu sont celles
+de Doudou, qui vient de loin.
 
 **Règle d'écriture :** Doudou ne répond jamais directement à une question.
 Il répond par un souvenir. Et on ne surligne JAMAIS ce qu'il représente —
@@ -434,10 +436,18 @@ et un vrai jeu :
   Restent inventés, à confirmer : le cordon de briques saillantes entre les deux
   étages, le collier de gouttière qui fuit, la toile d'araignée, la jardinière,
   le fil à linge et la parabole.
-- **La musique du dehors** : Evan la cherche. Dès que le fichier est posé dans
-  `10/assets/sounds/dehors.mp3`, la façade le prend tout seul à la place de la
-  musique de l'appartement (SONS.dehors, `optionnel: true` : tant qu'il manque,
-  rien ne se plaint).
+- ~~La musique du dehors~~ → **reçue le 27/09** : `Patterns_On_The_Glass.mp3`.
+  La façade, la cour et le nid la prennent à la place de celle de l'appartement,
+  et l'épilogue rend la main à `Keys_Left_By_The_Door` en rentrant.
+  Bouclée sur **0 → 172 s** (ses six dernières secondes sont un fondu de sortie,
+  et à 172 s le niveau est exactement celui du début : le raccord ne s'entend
+  pas), à **0,15** de volume contre 0,12 pour l'appartement — les deux morceaux
+  ont le même niveau à l'enregistrement, donc un quart au-dessus suffit à ce
+  qu'on sente le changement d'air.
+  ⚠️ Reste dans le dossier, **jamais branché** :
+  `Streetlights_Through_Blinds.mp3` (2 min 56). Il ne coûte rien tant qu'il
+  n'est pas dans `SONS` — mais si Evan le veut quelque part (le nid ? les
+  cartons de fin d'acte ?), c'est une ligne.
 - ~~Taille de Cakey~~ → **1.45** (Evan : « presque aussi grande que Samsam, de
   loin la plus grande à part lui »). Samsam est à 1.6, Bob et Doudou à 1.0.
 - ~~Décor du bas~~ → **une immense cour intérieure**, avec un parc et des arbres. Le nid de la Mouette est **dans un arbre**.
@@ -472,7 +482,5 @@ et un vrai jeu :
    l'immeuble au lever du jour — c'est déjà juste, mais ce n'est pas vous.
    (Tant qu'elle manque, la console affiche un 404 sur ce fichier. C'est normal :
    c'est comme ça qu'on sait qu'elle n'est pas là, et ça ne casse rien.)
-3. **LA MUSIQUE DU DEHORS.** `10/assets/sounds/dehors.mp3`. Pareil : dès qu'elle
-   est là, la façade, la cour et le nid la prennent à la place de la musique de
-   l'appartement.
+3. ~~LA MUSIQUE DU DEHORS.~~ **Reçue le 27/09** et branchée (voir plus haut).
 4. **MOIN.** Il n'existe encore qu'en texte.

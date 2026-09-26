@@ -957,12 +957,16 @@ function parlerARosyDansLeNid() {
         return;
     }
 
+    // ⚠️ Pas un mot sur une couture : Bob n'a jamais été décousu, et
+    // rien sur lui n'a jamais été réparé (Evan). Rosy remarque ce qui
+    // se voit vraiment après une nuit dehors — de la terre et de
+    // l'herbe.
     lancerDialogue([
-        { qui: "rosy", texte: "Ta couture d'épaule a lâché un peu. On la refera." },
-        // Klara ne recoud personne : c'est Doudou qui répare, depuis
-        // toujours, avec l'aiguille qu'il garde plantée dans le bras.
-        { qui: "rosy", texte: "Enfin — Doudou la refera. Il les refait toutes." },
-        { qui: "bob", texte: "Il les refait toutes." },
+        { qui: "rosy", texte: "Tu as de la terre partout. Et de l'herbe dans le dos." },
+        { qui: "rosy", texte: "Doudou va te brosser. Il va râler, et il va te brosser quand même." },
+        { qui: "bob", texte: "Il râle jamais." },
+        { qui: "rosy", texte: "..." },
+        { qui: "rosy", texte: "Non." },
     ]);
 }
 

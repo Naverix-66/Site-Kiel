@@ -1519,11 +1519,12 @@ function majLaSaisie() {
 function parlerPendantLEnvol() {
 
     lancerDialogue([
-        // ⚠️ Klara n'a JAMAIS recousu personne (Evan). Celui qui répare,
-        // ici, c'est Doudou — il a une aiguille plantée dans le bras
-        // depuis le premier jour, et c'est lui qui recoud le pyjama de
-        // Samsam à l'épilogue.
-        { texte: "Le bec s'est refermé sur son épaule. Pas sur son bras : sur la couture de son épaule, celle que Doudou a reprise deux fois." },
+        // ⚠️ BOB N'A JAMAIS ÉTÉ DÉCOUSU (Evan). Aucune couture, aucune
+        // réparation, aucune cicatrice sur lui : il est entier, et il
+        // l'est resté. Les seules coutures du jeu sont celles de
+        // Doudou, qui vient de loin, et celle que Doudou refait au
+        // pyjama de Samsam à l'épilogue.
+        { texte: "Le bec se referme sur son épaule. Pas sur son bras : sur l'épaule gauche, celle où Klara pose la main quand elle le prend." },
         { qui: "bob", texte: "!!" },
         { texte: "Là, en dessous : l'herbe haute, la veilleuse couchée qui brille, les vélos bleus, la plaque d'égout. Tout ça rétrécit." },
         { texte: "Bob ne se débat pas. Il attrape le bec à deux pattes, et il tient." },
