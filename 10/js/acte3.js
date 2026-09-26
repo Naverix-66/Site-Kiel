@@ -1529,13 +1529,16 @@ function majLeSonDeLaFacade() {
 
     if (typeof volumeDeBoucle !== "function" || !son.ctx) return;
 
-    // La musique du dehors dès qu'Evan aura posé son fichier dans
-    // assets/sounds/dehors.mp3 ; celle de l'appartement en attendant.
+    // La musique du dehors (Patterns_On_The_Glass, reçue le 27/09).
     if (typeof musiqueDuDehors === "function") musiqueDuDehors(true);
 
-    const fort = rafaleEnCours() ? 1 : 0.45;
+    // ⚠️ Le vent HORS RAFALE et la nuit ont baissé d'un cran : ils
+    // étaient au même niveau que la musique et la mangeaient. Pendant
+    // une rafale, en revanche, le vent reprend tout : c'est lui le
+    // danger, et il doit couvrir le reste.
+    const fort = rafaleEnCours() ? 1 : 0.34;
     volumeDeBoucle("vent", fort);
-    volumeDeBoucle("nuit", 0.4);
+    volumeDeBoucle("nuit", 0.3);
 
     // La corde travaille quand elle file : elle grince, d'autant
     // plus souvent qu'on descend vite.

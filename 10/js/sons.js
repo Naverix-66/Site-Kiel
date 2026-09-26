@@ -89,13 +89,22 @@ const SONS = {
        niveau est exactement celui du début (0,047 contre 0,043), donc
        le raccord ne s'entend pas.
 
-       ⚠️ volume: 0,15 et pas 0,3. Les deux morceaux ont le même
-       niveau à l'enregistrement (RMS 0,20 tous les deux) : à 0,3, le
-       dehors aurait été deux fois et demie plus fort que le dedans —
-       et Evan avait déjà dit que la musique couvrait tout. Un quart
-       au-dessus de l'appartement suffit à ce qu'on sente le
-       changement. */
-    dehors:         { fichier: "Patterns_On_The_Glass.mp3", debut: 0, fin: 172, volume: 0.15 },
+       ⚠️ depart: 36. C'EST LA LIGNE QUI COMPTE. Evan : « on n'entend
+       pas assez la 2e musique ». Ce n'était pas le volume : relevé
+       seconde par seconde, le morceau a trente-six secondes d'intro
+       très douce (0,04 puis 0,10 puis 0,16) avant d'atteindre son
+       niveau, 0,24. On démarrait donc la façade sur le passage le
+       plus effacé de tout le morceau. Maintenant on entre en plein
+       dedans, et l'intro ne revient qu'au tour suivant — dans deux
+       minutes seize, comme une respiration.
+
+       ⚠️ volume: 0,20 et pas 0,3. Les deux morceaux ont le même
+       niveau à l'enregistrement (RMS 0,20) : à 0,3, le dehors aurait
+       été deux fois et demie plus fort que le dedans, et Evan avait
+       déjà dit une fois que la musique couvrait tout. À 0,20, en
+       entrant à 36 s, il est nettement au-dessus de l'appartement
+       sans écraser le vent ni les cris de Bluey. */
+    dehors:         { fichier: "Patterns_On_The_Glass.mp3", debut: 0, fin: 172, depart: 36, volume: 0.20 },
     pluie:          { fichier: "wind_trough_window.mp3", debut: 1.2, volume: 0.2, vitesse: 1.6 },
 
     // ---- l'acte II ----
@@ -334,6 +343,14 @@ function demarrerBoucle(nom, volume) {
     source.loopStart = def.debut || 0;
     source.loopEnd = def.fin || tampon.duration;
 
+    /* « depart » : où l'on ENTRE dans le morceau, qui n'est pas
+       forcément là où il BOUCLE. Un morceau qui commence par une
+       longue intro douce s'entend à peine pendant sa première minute,
+       alors qu'il boucle très bien par ailleurs — c'est exactement le
+       cas de la musique du dehors. On entre donc en plein dedans, et
+       l'intro ne revient qu'au tour suivant, comme une respiration. */
+    const depart = def.depart === undefined ? source.loopStart : def.depart;
+
     // Un fondu d'entrée de deux secondes : rien ne doit démarrer d'un coup.
     const gain = son.ctx.createGain();
     const cible = def.volume * (volume === undefined ? 1 : volume);
@@ -342,7 +359,7 @@ function demarrerBoucle(nom, volume) {
 
     source.connect(gain);
     gain.connect(son.maitre);
-    source.start(0, source.loopStart);
+    source.start(0, depart);
 
     son.boucles[nom] = { source: source, gain: gain };
     return son.boucles[nom];

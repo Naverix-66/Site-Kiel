@@ -68,16 +68,28 @@ const MOT_DE_LA_FIN = [
     "",
     "",
     "",
-    "Personne, ici, ne peut marcher.",
-    "Personne ne peut parler, ni descendre douze mètres le long",
-    "d'un mur, ni tenir tête à une mouette de Kiel.",
+    "Klara, chacun de ces doudous te remercient...",
     "",
-    "Mais tout le monde, ici, t'attend.",
-    "Tous les jours. Depuis le début.",
+    "Ils te remercient d'etre aussi douce, aussi gentille",
+    "Aussi attentionnée et tendre avec eux.",
+    "",
+    "Il y a 4 années, toi et moi on a pris une décision mon ange :",
+    "Celle de se faire passer avant tout les autres",
+    "Et regarde nous, 4ans après, séparés par 1600km de distance.",
+    "Et notre amour qui grandi jour après jour, pour plus tard fonder une famille",
     "",
     "",
+    "Notre couple est un exemple pour pleins de gens, parce qu'on a des bases solides",
+    "(Et aussi parce qu'on est les meilleurs)",
     "",
-    "Il y a quatre ans, un 8 octobre.",
+    "",
+    "Merci pour tous ces moments ou j'ai rigolé, pleuré de joie, esperé, avec toi",
+    "Ce sont ces moments la, ceux du quotidient auquels on apportait pas tant d'importance",
+    "Qui me manques le plus...",
+    "",
+    "",
+    "On v y arriver mon ange, la l'amour est plus fort que la distance <3",
+    "Je t'aime plus que tout au monde.",
     "",
 ];
 
@@ -943,7 +955,7 @@ function construireLeTexteDeLaFin() {
 
     MOT_DE_LA_FIN.forEach(function (ligne, i) {
         const o = add([
-            text(ligne, { size: taille, width: Math.min(width() - 50, 760), align: "center" }),
+            text(ligne, { size: taille, width: Math.min(width() - 36, 980), align: "center" }),
             pos(width() / 2, height() + 60 + i * pas),
             anchor("center"),
             fixed(),
@@ -1038,7 +1050,7 @@ function majLeTexteDeLaFin() {
 
     FIN.lignes.forEach(function (o) {
         o.textSize = taille;
-        o.width = Math.min(width() - 50, 760);
+        o.width = Math.min(width() - 36, 980);   // les phrases d'Evan sont longues : on leur donne la place
         o.pos = vec2(width() / 2, y);
 
         // Elles apparaissent en bas et s'effacent en haut : jamais de

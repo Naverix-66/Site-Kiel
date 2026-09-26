@@ -2538,8 +2538,11 @@ function texteDAide() {
 function majLeSonDeLaCour() {
     if (typeof volumeDeBoucle !== "function" || !son.ctx) return;
     if (typeof musiqueDuDehors === "function") musiqueDuDehors(true);
-    volumeDeBoucle("vent", combat.phase >= 3 ? 0.22 : 0.35);
-    volumeDeBoucle("nuit", 0.5);
+    // Le vent et la nuit laissent la place à la musique du dehors :
+    // ils étaient au même niveau qu'elle, et à eux deux ils la
+    // couvraient exactement.
+    volumeDeBoucle("vent", combat.phase >= 3 ? 0.16 : 0.26);
+    volumeDeBoucle("nuit", 0.34);
 }
 
 

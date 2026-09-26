@@ -564,9 +564,11 @@ function majLaCameraDuNid() {
 function majLeSonDuNid() {
     if (typeof volumeDeBoucle !== "function" || !son.ctx) return;
     if (typeof musiqueDuDehors === "function") musiqueDuDehors(true);
-    // On est à douze mètres du sol, dans un arbre, au bord de la mer.
-    volumeDeBoucle("vent", 0.6);
-    volumeDeBoucle("nuit", 0.3);
+    // On est à douze mètres du sol, dans un arbre, au bord de la mer :
+    // c'est l'endroit le plus venté du jeu. Mais pas au point de
+    // couvrir la musique, alors on a baissé d'un cran.
+    volumeDeBoucle("vent", 0.44);
+    volumeDeBoucle("nuit", 0.22);
 }
 
 
