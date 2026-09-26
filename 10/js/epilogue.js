@@ -258,7 +258,7 @@ function installerEpilogue() {
 function objectifEpilogue() {
     if (!saitQue("epi_arrive")) return "";
     if (!saitQue("epi_gateau")) return "Il ne manque plus personne.";
-    if (!saitQue("epi_veilleuse")) return "Il manque encore une lumière.";
+    if (!saitQue("epi_veilleuse")) return "Quelque chose a tapé contre la vitre.";
     if (!saitQue("epi_elastique")) return "Le 8 octobre a commencé.";
     return "Il reste le pétale.";
 }
@@ -787,7 +787,7 @@ function laPhotoEstPrete() {
 }
 
 
-const DEFILEMENT_FIN = 24;        // pixels par seconde
+const DEFILEMENT_FIN = 30;        // pixels par seconde
 const INTERLIGNE_FIN = 1.7;
 
 

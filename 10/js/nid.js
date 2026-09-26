@@ -257,12 +257,15 @@ function peindreLaCourDenBas(ctx, alea) {
     }
 
     // Les couronnes des autres arbres de la cour, vues de dessus.
-    for (let i = 0; i < 160; i++) {
+    // Petites et peu contrastées : douze mètres plus bas, dans le noir,
+    // ça ne fait que des masses. Un gros disque bien net là-dedans
+    // ressemble à une bulle posée sur l'image, pas à un arbre.
+    for (let i = 0; i < 190; i++) {
         const x = alea() * NID.L;
-        const y = y0 + 6 + alea() * (y1 - y0 - 20);
+        const y = y0 + 6 + alea() * (y1 - y0 - 24);
         const k = 1 - (y - y0) / (y1 - y0);
-        const c = alea() > 0.9 ? COUL_NID.feuilleRousse : COUL_NID.arbreLoin;
-        disque(ctx, x, y, 5 + alea() * 16, [c[0], c[1], c[2], 0.35 + k * 0.4]);
+        const c = alea() > 0.94 ? COUL_NID.feuilleRousse : COUL_NID.arbreLoin;
+        disque(ctx, x, y, 4 + alea() * 9, [c[0], c[1], c[2], 0.22 + k * 0.3]);
     }
 
     // La veilleuse, couchée dans l'herbe, minuscule. Elle est encore
@@ -1359,13 +1362,26 @@ function dessinerLeRebordDeDevant() {
 }
 
 
+/* Le point doré au-dessus de ce qu'on peut toucher : le même qu'au
+   premier acte (interactions.js). Il a juste un halo en plus — dans
+   le nid, le fond est presque noir, et une pastille couleur vieil or
+   posée dessus se confond avec les brindilles. */
 function dessinerLIndicateurDuNid() {
     if (!nid.cible) return;
     const x = xDeLaChose(nid.cible);
     const y = NID.sol - 62 + Math.sin(time() * 3) * 3;
-    drawCircle({ pos: vec2(x, y), radius: 5, color: rgb(...COULEUR_OR) });
+    const bat = 0.6 + Math.abs(Math.sin(time() * 2.4)) * 0.4;
+
+    for (let i = 3; i >= 1; i--) {
+        drawCircle({
+            pos: vec2(x, y), radius: 5 + i * 5,
+            color: rgb(...COULEUR_OR), opacity: 0.07 * bat,
+        });
+    }
+    drawCircle({ pos: vec2(x, y), radius: 6, color: rgb(...COULEUR_OR) });
+    drawCircle({ pos: vec2(x - 1.6, y - 1.6), radius: 2, color: rgb(252, 244, 222) });
     drawCircle({
-        pos: vec2(x, y), radius: 5,
+        pos: vec2(x, y), radius: 6,
         fill: false, outline: { width: 2, color: rgb(...COULEUR_ENCRE) },
     });
 }

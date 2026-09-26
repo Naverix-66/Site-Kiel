@@ -1876,17 +1876,19 @@ function dessinerLaMenace() {
 
         // La colonne : c'est elle qu'on voit du coin de l'œil, même
         // sur un téléphone tenu à bout de bras.
+        const hautColonne = COUR.horizon - 40;
+        const hauteurColonne = COUR.sol - hautColonne + 14;
         drawRect({
-            pos: vec2(x - 23, COUR.horizon - 10), width: 46, height: COUR.sol - COUR.horizon + 14,
-            color: couleur, opacity: (0.05 + battement * 0.05) * force,
+            pos: vec2(x - 23, hautColonne), width: 46, height: hauteurColonne,
+            color: couleur, opacity: (0.07 + battement * 0.07) * force,
         });
         drawRect({
-            pos: vec2(x - 23, COUR.horizon - 10), width: 1.5, height: COUR.sol - COUR.horizon + 14,
-            color: couleur, opacity: (0.18 + battement * 0.2) * force,
+            pos: vec2(x - 23, hautColonne), width: 1.5, height: hauteurColonne,
+            color: couleur, opacity: (0.26 + battement * 0.28) * force,
         });
         drawRect({
-            pos: vec2(x + 22, COUR.horizon - 10), width: 1.5, height: COUR.sol - COUR.horizon + 14,
-            color: couleur, opacity: (0.18 + battement * 0.2) * force,
+            pos: vec2(x + 22, hautColonne), width: 1.5, height: hauteurColonne,
+            color: couleur, opacity: (0.26 + battement * 0.28) * force,
         });
 
         // Le cercle dans l'herbe.
