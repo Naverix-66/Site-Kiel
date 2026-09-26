@@ -140,6 +140,10 @@ let objetifFond = null;
 
 function creerObjectif() {
 
+    // Une scène neuve : l'ancien bandeau d'aide est mort avec
+    // l'ancienne, et l'inventaire n'a plus à l'éviter.
+    bandeauDAide = null;
+
     // Un bandeau sombre DERRIÈRE le texte, et pas seulement du
     // texte clair : le sol est du parquet clair, et sans ce fond
     // la ligne disparaît dès que Bob marche sur une lame claire.
@@ -204,14 +208,50 @@ function placerObjectif() {
     objetifFond.opacity = objetifAffiche.text === "" ? 0 : 0.6;
 }
 
-// Le bord gauche et le bas de la pastille d'objectif, en pixels
+// Les deux bords et le bas de la pastille d'objectif, en pixels
 // d'écran — ou null si elle est vide. L'inventaire s'en sert pour
-// ne jamais écrire par-dessus (inventaire.js).
+// ne jamais écrire par-dessus (inventaire.js). Il lui faut les DEUX
+// bords : à l'acte IV la liste passe à droite, et un inventaire qui
+// ne surveille que le bord gauche écrit alors pile dans l'objectif.
 function basDeLObjectif() {
     if (!objetifFond || objetifFond.opacity === 0) return null;
     return {
         gauche: objetifFond.pos.x - objetifFond.width / 2,
+        droite: objetifFond.pos.x + objetifFond.width / 2,
         y: objetifFond.pos.y + objetifFond.height,
+    };
+}
+
+
+/* ------------------------------------------------------------
+   LE SECOND BANDEAU
+   ------------------------------------------------------------
+   Les actes IV et V affichent une ligne d'aide juste sous
+   l'objectif. Elle est dans leur fichier, pas ici — mais
+   l'inventaire, lui, doit l'éviter comme il évite l'objectif,
+   sinon la moitié de « Une baguette cassée (pointue) » disparaît
+   sous une pastille opaque.
+
+   L'acte en cours le déclare à chaque image (ou le retire en
+   passant null), et l'inventaire lit l'encombrement TOTAL du haut
+   de l'écran. Une seule direction de dépendance : l'inventaire ne
+   sait rien des actes, et les actes ne touchent pas l'inventaire.
+   ------------------------------------------------------------ */
+let bandeauDAide = null;
+
+function poserBandeauDAide(zone) {
+    bandeauDAide = zone;
+}
+
+function encombrementDuHaut() {
+    const o = basDeLObjectif();
+    const a = bandeauDAide;
+    if (!o) return a || null;
+    if (!a) return o;
+    return {
+        gauche: Math.min(o.gauche, a.gauche),
+        droite: Math.max(o.droite, a.droite),
+        y: Math.max(o.y, a.y),
     };
 }
 
@@ -522,6 +562,15 @@ function installerStudio() {
     preparerInteractions();
     inventaire.aDroite = false;
     preparerInventaire();
+
+    // L'ÉPILOGUE rejoue cette même scène avec un autre casting et
+    // d'autres dialogues (epilogue.js). Le décor, Bob, la nuit, la
+    // caméra, les zones : tout le reste est identique, et c'est
+    // exactement le but — le jeu se referme sur son premier geste.
+    if (typeof epilogueEnCours === "function" && epilogueEnCours()) {
+        installerEpilogue();
+        return;
+    }
 
     installerCasting(CASTING_STUDIO);
     installerDecor(DECOR_STUDIO);

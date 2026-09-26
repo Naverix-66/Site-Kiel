@@ -140,10 +140,16 @@ function placerInventaire() {
         plusLarge = Math.max(plusLarge, l.fond.width);
     });
 
+    // La colonne descend SOUS la ligne d'objectif dès qu'une de ses
+    // pastilles la toucherait — et le bord à surveiller n'est pas le
+    // même selon le côté où vit la liste.
     let haut = INVENTAIRE_MARGE;
-    const bas = typeof basDeLObjectif === "function" ? basDeLObjectif() : null;
-    if (bas && INVENTAIRE_MARGE + plusLarge + 8 > bas.gauche) {
-        haut = bas.y + 8;
+    const bas = typeof encombrementDuHaut === "function" ? encombrementDuHaut() : null;
+    if (bas) {
+        const gene = inventaire.aDroite
+            ? (width() - INVENTAIRE_MARGE - plusLarge - 8 < bas.droite)
+            : (INVENTAIRE_MARGE + plusLarge + 8 > bas.gauche);
+        if (gene) haut = bas.y + 8;
     }
 
     // À l'acte IV, la liste passe à DROITE : le coin haut-gauche de

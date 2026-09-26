@@ -509,3 +509,104 @@ function peindreLePremierPlan(ctx, alea) {
 
 
 loadSprite("cour_fond", peindreLaCour());
+
+
+/* ============================================================
+   CADRER UNE ARÈNE — la cour, et plus tard le nid
+   ============================================================
+   Les deux décors vus de côté sont des tableaux plus larges que
+   hauts. Sur un écran d'ordinateur, on les montre EN ENTIER et la
+   caméra ne bouge pas : c'est le choix d'Evan, et il est juste —
+   on voit d'un seul coup d'œil la distance entre Bob, tout en
+   bas, et le petit carré jaune, tout en haut.
+
+   Mais sur le téléphone de Klara, tenu debout, « tout montrer »
+   donne une arène haute comme un timbre au milieu de deux grandes
+   bandes noires. Mesuré : 375 x 812, l'arène tombe à 375 x 276.
+   Injouable, et surtout moche.
+
+   Alors, et SEULEMENT dans ce cas-là :
+     - on grossit jusqu'à ce qu'une largeur utile remplisse
+       l'écran ;
+     - la caméra suit Bob, bornée aux bords du décor ;
+     - et on remplit ce qui dépasse de la toile avec du ciel en
+       haut et du sombre en bas, pour qu'il n'y ait jamais, jamais
+       de bande noire.
+
+   Sur grand écran, rien ne change : zoomTout l'emporte, la caméra
+   reste au centre, et il n'y a rien à remplir.
+   ============================================================ */
+function cadrerLArene(L, H, cibleX, largeurMini) {
+
+    const zoomTout = Math.min(width() / L, height() / H);
+    const zoomLisible = Math.min(height() / H, width() / largeurMini);
+    const zoom = Math.max(zoomTout, zoomLisible);
+    setCamScale(zoom);
+
+    const demi = width() / (2 * zoom);
+    const demiH = height() / (2 * zoom);
+
+    let x = L / 2;
+    if (demi < L / 2) x = Math.max(demi, Math.min(L - demi, cibleX));
+
+    let y = H / 2;
+    if (demiH < H / 2) y = Math.max(demiH, Math.min(H - demiH, H / 2));
+
+    return { zoom: zoom, x: x, y: y, demi: demi, demiH: demiH };
+}
+
+
+/* Ce qui dépasse de la toile : du ciel au-dessus, du sombre en
+   dessous et sur les côtés. À appeler EN PREMIER dans le onDraw.
+
+   ⚠️ En DÉGRADÉ, et pas en aplat. Un grand rectangle d'une seule
+   couleur au-dessus du décor, ça ne se lit pas comme un ciel : ça se
+   lit comme un bug d'affichage. Le dégradé, lui, passe inaperçu, et
+   c'est tout ce qu'on lui demande. */
+function remplirAutourDeLArene(cadre, L, H, ciel, sombre) {
+
+    const g = cadre.x - cadre.demi - 4;
+    const d = cadre.x + cadre.demi + 4;
+    const h = cadre.y - cadre.demiH - 4;
+    const b = cadre.y + cadre.demiH + 4;
+    const l = d - g;
+
+    const bandes = 24;
+
+    if (h < 0) {
+        // plus on monte, plus la nuit est profonde
+        const hauteur = -h / bandes;
+        for (let i = 0; i < bandes; i++) {
+            const y = h + hauteur * i;
+            const k = 1 - (i / bandes);
+            drawRect({
+                pos: vec2(g, y), width: l, height: hauteur + 1,
+                color: melangerVersNoir(ciel, k * 0.55),
+            });
+        }
+    }
+
+    if (b > H) {
+        const hauteur = (b - H) / bandes;
+        for (let i = 0; i < bandes; i++) {
+            const y = H + hauteur * i;
+            const k = i / bandes;
+            drawRect({
+                pos: vec2(g, y), width: l, height: hauteur + 1,
+                color: melangerVersNoir(sombre, k * 0.7),
+            });
+        }
+    }
+
+    if (g < 0) drawRect({ pos: vec2(g, h), width: -g, height: b - h, color: melangerVersNoir(sombre, 0.35) });
+    if (d > L) drawRect({ pos: vec2(L, h), width: d - L, height: b - h, color: melangerVersNoir(sombre, 0.35) });
+}
+
+
+function melangerVersNoir(couleur, k) {
+    return rgb(
+        Math.round(couleur.r * (1 - k)),
+        Math.round(couleur.g * (1 - k)),
+        Math.round(couleur.b * (1 - k))
+    );
+}

@@ -189,6 +189,11 @@ const MANCHES_BLUEY = ["bluey_1", "bluey_2", "bluey_3"];
 function objectifCourant() {
 
     if (!saitQue("ouverture")) return "";
+    // Les actes suivants passent AVANT : le plus récent d'abord, sinon
+    // la ligne du haut resterait bloquée sur l'acte I.
+    if (typeof epilogueEnCours === "function" && epilogueEnCours()) {
+        return objectifEpilogue();                     // epilogue.js
+    }
     if (saitQue("acte2")) return objectifActeII();     // acte2.js
     if (!saitQue("fenetre_vue")) return "Fermer la fenêtre.";
 
@@ -232,6 +237,10 @@ function rafraichirBulles() {
     if (typeof effacerToutesLesBulles !== "function") return;
     effacerToutesLesBulles();
 
+    if (typeof epilogueEnCours === "function" && epilogueEnCours()) {
+        bullesEpilogue();                              // epilogue.js
+        return;
+    }
     if (saitQue("acte2")) { bullesActeII(); return; }   // acte2.js
     if (!saitQue("bluey_ok")) { marquerDuNeuf("bluey", saitQue("fenetre_vue")); return; }
     if (!saitQue("miroir")) return;

@@ -170,20 +170,162 @@ et lumineux, ici c'est bleu, froid, immense, vertical.
   de la veilleuse, grande comme un ongle. Un cri de mouette, très haut dans un
   arbre. Carton « Fin de l'acte III ».
 
-### Acte IV — Le boss : **La Mouette** *(arène)*
+
+### Acte IV — Le boss : **La Mouette** *(arène, vue de côté)*
 Kiel est un port. Les mouettes y sont énormes et sans aucune pitié.
-Son nid est **en haut d’un arbre de la cour intérieure**, plein de choses brillantes.
+Son nid est **en haut d'un arbre de la cour intérieure**, plein de choses brillantes.
 Rosy est dedans.
-Combat en phases : elle plonge, elle crie, elle lâche des trucs.
 
-### Épilogue
-Bob remonte Rosy à l'aube. Tout le monde applaudit.
-Et **là seulement**, Bob sort ce qu'il avait préparé pour le 8 octobre.
+**CODÉ** (`js/cour.js` pour l'arène, `js/acte4.js` pour l'acte, `js/nid.js`
+pour le nid) :
 
-Dernier écran : le pixel art s'efface sur **une vraie photo d'Evan et Klara**.
+- **UNE SEULE TOUCHE : ESPACE.** Evan : « je savais pas que Bob pouvait se
+  protéger, on devrait mettre une touche unique. » Gauche/droite pour marcher
+  (flèches, QD, AD, ou le joystick du reste du jeu), ESPACE **tenu** pour lever
+  le couvercle, ESPACE **appuyé** pour frapper. ESPACE ne fait jamais deux
+  choses à la fois : dès qu'un coup est possible, le couvercle ne se lève plus
+  et le mot à côté du bouton change. Le joueur n'a jamais à choisir une touche,
+  seulement un moment.
+- **ET SURTOUT : ON VOIT OÙ ÇA VA TOMBER.** Evan : « j'ai pas bien compris le
+  combat, c'est tellement vague. » Le combat était juste, mais invisible. Tout ce
+  qui va arriver est maintenant dessiné AU SOL, avant d'arriver :
+  une colonne de lumière et un cercle dans l'herbe à l'endroit exact du piqué,
+  **doré** quand Bob n'est pas dedans, **rouge** quand il l'est, avec un « ! »
+  au-dessus de sa tête. Et un arc rouge devant la mouette au sol, qui montre la
+  portée de son coup d'aile. En phase 1 le cercle suit Bob **en retard** : c'est
+  toute la règle du combat, montrée au lieu d'être écrite.
+- **Le tout premier piqué arrête le jeu** : elle reste figée en l'air, le cercle
+  est sous les yeux du joueur, et Doudou dit la règle une seule fois. C'est le
+  moment qui décide si Klara comprend ou pas.
+- **Phase 1 — L'OMBRE.** Elle tombe là où Bob était il y a une seconde. Esquiver,
+  ou lever le couvercle et ne plus bouger. Le couvercle **bloque toujours**
+  (règle d'Evan : Klara ne peut pas se sentir mauvaise), mais il est LOURD :
+  Bob ne le tient que deux secondes. ⚠️ Ses bras ne fatiguent jamais PENDANT une
+  attaque — sinon le couvercle pouvait retomber à l'image exacte du contact, et
+  on se faisait toucher en se protégeant. Levé tôt : CLONG, elle rebondit. Levé
+  tard : **DONG**, elle s'écrase au sol, et c'est la seule ouverture de l'acte.
+  Au cinquième piqué, elle ne vise plus Bob : elle vise **le dé qui brille sur sa
+  tête**, et elle l'emporte.
+- **Phase 2 — LE PHARE, et son prix** (décision d'Evan). Cakey fait descendre la
+  veilleuse de Klara au bout de la rallonge, au milieu de la cour. Le prix se
+  VOIT : la seule chose chaude de tout l'écran — le petit carré jaune tout en
+  haut à gauche — **s'éteint**. À partir de là ils crient dans le noir.
+  Le faisceau balaie l'herbe, et la mouette tombe dans la lumière : « reste hors
+  de la lumière » est une règle qu'on n'a pas eu besoin d'écrire. Retournement :
+  **lever le couvercle la ramène sur soi**, parce qu'il brille plus que la
+  veilleuse. Le bouclier devient un appât, et c'est au joueur de choisir quand.
+  Au bout de cinq piqués elle s'en prend à la lampe : le fil grince, il casse, la
+  veilleuse tombe dans l'herbe **encore allumée**, et la cour se retrouve éclairée
+  à plat, avec des ombres immenses.
+- **Phase 3 — AU SOL.** Elle se pose. Ailes fermées, **elle est plus petite que
+  Bob** (c'est mesuré : 37 px contre 43) — et une seconde plus tard elle ouvre,
+  et elle fait deux fois sa largeur. Elle lui prend le couvercle au passage, sans
+  même l'arracher. Bob sort la baguette. Elle crie avant chaque coup d'aile ;
+  reculer jusqu'au mur ne sert à rien, il faut **passer derrière elle** — elle
+  met un temps fou à se retourner. Trois coups de baguette, et le troisième est
+  écrit d'avance : elle se décale, la baguette tape la grille de cave et **casse
+  en deux**. Le bout cassé est pointu. Beaucoup plus pointu que la baguette ne
+  l'a jamais été.
+- **Phase 4 — ELLE L'EMPORTE.** Le paiement de la phrase de Doudou à l'ouverture
+  (« Je n'ai jamais choisi le chemin, j'ai juste tenu bon pendant qu'on
+  m'emmenait »). Bob ne monte pas à l'arbre : il se fait emmener. La cour
+  rétrécit sous lui pendant qu'on lit.
+- **Jamais de mort, et jamais de blocage.** Les phases 1 et 2 comptent des
+  piqués, pas des réussites : elles avancent toutes seules. La phase 3 est la
+  seule qui demande de réussir — alors Doudou réexplique au bout de quatre
+  balayages, puis de neuf, et à partir de douze elle met nettement plus de temps
+  à se rattraper. Le joueur finira toujours par passer, et il ne saura jamais
+  qu'on l'a aidé.
+- **Vérifié par simulation** (horloge factice, image par image, six
+  comportements) : immobile = touché 5 fois sur 5 ; va-et-vient = 0 touche ;
+  couvercle tenu = 5 CLONG, 0 touche ; couvercle levé pendant le piqué = 4 DONG,
+  0 touche ; au sol en fuyant toujours = elle finit quand même par arriver ;
+  au sol en frappant = la baguette casse en vingt secondes.
+- **Le cadrage** : sur un écran d'ordinateur, l'arène est FIXE et on la voit en
+  entier — on lit d'un coup d'œil la distance entre Bob et la petite fenêtre
+  jaune. Sur le téléphone de Klara, tenu debout, « tout montrer » donnait une
+  arène haute comme un timbre entre deux bandes noires (mesuré : 375 x 276) :
+  elle grossit donc de moitié, la caméra suit Bob, et ce qui dépasse de la toile
+  est rempli par un ciel et une ombre en dégradé — jamais de bande noire.
+
+### Le nid *(`js/nid.js`)*
+La scène la plus calme du jeu, juste après la plus bruyante. Elle se joue
+**exactement comme l'acte I** : on marche à gauche et à droite, un point doré
+flotte au-dessus de ce qu'on peut toucher, un verbe s'écrit à côté du bouton, on
+appuie. Le jeu se referme sur le geste avec lequel il a commencé.
+
+- **Du sommet de l'arbre, on voit Kiel** : les toits à pignons, un clocher avec
+  son horloge, trois grues de chantier naval avec leur petite lumière rouge, et
+  derrière, **l'eau**. Bob n'a jamais vu la ville de Klara. Il la voit, et elle
+  est en train de se réveiller.
+- **Vingt-trois choses brillent dans le nid, et aucune n'est à elle.** Une
+  barrette, un trombone, un morceau de verre bleu poli par la mer, une boucle
+  d'oreille **seule** — « ça veut dire qu'il y a quelqu'un, en bas, qui a
+  l'autre. » Bob ne prend rien d'autre que ce qui est à lui : le dé, le couvercle.
+- **Rosy est prise dans un fil de fer.** Un fil de fleuriste, celui qu'on serre
+  autour d'un bouquet. Personne ne le dit à voix haute : Rosy tient une rose
+  depuis le premier jour du jeu. Elle s'inquiète pour tout le monde avant de
+  s'inquiéter pour elle, et sa première question est : « Est-ce que quelqu'un a
+  pensé à fermer la fenêtre ? »
+- **C'est la baguette CASSÉE qui coupe le fil.** Filet de sécurité : si une
+  partie rechargée au mauvais moment privait Bob de tout, il prend l'éclat de
+  verre du tas. Il n'y a pas de nid sans sortie.
+- **LE PÉTALE** (décision d'Evan). La mouette revient se mettre entre eux et le
+  bord. Bob n'a plus rien : il pose le pétale par terre, devant elle. « Il brille
+  pas. Mais il est doux, et tu n'en as pas. » Elle recule d'un pas, et le passage
+  est libre. Puis, au bord du nid, **Bob revient le prendre, sous son regard.**
+  Elle ne bouge pas. « Il n'est pas à moi. Je le rapporte à quelqu'un chaque
+  matin. Ça fait quatre ans. » C'est là qu'elle arrête d'être un monstre, et on
+  ne l'explique nulle part.
+
+### Le retour, et la corde *(retour dans `js/acte4.js`)*
+Elle les prend tous les deux et les descend le long du mur. **Le pyjama de Samsam
+pend là depuis le début de l'acte, quarante-quatre pixels au-dessus de la tête de
+Bob, dans le décor, et personne ne l'a jamais montré du doigt.** Une fenêtre de
+huit dixièmes de seconde pour l'attraper — et si on la rate, elle fait demi-tour
+et repasse. Jamais de mort, même à la dernière image du dernier acte.
+
+« JE TE TIENS. » C'est Samsam qui le dit. Celui qui ne se lève jamais est celui
+qui rattrape. Et la corde monte : pas parce que Bob grimpe, parce que quelqu'un
+de très gros tire.
+
+### Épilogue *(`js/epilogue.js`)*
+**CODÉ.** Il se joue dans l'appartement, en vue de dessus, avec la ligne
+d'objectif en haut et le bouton « parler à » en bas : c'est la scène de l'acte I,
+telle quelle, avec un autre casting et d'autres dialogues.
+
+1. **La rentrée.** Six pattes tirent Bob et Rosy par la fenêtre. Doudou est assis
+   contre le mur avec une aiguille et un bout de pyjama, et il ne lève pas les
+   yeux : « Ferme la fenêtre, mon grand. » Samsam a une couture neuve, un peu de
+   travers. Klara n'a rien entendu.
+2. **LE GÂTEAU.** Cakey compte : Bluey, Fraisy, Doudou, Samsam, Rosy, Bob. Six.
+   C'est la première fois depuis minuit qu'elle arrive au bout de sa liste. Et
+   comme Samsam ne peut pas venir, **c'est le gâteau qui va à Samsam** : elle
+   traverse la pièce et le pose par terre, à côté de sa tête. Personne ne fait
+   remarquer qu'elle vient de déplacer la fête de trois mètres pour quelqu'un qui
+   n'avait rien demandé.
+3. **LA VEILLEUSE REVIENT.** Pas par eux — ils ne peuvent pas descendre. **Par
+   elle.** Elle la pose sur l'appui de la fenêtre, debout, encore allumée, et
+   elle s'en va. « Elle a dit merci ?! » — « Non, Bluey. Elle a rendu. » Bob la
+   rebranche, et le studio redevient jaune.
+4. **L'ÉLASTIQUE.** Rosy a fait une crêpe (Sylt). Bob sort ce qu'il gardait depuis
+   trois semaines : un élastique rouge à liseré doré. « Je lui ai dit : un joli. »
+   — « je lui en ai trouvé quatorze. » Pendant ce temps Doudou emmène Bluey
+   raconter un train qui roule sur la mer.
+5. **LE PÉTALE**, sur la table de nuit, dans le rond plus clair de la poussière.
+   « Bonjour, Klara. Il s'est rien passé cette nuit. » Puis tout le monde retourne
+   à sa place, sans rien dire, parce que c'est une chose qu'ils savent faire.
+
+**Le mot de la fin** (`scene("fin")`) : le texte défile sur une vraie photo — et
+tant qu'elle n'est pas là, sur la façade de l'immeuble au lever du jour, avec la
+fenêtre de Klara allumée. La dernière carte reste : **« Joyeux 4 ans, Klara. »**
+
+⚠️ **Le texte est tout en haut de `js/epilogue.js`, dans `MOT_DE_LA_FIN`.**
+Une chaîne = une ligne, une chaîne vide = un blanc. Celui qui y est parle du jeu
+et pas de vous deux, exprès : c'est à Evan de dire ça.
+⚠️ **La photo va dans `10/assets/photos/nous.jpg`.** Rien d'autre à faire.
 
 ---
-
 ## Le casting
 
 Voir `js/personnages.js` pour les voix — le contrat d'écriture de chacun.
@@ -259,6 +401,9 @@ et un vrai jeu :
 1. **Vue de dessus** — l'appartement, l'exploration, les dialogues (Actes I-II)
 2. **Vue de côté** — la descente en rappel (Acte III)
 3. **Arène** — le combat contre la Mouette (Acte IV)
+4. **Et retour au 1** — le nid, puis l'épilogue, se rejouent avec la grammaire
+   de l'acte I : marcher, un verbe, un bouton. Le jeu se referme sur son
+   premier geste, et il n'y a rien de neuf à apprendre à la dernière minute.
 
 ---
 
@@ -294,5 +439,22 @@ et un vrai jeu :
   Manque : **Moin** (il n'existe qu'en texte).
 - La vraie couleur des rideaux de Klara (le rideau tombé est crème pour l'instant).
 - ~~Cakey appâte la mouette avec son gâteau~~ → **NON, décidé par Evan.**
-  Cakey ne partage JAMAIS son gâteau avec la mouette.
-- Le texte exact de la fin, et la photo finale.
+  Cakey ne partage JAMAIS son gâteau avec la mouette. (Et elle ne le partage pas
+  non plus à l'épilogue : elle le DÉPLACE, pour que Samsam en ait.)
+
+### Ce qui attend Evan, et rien d'autre
+
+1. **LE TEXTE DE LA FIN.** `js/epilogue.js`, tout en haut, `MOT_DE_LA_FIN`.
+   Une chaîne entre guillemets = une ligne à l'écran, une chaîne vide = un blanc.
+   Ce qui est écrit là est provisoire et parle du jeu, pas de vous deux :
+   c'est à toi de dire ça. La dernière carte (« Joyeux 4 ans, Klara. ») est
+   juste en dessous, dans `DERNIER_MOT`, et elle reste à l'écran sans s'en aller.
+2. **LA PHOTO.** `10/assets/photos/nous.jpg`. Rien d'autre à faire : le jeu la
+   prend tout seul. Tant qu'elle n'y est pas, la fin se joue sur la façade de
+   l'immeuble au lever du jour — c'est déjà juste, mais ce n'est pas vous.
+   (Tant qu'elle manque, la console affiche un 404 sur ce fichier. C'est normal :
+   c'est comme ça qu'on sait qu'elle n'est pas là, et ça ne casse rien.)
+3. **LA MUSIQUE DU DEHORS.** `10/assets/sounds/dehors.mp3`. Pareil : dès qu'elle
+   est là, la façade, la cour et le nid la prennent à la place de la musique de
+   l'appartement.
+4. **MOIN.** Il n'existe encore qu'en texte.
