@@ -203,6 +203,7 @@ const descente = {
    ============================================================ */
 scene("facade", function () {
 
+    oublierLeDialogue();
     charger();
 
     // Samsam a donné son pyjama à la fin de l'acte II : il est au

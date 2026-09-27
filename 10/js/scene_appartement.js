@@ -428,6 +428,7 @@ function poserMeubles(piece) {
    ============================================================ */
 scene("appartement", (nomDeLaPiece) => {
 
+    oublierLeDialogue();
     const piece = PIECES[nomDeLaPiece];
     const taille = dimensionsDeLaPiece(piece);
 

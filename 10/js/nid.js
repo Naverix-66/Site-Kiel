@@ -479,6 +479,7 @@ const nid = {
    ============================================================ */
 scene("nid", function () {
 
+    oublierLeDialogue();
     charger();
     APPARENCES.samsam = "samsam_sans_pyjama";
     preparerLesSons();
@@ -542,6 +543,8 @@ function remettreLeNid() {
     nid.rosy.tremble = 0;
     nid.oiseau.x = NID.L + 70;
     nid.oiseau.posee = false;
+    nid.oiseau.rapporte = false;
+    nid.oiseau.recule = false;
     nid.oiseau.vers = -1;
     nid.petale = null;
     nid.fil = 1;
@@ -669,13 +672,11 @@ const CHOSES_DU_NID = [
     },
 
     {
-        cle: "petale", x: 0,      // il n'existe que posé : x suit nid.petale
-        verbe: function () {
-            if (!nid.petale) return null;
-            if (nid.etape !== "repris") return null;
-            return "Reprendre la pétale";
-        },
-        action: reprendreLePetale,
+        // La pétale n'est plus une chose à cliquer : c'est ELLE qui
+        // vient la rendre, au bord du nid (voir reprendreLePetale).
+        cle: "petale", x: 0,
+        verbe: function () { return null; },
+        action: function () { },
     },
 
     {
@@ -690,7 +691,7 @@ const CHOSES_DU_NID = [
             // repartir. Ce n'est pas une punition : c'est la seule
             // façon d'être sûr que Klara voie Bob revenir le
             // chercher, et c'est le meilleur moment de l'acte.
-            if (nid.etape === "repris") return nid.petale ? null : "Repartir";
+            if (nid.etape === "repris") return "Repartir";
             return null;
         },
         action: allerAuBord,
@@ -981,7 +982,11 @@ function parlerARosyDansLeNid() {
 function allerAuBord() {
 
     if (nid.etape === "libre") { elleRevient(); return; }
-    if (nid.etape === "repris" && !nid.petale) { repartir(); return; }
+    if (nid.etape !== "repris") return;
+    // Au bord, si la pétale est encore par terre chez elle, c'est
+    // qu'elle n'est pas encore venue la rendre. Elle vient.
+    if (nid.petale) { reprendreLePetale(); return; }
+    repartir();
 }
 
 
@@ -1028,7 +1033,7 @@ function offrirLePetale() {
         { qui: "bob", texte: "Viens." },
     ], function () {
         nid.etape = "repris";
-        if (typeof objectif === "function") objectif("Tu as laissé quelque chose.");
+        if (typeof objectif === "function") objectif("Repartir.");
         nid.aide = time() + 16;
     });
 }
@@ -1046,16 +1051,31 @@ function poserLePetale() {
    ------------------------------------------------------------
    Sous son regard. Elle ne bouge pas. On n'explique rien.
    ------------------------------------------------------------ */
+/* ⚠️ CE N'EST PLUS BOB QUI LA REPREND : C'EST ELLE QUI LA REND.
+   Evan : « j'aime que Bob donne la pétale à la mouette, mais c'est
+   pas très cohérent qu'il lui donne et que direct après il la
+   récupère ». Exact — ça annulait le don.
+
+   Alors le don reste entier, et c'est ELLE qui revient la poser
+   devant lui. Une pétale ne brille pas : elle n'en veut pas, et elle
+   le fait savoir de la seule façon qu'elle connaît. C'est aussi ce
+   qu'elle fera à l'épilogue avec la veilleuse — elle ne donne pas,
+   elle RÉPARE. On ne l'explique nulle part. */
 function reprendreLePetale() {
 
     lancerDialogue([
-        { texte: "Bob s'arrête au bord du nid." },
-        { texte: "Il regarde la pétale posée dans les brindilles. Il regarde la mouette. Il revient sur ses pas." },
-        { qui: "rosy", texte: "Bob, non—" },
-        { texte: "Il se baisse et il ramasse la pétale.", quand: ramasserLePetale },
+        { texte: "Ils sont au bord. Derrière eux, quelque chose remue dans les brindilles." },
+        { qui: "rosy", texte: "Bob—" },
+        { texte: "Elle avance. Elle a la pétale dans le bec.", quand: elleRapporteLaPetale },
+        { texte: "Elle la pose par terre, devant les pattes de Bob, et elle recule d'un pas.", quand: elleReposeLaPetale },
+        { qui: "bob", texte: "..." },
+        { qui: "bob", texte: "Tu en veux pas ?" },
+        { texte: "Elle penche la tête." },
+        { qui: "bob", texte: "Elle brille pas. C'est ça ?" },
         { texte: "Elle est à trente centimètres. Elle pourrait fermer le bec une fois et ce serait fini." },
         { texte: "Elle ne bouge pas." },
-        { qui: "bob", texte: "Pardon." },
+        { texte: "Bob se baisse et il ramasse la pétale.", quand: ramasserLePetale },
+        { qui: "bob", texte: "Merci." },
         { qui: "bob", texte: "Elle n'est pas à moi." },
         // ⚠️ C'EST ICI QU'ON EXPLIQUE LA PÉTALE, et nulle part ailleurs.
         // Evan : « j'ai pas compris qu'il fallait mettre la pétale sur
@@ -1077,6 +1097,21 @@ function reprendreLePetale() {
     ], function () {
         if (typeof objectif === "function") objectif("Repartir.");
     });
+}
+
+
+function elleRapporteLaPetale() {
+    nid.oiseau.rapporte = true;          // elle marche vers Bob avec
+    nid.petale = null;                   // la pétale est dans son bec
+    if (typeof jouerSon === "function") jouerSon("moin", { volume: 0.25 });
+}
+
+
+function elleReposeLaPetale() {
+    nid.oiseau.rapporte = false;
+    nid.oiseau.recule = true;
+    nid.petale = { x: nid.bob.x + 22 * nid.bob.vers, y: NID.sol - 3 };
+    if (typeof sonSynthe === "function") sonSynthe("tok", 0.2);
 }
 
 
@@ -1139,11 +1174,21 @@ function quitterLeNid() {
    LA MOUETTE, DANS LE NID
    ============================================================ */
 function majLaMouetteDuNid() {
+
     const o = nid.oiseau;
     if (!o.posee) return;
-    // Elle glisse jusqu'à sa place, puis elle ne bouge plus. C'est
+
+    // Elle vient rendre la pétale, puis elle recule. C'est le seul
+    // moment où elle s'approche de son plein gré.
+    if (o.rapporte) {
+        o.x += ((nid.bob.x + 40 * nid.bob.vers) - o.x) * Math.min(1, dt() * 1.5);
+        o.vers = nid.bob.x < o.x ? -1 : 1;
+        return;
+    }
+
+    // Sinon elle glisse jusqu'à sa place, et elle ne bouge plus. C'est
     // son immobilité qui est inquiétante, pas ses mouvements.
-    const vise = nid.etape === "repris" || nidTermine()
+    const vise = o.recule || nid.etape === "repris" || nidTermine()
         ? NID.bord.droite + 52
         : NID.bord.droite + 6;
     o.x += (vise - o.x) * Math.min(1, dt() * 1.6);

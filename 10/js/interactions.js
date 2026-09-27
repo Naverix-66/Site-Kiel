@@ -61,13 +61,40 @@ function preparerInteractions() {
     // ---- l'indicateur qui flotte au-dessus de l'objet ----
     // Il vit dans le MONDE (pas de fixed) : il doit rester
     // accroché à l'objet quand la caméra bouge.
+    /* Le point doré, celui qui flotte au-dessus de ce qu'on peut
+       toucher. Evan : « j'aime bien comment t'as fait le point doré
+       dans le nid, possible de faire le même pour tout le jeu ? ».
+
+       Trois morceaux qui bougent ensemble : un halo qui respire, la
+       pastille d'or cerclée d'encre, et un éclat clair en haut à
+       gauche. Sur un parquet clair comme sur des brindilles noires,
+       il se voit — une pastille couleur vieil or toute seule se
+       confondait avec la moitié du décor. */
+    ui.halo = add([
+        circle(15),
+        pos(0, 0),
+        anchor("center"),
+        z(Z_INTERFACE - 11),
+        color(...COULEUR_OR),
+        opacity(0),
+    ]);
+
     ui.indicateur = add([
-        circle(5),
+        circle(6),
         pos(0, 0),
         anchor("center"),
         z(Z_INTERFACE - 10),
         color(...COULEUR_OR),
         outline(2, rgb(...COULEUR_ENCRE)),
+        opacity(0),
+    ]);
+
+    ui.eclat = add([
+        circle(2),
+        pos(0, 0),
+        anchor("center"),
+        z(Z_INTERFACE - 9),
+        color(252, 244, 222),
         opacity(0),
     ]);
 
@@ -356,8 +383,14 @@ function majInteractions(bob) {
             : Math.max(meilleure.haut + 6, Math.min(meilleure.bas - 6, bob.pos.y));
     }
 
-    ui.indicateur.pos = vec2(ix, iy + flottement);
+    const centre = vec2(ix, iy + flottement);
+    const bat = 0.6 + Math.abs(Math.sin(time() * 2.4)) * 0.4;
+    ui.indicateur.pos = centre;
     ui.indicateur.opacity = 1;
+    ui.halo.pos = centre;
+    ui.halo.opacity = 0.16 * bat;
+    ui.eclat.pos = centre.add(vec2(-1.8, -1.8));
+    ui.eclat.opacity = 0.9;
 
     ui.bouton.opacity = 0.9;
     ui.pointBouton.opacity = 1;
@@ -387,6 +420,8 @@ function majInteractions(bob) {
 function cacherInterfaceAction() {
     const ui = interactions.ui;
     ui.indicateur.opacity = 0;
+    ui.halo.opacity = 0;
+    ui.eclat.opacity = 0;
     ui.bouton.opacity = 0;
     ui.pointBouton.opacity = 0;
     ui.etiquette.opacity = 0;

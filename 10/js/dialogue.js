@@ -100,6 +100,37 @@ function echelleInterface() {
 /* ============================================================
    lancerDialogue(repliques, quandFini)
    ============================================================ */
+/* ============================================================
+   oublierLeDialogue() — à appeler au DÉBUT de chaque scène
+   ============================================================
+   ⚠️ L'objet « dialogue » est global : il survit au changement de
+   scène, alors que ses objets graphiques, eux, meurent avec elle.
+   Une scène quittée pendant qu'une boîte était ouverte laissait
+   donc dialogue.actif à true, avec une interface fantôme — et
+   lancerDialogue REFUSE poliment de s'ouvrir par-dessus un
+   dialogue déjà actif.
+
+   Résultat, constaté par Evan à la fin de l'acte IV : on arrivait
+   dans l'appartement sans une réplique, sans objectif, et Bob ne
+   bougeait plus, puisque tout le jeu croyait qu'on était en train
+   de lire quelque chose.
+
+   On ne détruit rien ici : les objets sont déjà partis avec la
+   scène. On remet juste l'état à zéro.
+   ============================================================ */
+function oublierLeDialogue() {
+    dialogue.actif = false;
+    dialogue.ui = null;
+    dialogue.repliques = [];
+    dialogue.index = -1;
+    dialogue.choix = null;
+    dialogue.zonesChoix = [];
+    dialogue.quandFini = null;
+    dialogue.ecouteurs = [];
+    dialogue.verrou = 0;
+}
+
+
 function lancerDialogue(repliques, quandFini) {
 
     // Deux dialogues en même temps, c'est toujours un bug d'appel.

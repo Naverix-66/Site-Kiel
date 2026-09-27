@@ -199,6 +199,7 @@ const combat = {
         vx: 0, vy: 0,
         vers: -1,         // -1 = elle regarde à gauche
         coups: 0,         // coups de baguette reçus (phase 3)
+        porte: null,      // ce qu'elle a dans le bec : "de" | "couvercle"
     },
 
     piques: 0,            // piqués de la phase 1
@@ -225,6 +226,7 @@ const combat = {
    ============================================================ */
 scene("cour", function () {
 
+    oublierLeDialogue();
     charger();
 
     // Samsam est sans pyjama depuis la fin de l'acte I : son pyjama
@@ -279,6 +281,7 @@ scene("cour", function () {
         dessinerLaLampe();
         dessinerLaMenace();
         dessinerLOiseau();
+        dessinerCeQuElleEmporte();
         dessinerBobDansLaCour();
         dessinerLesPlumes();
         dessinerLaPluieDeLaCour();
@@ -378,6 +381,7 @@ function remettreLeCombat() {
     combat.oiseau.vy = 0;
     combat.oiseau.vers = -1;
     combat.oiseau.coups = 0;
+    combat.oiseau.porte = null;
 
     combat.piques = 0;
     combat.piquesPhare = 0;
@@ -651,6 +655,7 @@ function majLaScene() {
     if (s.nom === "grimpe") majLaSceneDeLArbre();
     else if (s.nom === "de") majLaSceneDuDe();
     else if (s.nom === "lampe") majLaSceneDeLaLampe();
+    else if (s.nom === "vol_couvercle") majLaSceneDuVolDuCouvercle();
 }
 
 
@@ -774,10 +779,40 @@ function majLaSceneDuDe() {
         secouer(0.35);
         lacherDesPlumes(b.x, b.y - 44, 5, 0.6);
     }
-    o.etat = "emporte";                  // elle remonte avec
+    /* ⚠️ « vol » et pas « emporte ». Evan : « elle a ça dans la
+       bouche, ça ressemble pas au casque ». La pose « emporte » de sa
+       planche tient quelque chose de MOU et de rose — c'est parfait
+       quand elle emporte Bob, et ça ne ressemble à rien quand elle
+       emporte un dé à coudre. Alors elle vole normalement, et on
+       peint le dé à son bec (voir dessinerCeQuElleEmporte). */
+    o.etat = "vol";
+    combat.oiseau.porte = "de";
     o.x += (COUR.nid.x - o.x) * Math.min(1, dt() * 1.7);
     o.y += ((COUR.nid.y + 34) - o.y) * Math.min(1, dt() * 1.7);
     o.vers = 1;
+}
+
+
+/* Ce qu'elle a dans le bec, peint à la main par-dessus sa planche.
+   Le bec est au bord avant de la case, à peu près aux deux tiers de
+   sa hauteur. */
+function dessinerCeQuElleEmporte() {
+
+    const o = combat.oiseau;
+    if (!o.porte) return;
+
+    const x = o.x + (o.vers < 0 ? -26 : 26);
+    const y = o.y - 24;
+
+    if (o.porte === "de") {
+        drawRect({ pos: vec2(x - 4, y - 7), width: 8, height: 8, color: rgb(178, 172, 160) });
+        drawRect({ pos: vec2(x - 4, y - 7), width: 8, height: 2, color: rgb(214, 210, 200) });
+        drawRect({ pos: vec2(x - 3, y - 6), width: 6, height: 5, color: rgb(140, 134, 124) });
+    } else if (o.porte === "couvercle") {
+        drawEllipse({ pos: vec2(x, y - 2), radiusX: 12, radiusY: 4, color: rgb(150, 152, 156) });
+        drawEllipse({ pos: vec2(x, y - 3), radiusX: 9, radiusY: 2.6, color: rgb(196, 198, 202) });
+        drawEllipse({ pos: vec2(x - 3, y - 4), radiusX: 3, radiusY: 1, color: rgb(230, 232, 236) });
+    }
 }
 
 
@@ -1388,7 +1423,7 @@ function majLesMomentsDuCombat() {
 function direLaRegle() {
     if (typeof objectif !== "function") return;
     if (combat.phase <= 1) objectif("Elle tombe là où tu étais il y a une seconde.");
-    else if (combat.phase === 2) objectif("Elle va vers ce qui brille.");
+    else if (combat.phase === 2) objectif("Elle ne te vise plus : elle vise la lumière. Tiens.");
     else if (combat.phase === 3) objectif("Elle est à terre. Passe derrière elle.");
     else objectif("");
 }
@@ -1531,9 +1566,17 @@ function leRideauDuPhare() {
         { qui: "fraisy", texte: "C'EST MOI QUI LA FAIS TOURNER ! enfin — c'est Cakey qui tient, mais c'est moi qui pousse. c'est presque pareil." },
         { qui: "doudou", texte: "Mon grand. Elle ira vers la lumière." },
         { qui: "doudou", texte: "Alors ne sois pas dedans." },
+        { qui: "bob", texte: "Et je gagne comment ?" },
+        // ⚠️ Evan : « j'ai pas compris si je dois l'attirer, la sonner
+        // et la frapper pour gagner ». On répond franchement : il n'y
+        // a rien à gagner dans cette phase. Il n'y a qu'à tenir.
+        { qui: "doudou", texte: "Tu ne gagnes pas." },
+        { qui: "doudou", texte: "Tu tiens. Elle finira par en avoir assez de cette lampe, et ce jour-là elle descendra s'en occuper elle-même." },
+        { qui: "doudou", texte: "C'est à ce moment-là que tout change. Jusque-là, reste hors de la lumière, et respire." },
         { qui: "bob", texte: "Et si je lève le couvercle ?" },
         { qui: "doudou", texte: "..." },
-        { qui: "doudou", texte: "Alors c'est toi qui brilleras le plus." },
+        { qui: "doudou", texte: "Alors c'est toi qui brilleras le plus, et elle viendra sur toi." },
+        { qui: "doudou", texte: "Ça ne te fera pas avancer. Mais ça te fera un couvercle qui sonne, et un moment de tranquillité." },
         { qui: "bob", texte: "Bien." },
         { qui: "bob", texte: "Comme ça je saurai quand." },
     ], function () {
@@ -1635,9 +1678,10 @@ function elleSePose() {
         { texte: "D'un seul coup elle prend deux fois plus de place que lui, et le vent de ses ailes plaque l'herbe jusqu'aux pieds de Bob.", quand: leGrandDeploiement },
         { qui: "bluey", texte: "..." },
         { qui: "bluey", texte: "je la vois plus. je vois plus Bob." },
-        { texte: "Elle avance. Le couvercle argenté brille au bras de Bob, à hauteur de son bec, et c'est la chose la plus brillante qui reste dans cette cour." },
+        { texte: "Elle avance. Le couvercle argenté brille au bras de Bob, à hauteur de son bec, et c'est la chose la plus brillante qui reste dans cette cour.", quand: elleAvanceSurLeCouvercle },
         { texte: "Elle le prend. Elle ne le lui arrache même pas : elle le décroche, comme on prend une assiette sur une table.", quand: perdreLeCouvercle },
-        { texte: "On l'entend tomber dans le nid, tout en haut. Un bruit de casserole, très loin." },
+        { texte: "Elle remonte le poser chez elle, et elle redescend aussitôt." },
+        { texte: "On l'entend tomber dans le nid, tout en haut. Un bruit de casserole, très loin.", quand: elleRevientSansLeCouvercle },
         { qui: "bob", texte: "..." },
         { qui: "bob", texte: "D'accord." },
         { texte: "Bob sort la baguette de l'élastique de son short." },
@@ -1648,10 +1692,13 @@ function elleSePose() {
         { qui: "doudou", texte: "Elle crie avant. Elle crie toujours avant." },
         { qui: "doudou", texte: "Ne recule pas jusqu'au mur. Passe derrière elle — elle met un temps fou à se retourner." },
     ], function () {
+        combat.scene = null;
         reprendreLeCombat();          // avant de régler ses minuteries
         passerALaPhase(3);
         combat.oiseau.etat = "avance";
         combat.oiseau.coups = 0;
+        combat.oiseau.porte = null;
+        combat.oiseau.y = COUR.sol;
         combat.oiseau.jusqua = time() + 0.8;
         combat.aide = time() + 24;
         lesVoixSeTaisent();
@@ -1677,10 +1724,66 @@ function leGrandDeploiement() {
 }
 
 
+/* ------------------------------------------------------------
+   Elle prend le couvercle — et on le voit (Evan : « anime aussi
+   quand elle vole le bouclier »). Trois temps, calés sur trois
+   répliques : elle avance à portée, elle le décroche, elle monte
+   le ranger chez elle et redescend.
+   ------------------------------------------------------------ */
+function elleAvanceSurLeCouvercle() {
+    jouerLaScene("vol_couvercle");
+    combat.scene.etape2 = 0;
+}
+
+
 function perdreLeCouvercle() {
     donnerObjet("couvercle");
     combat.bob.couvercle = false;
+    combat.oiseau.porte = "couvercle";
+    if (combat.scene) combat.scene.monte = time();
+    secouer(0.3);
+    lacherDesPlumes(combat.bob.x + 14, combat.bob.y - 26, 4, 0.5);
     if (typeof sonSynthe === "function") sonSynthe("clang", 0.5);
+}
+
+
+function elleRevientSansLeCouvercle() {
+    if (combat.scene) combat.scene.redescend = time();
+    if (typeof sonSynthe === "function") sonSynthe("clang", 0.25);
+}
+
+
+function majLaSceneDuVolDuCouvercle() {
+
+    const o = combat.oiseau;
+    const b = combat.bob;
+    const s = combat.scene;
+
+    // 3. elle redescend, les pattes vides
+    if (s.redescend) {
+        o.porte = null;
+        o.etat = "vol";
+        o.vers = -1;
+        o.x += ((b.x + 105) - o.x) * Math.min(1, dt() * 2.2);
+        o.y += (COUR.sol - o.y) * Math.min(1, dt() * 2.2);
+        if (Math.abs(o.y - COUR.sol) < 4) { o.y = COUR.sol; o.etat = "avance"; }
+        return;
+    }
+
+    // 2. elle monte le ranger dans le nid
+    if (s.monte) {
+        o.etat = "vol";
+        o.vers = 1;
+        o.x += (COUR.nid.x - o.x) * Math.min(1, dt() * 1.9);
+        o.y += ((COUR.nid.y + 34) - o.y) * Math.min(1, dt() * 1.9);
+        return;
+    }
+
+    // 1. elle avance sur lui, ailes ouvertes, jusqu'à portée de bec
+    o.etat = "cri";
+    o.vers = b.x > o.x ? 1 : -1;
+    o.y = COUR.sol;
+    o.x += ((b.x + 30 * (o.x > b.x ? 1 : -1)) - o.x) * Math.min(1, dt() * 1.4);
 }
 
 
@@ -2032,6 +2135,11 @@ function majLeRetour() {
     }
 
     if (r.etape === "monte") {
+        // ⚠️ On attend que la boîte de dialogue soit refermée avant de
+        // changer de scène. Sinon on quittait la cour en plein texte,
+        // et l'appartement s'ouvrait avec un dialogue fantôme encore
+        // « actif » qui bloquait tout (voir oublierLeDialogue).
+        if (parle) return;
         r.voile = Math.min(1, r.voile + dt() * 0.5);
         if (r.voile >= 1 && !r.fini) {
             r.fini = true;

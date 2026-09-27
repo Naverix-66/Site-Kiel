@@ -680,6 +680,13 @@ function rosyALaFin() {
         { qui: "bluey", texte: "..." },
         { qui: "bluey", texte: "...d'accord." },
         { texte: "Bluey se tourne vers le mur. Il met même ses pattes sur ses yeux, ce que personne ne lui avait demandé." },
+        { texte: "Doudou regarde la fenêtre. Cakey regarde son gâteau. Samsam ferme les yeux." },
+        { texte: "Et au milieu du studio, plus personne ne regarde Bob et Rosy." },
+        { texte: "**smack**", quand: leSmack },
+        { qui: "bluey", texte: "C'ÉTAIT QUOI CE BRUIT ?!" },
+        { qui: "fraisy", texte: "rien. c'était le gâteau." },
+        { qui: "bluey", texte: "LE GÂTEAU FAIT PAS CE BRUIT-LÀ !!" },
+        { qui: "cakey", texte: "aujourd'hui, il fait tous les bruits qu'on veut." },
         { qui: "doudou", texte: "Viens par là, Bluey. Je vais te raconter un train qui roule sur la mer." },
         { qui: "bluey", texte: "...un train qui roule sur la MER ?!" },
         { qui: "doudou", texte: "Sur la mer. Vingt minutes. Il n'y a que de l'eau des deux côtés." },
@@ -702,6 +709,13 @@ function sortirLElastique() {
 function donnerLElastique() {
     donnerObjet("elastique");
     if (typeof jouerSon === "function") jouerSon("pop", { volume: 0.5 });
+}
+
+
+// Le seul bruit du jeu que personne n'est censé entendre.
+function leSmack() {
+    if (typeof jouerSon === "function") jouerSon("pop", { volume: 0.75, vitesse: 1.5 });
+    if (typeof sonSynthe === "function") sonSynthe("tinte", 0.35);
 }
 
 
@@ -940,6 +954,7 @@ function tailleDuTexteDeLaFin() {
 
 scene("fin", function () {
 
+    oublierLeDialogue();
     noter("fin_vue");
     sauvegarder();
     preparerLesSons();
