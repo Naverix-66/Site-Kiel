@@ -271,7 +271,7 @@ scene("cour", function () {
     onDraw(function () {
         if (combat.cadre) {
             remplirAutourDeLArene(combat.cadre, COUR.L, COUR.H,
-                rgb(20, 24, 38), rgb(12, 16, 14));
+                rgb(20, 24, 38), rgb(12, 16, 14), "cour_fond");
         }
         drawSprite({ sprite: "cour_fond", pos: vec2(0, 0), width: COUR.L, height: COUR.H });
         dessinerLaFenetreDeLoin();
@@ -329,7 +329,9 @@ function majLaCameraDeLaCour() {
     const suivi = combat.etat === "retour" || combat.etat === "envol"
         ? (combat.oiseau.x + combat.bob.x) / 2
         : combat.bob.x;
-    combat.cadre = cadrerLArene(COUR.L, COUR.H, suivi, 430);
+    // 62 -> 496 : du haut de la fenêtre de Klara au ras du chemin.
+    // Au-dessus il n'y a que du ciel, en dessous que du lierre.
+    combat.cadre = cadrerLArene(COUR.L, COUR.H, suivi, 430, 62, 496);
 
     const s = combat.secousse > 0 ? combat.secousse : 0;
     const tremble = s > 0 ? Math.min(1, s * 3) : 0;

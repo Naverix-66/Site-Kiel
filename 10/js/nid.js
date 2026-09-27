@@ -507,7 +507,7 @@ scene("nid", function () {
         if (nid.cadre) {
             remplirAutourDeLArene(nid.cadre, NID.L, NID.H,
                 rgb(COUL_NID.cielHaut[0], COUL_NID.cielHaut[1], COUL_NID.cielHaut[2]),
-                rgb(18, 15, 16));
+                rgb(18, 15, 16), "nid_fond");
         }
         drawSprite({ sprite: "nid_fond", pos: vec2(0, 0), width: NID.L, height: NID.H });
         dessinerLAubeDuNid();
@@ -556,7 +556,9 @@ function remettreLeNid() {
 function majLaCameraDuNid() {
     // Même règle qu'à la cour : tableau fixe sur grand écran, cadrage
     // qui suit Bob sur un téléphone (voir cadrerLArene, cour.js).
-    nid.cadre = cadrerLArene(NID.L, NID.H, nid.bob.x, 430);
+    // 0 -> 300 : du ciel au fond du nid. Le rebord de devant, en
+    // dessous, est du premier plan : il peut sortir du cadre.
+    nid.cadre = cadrerLArene(NID.L, NID.H, nid.bob.x, 430, 0, 300);
     setCamPos(nid.cadre.x, nid.cadre.y);
 }
 

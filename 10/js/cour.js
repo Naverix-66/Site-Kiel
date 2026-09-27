@@ -541,10 +541,50 @@ loadSprite("cour_fond", peindreLaCour());
    Sur grand écran, rien ne change : zoomTout l'emporte, la caméra
    reste au centre, et il n'y a rien à remplir.
    ============================================================ */
-function cadrerLArene(L, H, cibleX, largeurMini) {
+/* ⚠️ LA BOÎTE DE DIALOGUE MANGE LE BAS DE L'ÉCRAN.
+   Evan : « on ne voit pas les animations, la bulle de texte se pose
+   par-dessus ». Sur un écran large et peu haut, l'arène remplissait
+   toute la hauteur, la boîte couvrait ses trois cents derniers
+   pixels — et c'est exactement là que Bob marche.
 
-    const zoomTout = Math.min(width() / L, height() / H);
-    const zoomLisible = Math.min(height() / H, width() / largeurMini);
+   Dès qu'un dialogue s'ouvre, on recadre donc pour que TOUTE l'arène
+   tienne au-dessus de la boîte, et on la recentre dans ce qui reste.
+   Le recadrage est lissé sur une demi-seconde : un zoom qui saute à
+   chaque réplique serait pire que le problème.
+
+   Comme zoomTout et zoomLisible sont tous deux plafonnés par
+   libre/H, la hauteur tient toujours : il n'y a jamais de clamp
+   vertical à faire. */
+let basOccupe = 0;
+
+function placePriseParLeTexte() {
+    if (typeof dialogueEnCours !== "function" || !dialogueEnCours()) return 0;
+    if (typeof dialogue === "undefined" || !dialogue.boite) return 0;
+    return Math.max(0, height() - dialogue.boite.y);
+}
+
+
+/* haut / bas : la BANDE UTILE du décor, celle qu'il faut vraiment
+   voir. Pas toute la toile : dans la cour, les soixante premiers
+   pixels sont du ciel vide et les soixante derniers du lierre de
+   premier plan. Cadrer sur la toile entière pour laisser de la place
+   au texte réduisait l'arène à un timbre entouré de noir ; cadrer sur
+   la bande utile la garde grande. */
+function cadrerLArene(L, H, cibleX, largeurMini, haut, bas) {
+
+    const hautUtile = haut === undefined ? 0 : haut;
+    const basUtile = bas === undefined ? H : bas;
+    const utile = Math.max(80, basUtile - hautUtile);
+
+    const vise = placePriseParLeTexte();
+    const pas = Math.min(1, dt() * 3.2);
+    basOccupe += (vise - basOccupe) * (pas > 0 ? pas : 1);
+    if (Math.abs(vise - basOccupe) < 1) basOccupe = vise;
+
+    const libre = Math.max(140, height() - basOccupe);
+
+    const zoomTout = Math.min(width() / L, libre / utile);
+    const zoomLisible = Math.min(libre / utile, width() / largeurMini);
     const zoom = Math.max(zoomTout, zoomLisible);
     setCamScale(zoom);
 
@@ -554,10 +594,10 @@ function cadrerLArene(L, H, cibleX, largeurMini) {
     let x = L / 2;
     if (demi < L / 2) x = Math.max(demi, Math.min(L - demi, cibleX));
 
-    let y = H / 2;
-    if (demiH < H / 2) y = Math.max(demiH, Math.min(H - demiH, H / 2));
+    // On recentre la bande utile dans ce qui reste au-dessus du texte.
+    const y = (hautUtile + basUtile) / 2 + (height() / 2 - libre / 2) / zoom;
 
-    return { zoom: zoom, x: x, y: y, demi: demi, demiH: demiH };
+    return { zoom: zoom, x: x, y: y, demi: demi, demiH: demiH, libre: libre };
 }
 
 
@@ -568,13 +608,35 @@ function cadrerLArene(L, H, cibleX, largeurMini) {
    couleur au-dessus du décor, ça ne se lit pas comme un ciel : ça se
    lit comme un bug d'affichage. Le dégradé, lui, passe inaperçu, et
    c'est tout ce qu'on lui demande. */
-function remplirAutourDeLArene(cadre, L, H, ciel, sombre) {
+function remplirAutourDeLArene(cadre, L, H, ciel, sombre, toile) {
 
     const g = cadre.x - cadre.demi - 4;
     const d = cadre.x + cadre.demi + 4;
     const h = cadre.y - cadre.demiH - 4;
     const b = cadre.y + cadre.demiH + 4;
     const l = d - g;
+
+    /* Sur les CÔTÉS, on prolonge le décor au lieu de le noircir : on
+       étire sa toute première (et sa toute dernière) colonne de
+       pixels. Le ciel, les immeubles du fond et l'herbe continuent
+       donc tout seuls, sans bord net — un aplat sombre posé contre
+       l'arène se voyait comme une coupure. */
+    if (toile) {
+        if (g < 0) {
+            drawSprite({
+                sprite: toile, pos: vec2(g, 0), width: -g, height: H,
+                quad: quad(0, 0, 1 / L, 1),
+            });
+            drawRect({ pos: vec2(g, 0), width: -g, height: H, color: rgb(10, 12, 18), opacity: 0.35 });
+        }
+        if (d > L) {
+            drawSprite({
+                sprite: toile, pos: vec2(L, 0), width: d - L, height: H,
+                quad: quad((L - 1) / L, 0, 1 / L, 1),
+            });
+            drawRect({ pos: vec2(L, 0), width: d - L, height: H, color: rgb(10, 12, 18), opacity: 0.35 });
+        }
+    }
 
     const bandes = 24;
 
@@ -603,6 +665,8 @@ function remplirAutourDeLArene(cadre, L, H, ciel, sombre) {
         }
     }
 
+    // Sans toile à étirer, on se rabat sur un aplat sombre.
+    if (toile) return;
     if (g < 0) drawRect({ pos: vec2(g, h), width: -g, height: b - h, color: melangerVersNoir(sombre, 0.35) });
     if (d > L) drawRect({ pos: vec2(L, h), width: d - L, height: b - h, color: melangerVersNoir(sombre, 0.35) });
 }
