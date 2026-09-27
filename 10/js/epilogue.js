@@ -325,7 +325,7 @@ function assombrirLeStudio() {
         voileFroid.width = width();
         voileFroid.height = height();
         if (!saitQue("epi_veilleuse")) return;
-        voileFroid.opacity -= dt() * 0.16;
+        voileFroid.opacity -= dt() * 0.115;   // ~4 s, comme le fondu de la nuit
         if (voileFroid.opacity <= 0) destroy(voileFroid);
     });
 }
@@ -603,8 +603,21 @@ function poserLaVeilleuseALaFin() {
 }
 
 
+/* ⚠️ Evan : « quand on remet la lampe, la lumière de l'appart est
+   hyper forte, remets-la bien à la même que celle de l'acte I ».
+
+   Vérifié au pixel : l'état d'arrivée EST déjà celui de l'acte I —
+   même voile « nuit_studio », même opacité 1, un seul voile dans la
+   scène. Ce qui claquait, c'est la MARCHE : on passait de la pièce
+   volontairement très sombre (le voile froid, sans veilleuse) à la
+   nuit normale en deux secondes et demie, et l'œil lisait ça comme
+   un coup de projecteur.
+
+   Alors on étale : quatre secondes pour la nuit, quatre secondes
+   pour que le voile froid s'en aille, exactement en même temps. La
+   lumière revient comme elle est partie. */
 function rebrancherLaVeilleuse() {
-    changerDeNuit("nuit_studio", 2.5);
+    changerDeNuit("nuit_studio", 4);
     if (typeof jouerSon === "function") jouerSon("prise");
 }
 

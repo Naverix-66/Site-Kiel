@@ -2186,20 +2186,28 @@ function attraperLaCorde() {
         { qui: "bob", texte: "Je l'ai su tout du long." },
         { texte: "Et la corde se met à monter." },
         { texte: "Pas parce que Bob grimpe. Parce que tout en haut, quelqu'un de très gros, qui ne se lève jamais, tire." },
-        { texte: "Là-haut, le carré jaune se rallume. En grand, cette fois — quelqu'un a allumé le plafond.", quand: rallumerLaFenetre },
-        { qui: "cakey", texte: "on ne réveille plus personne, Bob. il est cinq heures." },
-        { qui: "cakey", texte: "et de toute façon." },
-        { qui: "cakey", texte: "de toute façon aujourd'hui, c'est le 8." },
+        /* ⚠️ PERSONNE N'ALLUME RIEN. Evan : « pourquoi ils allument la
+           lumière du plafond ?? ça a aucun sens ». Il a raison, et
+           c'est pire que ça : tout le jeu tient sur « ne pas réveiller
+           Klara ». Allumer le plafonnier à cinq heures du matin
+           annulerait quatre heures de précautions.
+
+           Ce qui rend la fenêtre visible, c'est le ciel. Elle ne
+           redevient pas jaune : elle devient grise, et on distingue à
+           nouveau cinq têtes dedans. */
+        { texte: "Là-haut, la fenêtre n'est plus tout à fait noire. Le ciel a commencé à la remplir par-derrière." },
+        { texte: "Cinq têtes penchées au-dessus du vide, et dix pattes sur l'appui." },
+        { qui: "cakey", texte: "on te voit, Bob." },
+        { qui: "cakey", texte: "on te voit très bien." },
     ], function () {
         if (typeof jouerSon === "function") jouerSon("revelation", { volume: 0.5 });
     });
 }
 
 
-function rallumerLaFenetre() {
-    combat.fenetre = 1;
-    if (typeof jouerSon === "function") jouerSon("prise");
-}
+// (La fenêtre ne se rallume jamais : c'est le jour qui la remplit.
+// Voir dessinerLaFenetreDeLoin, qui éclaircit les silhouettes au fur
+// et à mesure que combat.aube monte.)
 
 
 function laRemontee() {
@@ -2737,11 +2745,19 @@ function dessinerLaFenetreDeLoin() {
             sprite: apparenceDe(p.cle), frame: 0,
             pos: vec2(w.x + w.l * p.dx, sol + bouge),
             width: taille, height: taille, anchor: "bot",
-            opacity: 0.35 + allumee * 0.6,
+            // Fenêtre éteinte, ce sont des silhouettes — jusqu'à ce que
+            // le jour se lève derrière eux et les rende au monde. Rien
+            // ne s'allume dans cette pièce : Klara y dort.
+            opacity: Math.min(1, 0.32 + allumee * 0.6 + combat.aube * 0.45),
         };
-        // Éteinte, on les teinte en gris-nuit : il ne reste que des
-        // silhouettes, et c'est pire que de ne plus les voir du tout.
-        if (allumee <= 0) dessin.color = rgb(66, 64, 82);
+        if (allumee <= 0) {
+            const k = Math.min(1, combat.aube);
+            dessin.color = rgb(
+                Math.round(66 + k * 120),
+                Math.round(64 + k * 118),
+                Math.round(82 + k * 118)
+            );
+        }
         drawSprite(dessin);
     });
 
