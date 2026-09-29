@@ -407,7 +407,15 @@ function parlerAFraisyII() {
         return;
     }
 
-    if (saitQue("jus_ouvert")) {
+    /* ⚠️ « && saitQue("arme") » : sans lui, cette réponse passait AVANT
+       l'indice de l'évier et coupait tout le reste. Qui ouvrait le
+       frigo avant d'être venu demander une arme à Fraisy n'entendait
+       plus JAMAIS parler de la baguette : Fraisy partait boire avec
+       Samsam, et l'acte II devenait infinissable. (Evan, au test.)
+
+       La règle, ici comme ailleurs : la gorgée est un décor, l'indice
+       est le chemin. Le chemin passe devant. */
+    if (saitQue("jus_ouvert") && saitQue("arme")) {
         lancerDialogue([
             { qui: "fraisy", texte: "On le boit à deux, avec Samsam. Une gorgée chacun." },
             { qui: "fraisy", texte: "Bon. Deux pour moi, une pour lui. Il a dit oui." },

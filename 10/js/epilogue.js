@@ -122,7 +122,23 @@ OBJETS.elastique = { nom: "Un élastique rouge (un joli)" };
 /* ============================================================
    ENTRER DANS L'ÉPILOGUE
    ============================================================ */
+/* ⚠️ LE VERROU. Il est posé ici et lu par epilogueEnCours().
+
+   Sans lui, la seule chose qui disait « on est dans l'épilogue » était
+   un drapeau relu depuis localStorage par le charger() d'installerStudio().
+   Autrement dit : entre le moment où Bob repasse la fenêtre et celui où
+   l'appartement se rouvre, la réponse repassait par le disque. Tout ce
+   qui peut rater là — une écriture refusée, une sauvegarde plus vieille,
+   une adresse encore chargée d'un raccourci — et l'appartement se
+   rouvrait en ACTE II, avec « La suite arrive bientôt. » en haut et
+   personne à sa place. C'est l'écran qu'Evan a eu en remontant.
+
+   Une fois qu'on est entré dans l'épilogue pour de bon, plus rien ne
+   doit pouvoir le défaire dans cette partie. */
+let epilogueCommence = false;
+
 function commencerLEpilogue() {
+    epilogueCommence = true;
     memoire.acte = 5;
     noter("cour_finie");
     sauvegarder();
@@ -142,10 +158,19 @@ function commencerLEpilogue() {
    une porte neuve peut casser une porte ancienne.) */
 function epilogueEnCours() {
     if (typeof memoire === "undefined") return false;
+
+    // On y est entré pendant cette partie : aucune relecture du disque
+    // ni aucune adresse ne peut plus nous en faire sortir.
+    if (epilogueCommence) return true;
+
     if (typeof location !== "undefined" && /[?&](neuf|acte2)\b/.test(location.search)) {
         return false;
     }
-    return saitQue("cour_finie");
+
+    // « acte >= 5 » double le drapeau : la cour est finie, l'appartement
+    // ne peut plus être celui de l'acte II, même si les drapeaux relus
+    // sont incomplets.
+    return saitQue("cour_finie") || memoire.acte >= 5;
 }
 
 
@@ -987,9 +1012,9 @@ scene("fin", function () {
     // Tenir l'écran (ou une touche) fait défiler plus vite. On ne peut
     // pas SAUTER : c'est la seule chose du jeu qu'on ne peut pas
     // passer, et c'est voulu.
-    onTouchStart(function (p) { if (!toucheLeRetour(p)) FIN.doigt = true; });
-    onTouchEnd(function (p) { FIN.doigt = false; if (toucheLeRetour(p)) revenirAuCalendrier(); });
-    onMouseRelease(function () { if (toucheLeRetour(mousePos())) revenirAuCalendrier(); });
+    onTouchStart(function (p) { if (!surUnBouton(p)) FIN.doigt = true; });
+    onTouchEnd(function (p) { FIN.doigt = false; cliquerLesBoutonsDeLaFin(p); });
+    onMouseRelease(function () { cliquerLesBoutonsDeLaFin(mousePos()); });
 
     onUpdate(function () {
         setCamScale(1);
@@ -1066,6 +1091,28 @@ function construireLeTexteDeLaFin() {
         pos(0, 0), anchor("left"), fixed(), z(Z_INTERFACE + 62),
         color(...COULEUR_CREME), opacity(0),
     ]);
+
+    /* L'autre porte (Evan) : effacer la partie et tout revivre depuis
+       la première seconde. Elle est à l'autre bout de l'écran, et elle
+       arrive en même temps que la première.
+
+       ⚠️ EN DEUX TEMPS. Un seul appui effacerait quatre heures de jeu
+       sur un doigt posé de travers, et ça au moment précis où Klara
+       vient de lire la dernière ligne. Le premier appui demande, le
+       second fait. FIN.demandeRaz retombe tout seul au bout de cinq
+       secondes : une question qui reste à l'écran finit par être
+       répondue par accident. */
+    FIN.demandeRaz = 0;
+    FIN.ui.fondRaz = add([
+        rect(10, 10, { radius: 8 }),
+        pos(0, 0), anchor("right"), fixed(), z(Z_INTERFACE + 61),
+        color(...COULEUR_NUIT), opacity(0),
+    ]);
+    FIN.ui.raz = add([
+        text("Tout recommencer", { size: 15 }),
+        pos(0, 0), anchor("right"), fixed(), z(Z_INTERFACE + 62),
+        color(...COULEUR_CREME), opacity(0),
+    ]);
 }
 
 
@@ -1083,10 +1130,53 @@ function zoneDuRetour() {
 }
 
 
-function toucheLeRetour(p) {
-    const z = zoneDuRetour();
+function zoneDeLaRaz() {
+    const ui = FIN.ui;
+    if (!ui || !ui.raz || ui.raz.opacity < 0.5) return null;
+    const f = ui.fondRaz;
+    return {
+        x: f.pos.x - f.width, y: f.pos.y - f.height / 2,
+        l: f.width, h: f.height,
+    };
+}
+
+
+function dansLaZone(z, p) {
     if (!z || !p) return false;
     return p.x >= z.x && p.x <= z.x + z.l && p.y >= z.y && p.y <= z.y + z.h;
+}
+
+
+function toucheLeRetour(p) { return dansLaZone(zoneDuRetour(), p); }
+function toucheLaRaz(p) { return dansLaZone(zoneDeLaRaz(), p); }
+
+
+// Vrai si le doigt est posé sur l'un des deux boutons : dans ce cas il
+// ne doit PAS accélérer le défilement en même temps.
+function surUnBouton(p) { return toucheLeRetour(p) || toucheLaRaz(p); }
+
+
+/* Le seul endroit qui décide de ce que fait un appui sur l'écran de
+   fin. Deux boutons, une porte de sortie chacun, et rien qui puisse
+   partir tout seul. */
+function cliquerLesBoutonsDeLaFin(p) {
+
+    if (toucheLeRetour(p)) {
+        revenirAuCalendrier();
+        return;
+    }
+
+    if (!toucheLaRaz(p)) return;
+
+    // Premier appui : on demande. Second : on efface.
+    if (!FIN.demandeRaz || time() - FIN.demandeRaz > 5) {
+        FIN.demandeRaz = time();
+        if (typeof sonSynthe === "function") sonSynthe("tok", 0.45);
+        return;
+    }
+
+    FIN.demandeRaz = 0;
+    if (typeof recommencer === "function") recommencer();
 }
 
 
@@ -1157,6 +1247,23 @@ function majLeTexteDeLaFin() {
     ui.fondRetour.width = (ui.retour.width || 120) + 30;
     ui.fondRetour.height = (ui.retour.height || 18) + 18;
     ui.fondRetour.opacity = apparu * 0.55;
+
+    /* « Tout recommencer », en bas à droite, en même temps que l'autre.
+       Il est volontairement plus discret que la porte du calendrier :
+       c'est le geste qu'on fait exprès, pas celui qu'on fait en
+       partant. Quand il a été demandé une fois, il devient doré et
+       change de mot — on voit qu'on est en train de répondre à une
+       question, pas de cliquer deux fois sur un bouton. */
+    const enQuestion = !!FIN.demandeRaz && (time() - FIN.demandeRaz) <= 5;
+    ui.raz.text = enQuestion ? "Effacer la partie ?" : "Tout recommencer";
+    ui.raz.textSize = ui.retour.textSize;
+    ui.raz.pos = vec2(width() - 24, height() - 36);
+    ui.raz.opacity = apparu * (enQuestion ? 0.95 : 0.6);
+    ui.raz.color = enQuestion ? rgb(...COULEUR_OR) : rgb(...COULEUR_CREME);
+    ui.fondRaz.pos = vec2(width() - 14, height() - 36);
+    ui.fondRaz.width = (ui.raz.width || 120) + 30;
+    ui.fondRaz.height = (ui.raz.height || 18) + 18;
+    ui.fondRaz.opacity = apparu * (enQuestion ? 0.75 : 0.45);
 }
 
 

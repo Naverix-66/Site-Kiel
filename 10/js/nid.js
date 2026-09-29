@@ -1252,22 +1252,24 @@ function dessinerLAubeDuNid() {
 
 function dessinerLesChosesDuNid() {
 
-    // Le dé et le couvercle, tant qu'il ne les a pas repris. Ils sont
-    // dessinés ICI et pas dans le décor, parce qu'ils disparaissent.
+    /* Le dé et le couvercle, tant qu'il ne les a pas repris. Ils sont
+       dessinés ICI et pas dans le décor, parce qu'ils disparaissent.
+
+       ⚠️ AVEC LEUR VRAIE ICÔNE, pas des rectangles posés à la main.
+       Evan : « pour les objets par terre, utilise les assets non ? ».
+       Oui — et c'est la même image que celle de l'inventaire, à
+       gauche : on reconnaît au sol exactement ce qu'on a perdu.
+       (ICONES_OBJETS, planche assets/ui/objets.png, voir moteur.js.) */
     if (!aObjet("de")) {
-        const x = NID.choses.de, y = NID.sol - 2;
-        drawRect({ pos: vec2(x - 4, y - 8), width: 8, height: 8, color: rgb(178, 172, 160) });
-        drawRect({ pos: vec2(x - 4, y - 8), width: 8, height: 2, color: rgb(214, 210, 200) });
-        drawRect({ pos: vec2(x - 3, y - 7), width: 6, height: 5, color: rgb(140, 134, 124) });
-        etincelle(x + 3, y - 9, 0);
+        const x = NID.choses.de;
+        dessinerLObjetAuSol("de", x, 22);
+        etincelle(x + 8, NID.sol - 20, 0);
     }
 
     if (!aObjet("couvercle")) {
-        const x = NID.choses.couvercle, y = NID.sol - 2;
-        drawEllipse({ pos: vec2(x, y - 3), radiusX: 13, radiusY: 4.5, color: rgb(150, 152, 156) });
-        drawEllipse({ pos: vec2(x, y - 4), radiusX: 10, radiusY: 3, color: rgb(196, 198, 202) });
-        drawEllipse({ pos: vec2(x - 3, y - 5), radiusX: 3.5, radiusY: 1.2, color: rgb(230, 232, 236) });
-        etincelle(x - 8, y - 8, 1.3);
+        const x = NID.choses.couvercle;
+        dessinerLObjetAuSol("couvercle", x, 30);
+        etincelle(x - 14, NID.sol - 26, 1.3);
     }
 
     // Le pétale, posé dans les brindilles. Il ne brille pas. C'est
@@ -1289,6 +1291,35 @@ function dessinerLesChosesDuNid() {
     etincelle(NID.choses.tresor - 30, NID.sol - 10, 0.6);
     etincelle(NID.choses.tresor + 22, NID.sol - 8, 2.1);
     etincelle(NID.choses.tresor + 60, NID.sol - 11, 3.4);
+}
+
+
+/* ------------------------------------------------------------
+   Un objet posé dans les brindilles : son ombre, puis son icône.
+   ------------------------------------------------------------
+   « taille » est le côté de la case d'icône, en pixels. L'objet
+   peint dedans en occupe un peu moins : l'air autour vient tout
+   seul, sans avoir à le calculer. Repère : Bob fait 56.
+
+   Si la clé n'a pas d'icône sur la planche, on ne dessine RIEN
+   plutôt qu'un carré de secours — un objet fantôme au sol
+   enverrait Klara le chercher pour rien.
+   ------------------------------------------------------------ */
+function dessinerLObjetAuSol(cle, x, taille) {
+
+    const frame = (typeof ICONES_OBJETS !== "undefined") ? ICONES_OBJETS[cle] : undefined;
+    if (typeof frame !== "number") return;
+
+    drawEllipse({
+        pos: vec2(x, NID.sol + 1),
+        radiusX: taille * 0.34, radiusY: taille * 0.12,
+        color: rgb(0, 0, 0), opacity: 0.28,
+    });
+    drawSprite({
+        sprite: "icones_objets", frame: frame,
+        pos: vec2(x, NID.sol + 2),
+        width: taille, height: taille, anchor: "bot",
+    });
 }
 
 

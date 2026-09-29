@@ -804,15 +804,20 @@ function dessinerCeQuElleEmporte() {
     const x = o.x + (o.vers < 0 ? -26 : 26);
     const y = o.y - 24;
 
-    if (o.porte === "de") {
-        drawRect({ pos: vec2(x - 4, y - 7), width: 8, height: 8, color: rgb(178, 172, 160) });
-        drawRect({ pos: vec2(x - 4, y - 7), width: 8, height: 2, color: rgb(214, 210, 200) });
-        drawRect({ pos: vec2(x - 3, y - 6), width: 6, height: 5, color: rgb(140, 134, 124) });
-    } else if (o.porte === "couvercle") {
-        drawEllipse({ pos: vec2(x, y - 2), radiusX: 12, radiusY: 4, color: rgb(150, 152, 156) });
-        drawEllipse({ pos: vec2(x, y - 3), radiusX: 9, radiusY: 2.6, color: rgb(196, 198, 202) });
-        drawEllipse({ pos: vec2(x - 3, y - 4), radiusX: 3, radiusY: 1, color: rgb(230, 232, 236) });
-    }
+    /* La VRAIE icône de l'objet, la même que dans l'inventaire.
+       Evan : « elle a ça dans la bouche, ça ressemble pas au casque ».
+       Des rectangles peints à la main n'y ressemblaient pas davantage :
+       ce qu'il faut reconnaître dans son bec, c'est l'image qu'on a vue
+       en le ramassant. */
+    const taille = o.porte === "couvercle" ? 22 : 16;
+    const frame = (typeof ICONES_OBJETS !== "undefined") ? ICONES_OBJETS[o.porte] : undefined;
+    if (typeof frame !== "number") return;
+
+    drawSprite({
+        sprite: "icones_objets", frame: frame,
+        pos: vec2(x, y), width: taille, height: taille,
+        anchor: "center", flipX: o.vers < 0,
+    });
 }
 
 
@@ -1437,7 +1442,7 @@ function lePremierPique() {
         { texte: "Dans l'herbe, sous elle, un rond de lumière pâle. Il est exactement là où Bob se tenait il y a une seconde." },
         { qui: "bluey", texte: "POURQUOI ELLE S'ARRÊTE ?! POURQUOI ELLE S'ARRÊTE COMME ÇA ?!" },
         { qui: "doudou", texte: "Elle a déjà choisi, Bluey." },
-        { qui: "doudou", texte: "À Sylt, elle avait choisi la dame d'en face bien avant de descendre. Nous, on l'a vue viser. On n'a rien dit. On a serré nos crêpes." },
+        { qui: "doudou", texte: "À Sylt, elle avait choisi la dame qui venait en face bien avant de descendre. Nous, on l'a vue viser. On n'a rien dit. On a serré nos crêpes." },
         { qui: "doudou", texte: "Elle ne change jamais d'avis en route, mon grand. Elle tombe là où tu étais." },
         { qui: "bob", texte: "Alors il faut que je n'y sois plus." },
         { qui: "doudou", texte: "Oui." },
@@ -1516,7 +1521,7 @@ function elleEmporteLeDe() {
         { texte: "Elle repart en l'air, et elle se fige encore une fois. Mais cette fois elle ne regarde pas Bob." },
         { texte: "Elle regarde ce qui brille sur sa tête." },
         { qui: "bluey", texte: "ELLE REGARDE TA TÊTE !! BOB !! ELLE REGARDE TA TÊTE !!" },
-        { qui: "doudou", texte: "La dame qui était assise en face, à Sylt. Elle avait ses lunettes de soleil posées sur les cheveux." },
+        { qui: "doudou", texte: "La dame qui venait en face, à Sylt. Elle avait ses lunettes de soleil posées sur les cheveux." },
         { qui: "doudou", texte: "Elles brillaient. C'est là que la mouette a regardé en premier." },
         { texte: "Elle tombe.", quand: elleViseLaTete },
         { texte: "Le dé à coudre part avec elle. On l'entend tomber dans le nid, tout en haut, avec un bruit de petite monnaie." },
@@ -1589,6 +1594,13 @@ function leRideauDuPhare() {
         passerALaPhase(2);
         combat.piquesPhare = 0;
         combat.oiseau.etat = "nid";
+        /* ⚠️ Elle vient de déposer le dé là-haut : elle n'a plus rien
+           dans le bec. Sans cette ligne, le dé restait peint à son bec
+           pendant TOUTE la phase du phare — elle piquait la lampe avec
+           un dé à coudre au bout du nez. (Evan, au test.) On le retrouve
+           d'ailleurs dans le nid, ce qui n'a de sens que si elle l'a
+           lâché ici. */
+        combat.oiseau.porte = null;
         combat.oiseau.x = COUR.nid.x;
         combat.oiseau.y = COUR.nid.y + 34;
         combat.oiseau.jusqua = time() + 2;
