@@ -1,0 +1,29 @@
+LA PHOTO DE LA FIN
+==================
+
+Dépose ici une vraie photo de vous deux, nommée exactement :
+
+    nous.jpg
+
+C'est tout. Il n'y a rien à changer dans le code : le jeu la trouve
+tout seul et le pixel art s'efface dessus pendant que le texte défile.
+
+Le format n'a pas d'importance (portrait, paysage, carré) : elle est
+recadrée pour remplir l'écran sans être déformée, et un voile sombre
+est posé par-dessus, plus dense en haut et en bas, pour que le texte
+reste lisible quelle que soit la photo.
+
+TANT QU'ELLE N'EST PAS LÀ
+-------------------------
+La fin se joue sur la façade de votre immeuble au lever du jour, avec
+la fenêtre de Klara allumée. C'est déjà juste — mais ce n'est pas vous.
+
+La console du navigateur affichera un 404 sur assets/photos/nous.jpg.
+C'est normal, et c'est même comme ça que le jeu sait qu'elle manque.
+Rien ne casse.
+
+LE TEXTE QUI DÉFILE
+-------------------
+Il n'est pas ici : il est tout en haut de 10/js/epilogue.js, dans
+MOT_DE_LA_FIN. Une ligne entre guillemets = une ligne à l'écran, une
+ligne vide "" = un blanc.

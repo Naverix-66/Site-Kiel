@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- viewport-fit=cover + user-scalable=no : indispensable sur téléphone,
+         sinon un double-tap zoome la page au lieu de jouer. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <link rel="stylesheet" href="octobre.css">
+    <title>Bob — Octobre</title>
+</head>
+<body>
+
+    <script src="https://unpkg.com/kaplay@3001.0.19/dist/kaplay.js"></script>
+
+    <!-- ============================================================
+         L'ORDRE DE CES FICHIERS COMPTE.
+         Il n'y a pas d'import/export : chaque fichier peut utiliser
+         tout ce qui a été défini dans les fichiers AU-DESSUS de lui.
+         Si tu ajoutes un fichier, ajoute-le au bon endroit ici.
+         ============================================================ -->
+
+    <script src="js/config.js"></script>            <!-- les constantes de réglage -->
+    <script src="js/moteur.js"></script>            <!-- démarre kaplay + charge les images -->
+    <script src="js/pieces.js"></script>            <!-- le plan de l’appartement -->
+    <script src="js/meubles.js"></script>          <!-- le catalogue des meubles -->
+    <script src="js/murs.js"></script>              <!-- murs texturés + fenêtres -->
+    <script src="js/lumieres.js"></script>          <!-- la nuit et ses lumières -->
+    <script src="js/personnages.js"></script>       <!-- le casting -->
+    <script src="js/controles.js"></script>         <!-- clavier + joystick tactile -->
+    <script src="js/joueur.js"></script>            <!-- Bob -->
+    <script src="js/dialogue.js"></script>          <!-- la boîte de dialogue -->
+    <script src="js/interactions.js"></script>      <!-- "appuie pour parler" -->
+    <script src="js/inventaire.js"></script>        <!-- ce que Bob transporte -->
+    <script src="js/histoire.js"></script>          <!-- mémoire, objectif, casting -->
+    <script src="js/vie.js"></script>               <!-- idles, bulles, sursauts -->
+    <script src="js/marche.js"></script>            <!-- les peluches qui traversent -->
+    <script src="js/intro.js"></script>             <!-- l'ouverture animée -->
+    <script src="js/animes.js"></script>            <!-- portes et frigo animés -->
+    <script src="js/sons.js"></script>              <!-- les sons et la musique -->
+    <script src="js/jeux.js"></script>              <!-- petits jeux : le socle, la rallonge, les cartons -->
+    <script src="js/pixels.js"></script>            <!-- les pinceaux des petits jeux (pixel art peint au chargement) -->
+    <script src="js/reveil.js"></script>            <!-- Klara se réveille : tout le monde fait le mort -->
+    <script src="js/jeu_vaisselle.js"></script>     <!-- la pile de vaisselle -->
+    <script src="js/jeu_couture.js"></script>       <!-- la boîte à couture (Docteur Maboule) -->
+    <script src="js/facade.js"></script>            <!-- la façade de l'immeuble, peinte au chargement -->
+    <script src="js/cour.js"></script>              <!-- la cour et son grand arbre, peints au chargement -->
+    <script src="js/acte1.js"></script>             <!-- tout le texte de l'acte I -->
+    <script src="js/acte2.js"></script>             <!-- l'acte II : l'équipement -->
+    <script src="js/acte3.js"></script>             <!-- l'acte III : la descente -->
+    <script src="js/acte4.js"></script>             <!-- l'acte IV : la mouette -->
+    <!-- ⚠️ nid.js et epilogue.js APRÈS acte1.js : ils ajoutent des
+         lignes à OBJETS, qui est défini là-bas. -->
+    <script src="js/nid.js"></script>               <!-- le nid, tout en haut de l'arbre -->
+    <script src="js/epilogue.js"></script>          <!-- l'épilogue, et le mot de la fin -->
+    <script src="js/verifications.js"></script>     <!-- contrôle du plan au démarrage -->
+    <script src="js/scene_appartement.js"></script> <!-- la scène jouable -->
+    <script src="js/octobre.js"></script>           <!-- le lancement du jeu -->
+
+</body>
+</html>

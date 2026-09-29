@@ -1,0 +1,38 @@
+/* ============================================================
+   OCTOBRE — habillage de la page qui contient le jeu
+   ============================================================
+   Le jeu lui-même est dessiné par kaplay dans un <canvas>.
+   Ce fichier ne sert qu'à une chose : faire en sorte que le
+   canvas occupe tout l'écran proprement, surtout sur téléphone.
+   ============================================================ */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;               /* pas de scroll : c'est un jeu, pas une page */
+    background-color: #17131A;      /* le noir violacé des bords, si l'écran ne colle pas */
+}
+
+body {
+    /* Empêche le "tirer pour rafraîchir" de Chrome mobile quand on
+       balaie vers le bas avec le joystick. Sans ça, la page recharge
+       en plein milieu d'une partie. */
+    overscroll-behavior: none;
+
+    /* Supprime le flash gris/bleu que met le navigateur sur chaque tap. */
+    -webkit-tap-highlight-color: transparent;
+
+    /* Empêche la sélection de texte quand on garde le doigt appuyé. */
+    -webkit-user-select: none;
+    user-select: none;
+
+    /* Le doigt sert à jouer, pas à scroller ni à zoomer. */
+    touch-action: none;
+}
+
+canvas {
+    display: block;
+    /* Pixel art : on veut des carrés nets, pas un flou de mise à l'échelle. */
+    image-rendering: pixelated;
+}
