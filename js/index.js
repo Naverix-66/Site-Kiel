@@ -5,7 +5,7 @@
    Mets simplement le numéro du mois en cours (1 = janvier,
    9 = septembre, 12 = décembre, etc.)
    ============================================================ */
-const MOIS_ACTUEL = 10;
+const MOIS_ACTUEL = 11;
 
 
 //Mettre un higher_score.
