@@ -12,9 +12,8 @@
 
    Relancer après avoir déposé de nouveaux fichiers audio.
 
-   GÉNÉRER (Gemini par défaut, voir GEMINI plus bas) :
+   GÉNÉRER (Piper par défaut, voir REGLAGES et EMOTIONS plus bas) :
 
-       export GEMINI_API_KEY=ta_clé          (aistudio.google.com)
        node outils/voix.js --echantillon      3 répliques par peluche
        node outils/voix.js --generer          toutes celles qui manquent
 
@@ -22,7 +21,10 @@
    outils/voix_directions.json, champ « jeu ». Le script reprend là
    où il s'est arrêté : un quota atteint n'est pas grave.
 
-   Avec Piper : ajouter --moteur piper (voir REGLAGES). Il faut piper (pip install piper-tts, dans le venv activé) et
+   Avec Gemini (10 répliques par jour en gratuit) : --moteur gemini
+   et export GEMINI_API_KEY=ta_clé (aistudio.google.com).
+
+   Pour Piper, il faut piper (pip install piper-tts, dans le venv activé) et
    ffmpeg. Les modèles .onnx sont cherchés dans ~/piper-voix, ou
    dans le dossier donné par la variable PIPER_VOIX.
    Pour réécouter une peluche après un réglage : supprimer ses
@@ -54,13 +56,39 @@ const PORTRAITS = {
 //   lenteur  --length-scale de Piper : > 1 plus lent, < 1 plus rapide
 //   hauteur  1 = naturelle, 1.4 = bien plus aigu, 0.8 = plus grave
 const REGLAGES = {
-    bluey:  { modele: "fr_FR-tom-medium",   lenteur: 0.85, hauteur: 1.55 },
-    fraisy: { modele: "fr_FR-siwis-medium", lenteur: 0.9,  hauteur: 1.3 },
-    cakey:  { modele: "fr_FR-upmc-medium",  locuteur: 0, lenteur: 1.0, hauteur: 1.1 },
-    rosy:   { modele: "fr_FR-siwis-medium", lenteur: 1.0,  hauteur: 1.05 },
-    samsam: { modele: "fr_FR-upmc-medium",  locuteur: 1, lenteur: 1.05, hauteur: 0.93 },
-    doudou: { modele: "fr_FR-tom-medium",   lenteur: 1.1,  hauteur: 0.92 },
+    // Sans changer la hauteur, une voix d'adulte reste une voix d'adulte :
+    // les petits (Bluey, Fraisy) prennent donc des voix féminines rapides.
+    // Cinq voix pour six peluches : deux paires se partagent une voix et
+    // se distinguent par le débit.
+    bluey:  { modele: "fr_FR-siwis-medium", lenteur: 0.8 },
+    fraisy: { modele: "fr_FR-upmc-medium",  locuteur: 0, lenteur: 0.88 },
+    cakey:  { modele: "fr_FR-siwis-medium", lenteur: 0.97 },
+    rosy:   { modele: "fr_FR-upmc-medium",  locuteur: 0, lenteur: 1.1 },
+    samsam: { modele: "fr_FR-upmc-medium",  locuteur: 1, lenteur: 1.08 },
+    doudou: { modele: "fr_FR-tom-medium",   lenteur: 1.12 },
 };
+
+// L'émotion, pour Piper. Il ne comprend pas « dis-le tristement » : on
+// joue sur ce qu'il sait régler.
+//   lenteur  le débit (excité = plus vite, triste = plus lent)
+//   bruit    --noise-scale, la variation de l'intonation (0.667 par
+//            défaut) : plus haut = plus vivant, mais trop haut = bizarre
+// On la devine d'après l'indication de jeu (voix_directions.json) si
+// elle existe, sinon d'après la ponctuation du texte.
+const EMOTIONS = [
+    { mots: /cri|hurl|excit|joie|panique|vite|enthousias/i, lenteur: 0.88, bruit: 0.85 },
+    { mots: /chuchot|tout bas|murmur/i,                      lenteur: 1.15, bruit: 0.5 },
+    { mots: /trist|larme|doux|douce|tendre|ému|las/i,         lenteur: 1.12, bruit: 0.6 },
+    { mots: /colère|énerv|sec|ferme/i,                       lenteur: 0.95, bruit: 0.75 },
+];
+function emotionPiper(texte, jeu) {
+    for (const e of EMOTIONS) if (jeu && e.mots.test(jeu)) return e;
+    const lettres = texte.replace(/[^\p{L}]/gu, "");
+    const majuscules = lettres.length > 3 && lettres === lettres.toUpperCase();
+    if (majuscules || /!/.test(texte)) return { lenteur: 0.9, bruit: 0.8 };   // ça crie
+    if (/\.\.\.|…/.test(texte))       return { lenteur: 1.08, bruit: 0.6 };   // ça hésite
+    return { lenteur: 1, bruit: 0.667 };
+}
 
 // Ce que Piper PRONONCE — le texte affiché et l'empreinte, eux, ne
 // changent pas. Les points de suspension en tête (« ...Bob. ») et les
@@ -71,7 +99,9 @@ function texteAPrononcer(texte) {
         .replace(/\s*[—–]\s*$/, "...")          // « C'est— » -> « C'est... »
         .replace(/\s*[—–]\s*/g, ", ")           // tiret au milieu -> virgule
         .replace(/…/g, "...")
-        .replace(/([!?])[!?]+/g, "$1");          // « !!! » -> « ! »
+        .replace(/([!?])[!?]+/g, "$1")           // « !!! » -> « ! »
+        // Un mot en MAJUSCULES risque d'être épelé comme un sigle.
+        .replace(/\p{Lu}{2,}/gu, m => m.toLowerCase());
 }
 
 // FNV-1a 32 bits — IDENTIQUE à empreinteVoix() de js/voix.js.
@@ -137,7 +167,7 @@ fs.writeFileSync(FICHIER_DIRECTIONS, "[\n" + tableau.map(d => " " + JSON.stringi
 // 3. Générer (seulement avec --generer / --echantillon) ----------
 const ECHANTILLON = process.argv.includes("--echantillon");
 const i_moteur = process.argv.indexOf("--moteur");
-const MOTEUR = i_moteur > 0 ? process.argv[i_moteur + 1] : "gemini";
+const MOTEUR = i_moteur > 0 ? process.argv[i_moteur + 1] : "piper";
 const attendre = ms => new Promise(r => setTimeout(r, ms));
 
 function verifierFfmpeg() {
@@ -182,12 +212,15 @@ async function genererPiper() {
         const liste = aGenerer(qui);
         liste.forEach(function (x, i) {
             process.stdout.write("\r" + qui + " " + (i + 1) + "/" + liste.length + "   ");
-            const args = ["-m", "piper", "-m", modele, "-f", tmp, "--length-scale", String(r.lenteur)];
+            const emo = emotionPiper(x.texte, directions[x.cle]);
+            const args = ["-m", "piper", "-m", modele, "-f", tmp,
+                "--length-scale", String(+(r.lenteur * emo.lenteur).toFixed(2)),
+                "--noise-scale", String(emo.bruit)];
             if (r.locuteur !== undefined) args.push("--speaker", String(r.locuteur));
             // Le texte passe par l'entrée standard : marche avec toutes les versions de Piper.
             const p = spawnSync(process.env.PIPER_PYTHON || "python3", args, { input: texteAPrononcer(x.texte), encoding: "utf8" });
             if (p.status !== 0) { console.error("\nPiper a échoué :\n" + p.stderr); process.exit(1); }
-            versMp3([], tmp, frequence, r.hauteur, path.join(DOSSIER_VOIX, x.cle + ".mp3"), rubberband);
+            versMp3([], tmp, frequence, r.hauteur || 1, path.join(DOSSIER_VOIX, x.cle + ".mp3"), rubberband);
             presents[x.cle] = x.cle + ".mp3";
         });
         if (liste.length) console.log("");
