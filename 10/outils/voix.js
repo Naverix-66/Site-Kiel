@@ -52,10 +52,22 @@ const REGLAGES = {
     bluey:  { modele: "fr_FR-tom-medium",   lenteur: 0.85, hauteur: 1.55 },
     fraisy: { modele: "fr_FR-siwis-medium", lenteur: 0.9,  hauteur: 1.3 },
     cakey:  { modele: "fr_FR-upmc-medium",  locuteur: 0, lenteur: 1.0, hauteur: 1.1 },
-    rosy:   { modele: "fr_FR-siwis-medium", lenteur: 1.15, hauteur: 1.08 },
-    samsam: { modele: "fr_FR-upmc-medium",  locuteur: 1, lenteur: 1.2, hauteur: 0.85 },
-    doudou: { modele: "fr_FR-gilles-low",   lenteur: 1.3,  hauteur: 0.9 },
+    rosy:   { modele: "fr_FR-siwis-medium", lenteur: 1.0,  hauteur: 1.05 },
+    samsam: { modele: "fr_FR-upmc-medium",  locuteur: 1, lenteur: 1.05, hauteur: 0.93 },
+    doudou: { modele: "fr_FR-tom-medium",   lenteur: 1.1,  hauteur: 0.92 },
 };
+
+// Ce que Piper PRONONCE — le texte affiché et l'empreinte, eux, ne
+// changent pas. Les points de suspension en tête (« ...Bob. ») et les
+// tirets de phrase coupée (« C'est— ») le font bafouiller.
+function texteAPrononcer(texte) {
+    return texte
+        .replace(/^[\s.…—-]+/, "")              // « ...Bob. » -> « Bob. »
+        .replace(/\s*[—–]\s*$/, "...")          // « C'est— » -> « C'est... »
+        .replace(/\s*[—–]\s*/g, ", ")           // tiret au milieu -> virgule
+        .replace(/…/g, "...")
+        .replace(/([!?])[!?]+/g, "$1");          // « !!! » -> « ! »
+}
 
 // FNV-1a 32 bits — IDENTIQUE à empreinteVoix() de js/voix.js.
 function empreinteVoix(qui, texte) {
@@ -121,7 +133,7 @@ if (ECHANTILLON || process.argv.includes("--generer")) {
             const args = ["-m", "piper", "-m", modele, "-f", tmp, "--length-scale", String(r.lenteur)];
             if (r.locuteur !== undefined) args.push("--speaker", String(r.locuteur));
             // Le texte passe par l'entrée standard : marche avec toutes les versions de Piper.
-            const p = spawnSync(process.env.PIPER_PYTHON || "python3", args, { input: x.texte, encoding: "utf8" });
+            const p = spawnSync(process.env.PIPER_PYTHON || "python3", args, { input: texteAPrononcer(x.texte), encoding: "utf8" });
             if (p.status !== 0) { console.error("\nPiper a échoué :\n" + p.stderr); process.exit(1); }
 
             const filtre = rubberband
