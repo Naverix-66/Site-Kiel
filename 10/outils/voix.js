@@ -60,7 +60,7 @@ const REGLAGES = {
     // les petits (Bluey, Fraisy) prennent donc des voix féminines rapides.
     // Cinq voix pour six peluches : deux paires se partagent une voix et
     // se distinguent par le débit.
-    bluey:  { modele: "fr_FR-siwis-medium", lenteur: 0.8 },
+    bluey:  { modele: "fr_FR-siwis-medium", lenteur: 0.85, hauteur: 1.12 },   // la seule exception : le plus petit
     fraisy: { modele: "fr_FR-upmc-medium",  locuteur: 0, lenteur: 0.88 },
     cakey:  { modele: "fr_FR-siwis-medium", lenteur: 0.97 },
     rosy:   { modele: "fr_FR-upmc-medium",  locuteur: 0, lenteur: 1.1 },
