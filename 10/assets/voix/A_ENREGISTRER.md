@@ -3,568 +3,568 @@
 Généré par `node outils/voix.js` — ne pas modifier à la main.
 
 Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3` conseillé ; `.ogg`, `.wav`, `.m4a` acceptés), puis on relance le script.
-0 / 534 faites. ✅ = fichier déjà présent.
+534 / 534 faites. ✅ = fichier déjà présent.
 
 ## bluey (111 répliques)
 
 **Voix :** Tout petit ourson bleu, garçon. Voix très aiguë d'enfant de 5 ans, surexcitée, parle vite, crie souvent. Débit rapide.
 
-- `8e2d6288` — BOB !! T'ES DESCENDU !! MOI AUSSI JE SUIS DESCENDU !! ON EST DEUX !!
-- `074281f8` — C'EST LA MEILLEURE NUIT DE MA VIE.
-- `f8d5ce0a` — Tu dis ça avec ta voix de quand ça va pas aller.
-- `13531ca1` — IL A TAPÉ DANS LE MIROIR !! DEUX FOIS !! VA VOIR !!
-- `607671db` — OUI !! ...NON !! ATTENDS !!
-- `900a064c` — BOB. IL S'EST PASSÉ UN TRUC CETTE NUIT.
-- `372a77c0` — NON MAIS UN VRAI TRUC !! IL Y AVAIT UN OISEAU !!
-- `3ef1fc32` — GRAND COMME LE FRIGO !! NON !! COMME LE LIT !! NON !!
-- `2ae701a5` — ...COMME LE FRIGO.
-- `bf1330a9` — ET IL A TAPÉ DANS LE MIROIR !! DEUX FOIS !! TOC TOC !!
-- `2146adb2` — ET SAMSAM IL EST PAS DANS LE LIT.
-- `847eae19` — JE TE RACONTE TOUT !! MAIS ÇA SORT PAS QUAND JE SUIS ASSIS !!
-- `0cae19e8` — TROUVE-MOI TROIS FOIS ET JE TE DIS TOUT !! PROMIS JURÉ !!
-- `ecbda59f` — AAAAH !! NON !! COMMENT T'AS FAIT !!
-- `17bad0ff` — JE DÉPASSE JAMAIS !!
-- `ecf50036` — ENCORE !! FERME LES YEUX !!
-- `825ce8b1` — CETTE FOIS J'ÉTAIS VRAIMENT BIEN CACHÉ !!
-- `5acefd77` — OUI MAIS DOUCEMENT !!
-- `251f9d16` — DERNIÈRE !! LA PLUS DURE DE L'UNIVERS !!
-- `07e84418` — Tu m'as trouvé trois fois.
-- `3728996c` — Personne me trouve jamais trois fois.
-- `e523b48b` — Personne me cherche jamais trois fois.
-- `c45c259d` — C'EST VRAI !! TOI TU CHERCHES TOUT LE MONDE !! SURTOUT ROSY !!
-- `71c0f4ce` — TU LA REGARDES QUAND ELLE DORT !! JE T'AI VU !!
-- `ae91d492` — LE MUR IL EST DE L'AUTRE CÔTÉ, BOB.
-- `1f8f8c00` — BON !! L'OISEAU !!
-- `d068aa93` — Il est entré par la fenêtre de gauche. Celle qui est ouverte. Il a fait DEUX TOURS de l'appartement.
-- `07379f6f` — Il cherchait ! Il a regardé sur le bureau, dans l'évier, derrière le miroir !
-- `300908ee` — Et après il a tapé dans le miroir. DEUX FOIS. Avec la tête.
-- `79c80b86` — IL S'EST PAS COGNÉ !! IL A TAPÉ !! C'EST PAS PAREIL !!
-- `d7330ad3` — ET PENDANT QUE JE CRIAIS, MOI, J'ENTENDAIS RIEN !!
-- `821836a3` — SAMSAM IL ENTEND TOUT !! DEMANDE-LUI CE QU'IL A ENTENDU PENDANT QUE JE CRIAIS !!
-- `3f89310a` — SAMSAM IL EST PAS DANS LE LIT, BOB.
-- `4173f5dc` — Tu es revenu.
-- `b79dc091` — Personne revient.
-- `98337ff0` — ENFIN SI !! TOUT LE MONDE REVIENT !! C'EST UN APPARTEMENT !! ON PEUT PAS PARTIR !!
-- `aaadc4ea` — Il se regardait pas.
-- `9062b8de` — Il tournait la tête sur le côté. Comme ça. Pour voir DERRIÈRE son bec.
-- `9248913a` — Parce qu'il avait un truc dans le bec.
-- `5ad6a435` — Un truc blanc.
-- `2ea0a05d` — Et ça bougeait.
-- `8b41646a` — Ça bougeait beaucoup.
-- `4b56617c` — J'ai cru que c'était un jeu.
-- `ab35e37c` — J'ai ri.
-- `c4b29898` — ...J'aurais pas dû rire ?
-- `1b937fb3` — J'ai dit à tout le monde qu'il y avait un oiseau.
-- `8e124a1b` — Toute la nuit, Bob. À tout le monde.
-- `6b98e1a1` — Va voir Doudou.
-- `5dc6818f` — Lui il répond jamais, mais il écoute toujours. Moi c'est l'inverse.
-- `2a675061` — JE SURVEILLE LE PHARE !! S'IL S'ÉTEINT, JE CRIE !!
-- `8d53b2e9` — IL VA PAS S'ÉTEINDRE !! MAIS JE CRIE QUAND MÊME, AU CAS OÙ !!
-- `ae3297bf` — Tu vas avoir froid, en bas.
-- `df790e33` — LE SERPENT BLANC !! SOUS LE BUREAU !! C'EST UNE RALLONGE !!
-- `636bcac4` — C'EST UN SERPENT !! MAIS C'EST UNE RALLONGE !!
-- `0c55c318` — LE ROND ARGENTÉ !! TU L'AS !!
-- `f62474e4` — MAIS IL EST ENCORE SUR LA BOUTEILLE !! IL FAUT QUELQU'UN DE TRÈS FORT !!
-- `980c3189` — PAS MOI !! MOI JE SUIS TRÈS FORT MAIS PAS POUR ÇA !!
-- `234a1db7` — BOB !! T'ES PAS PARTI !! TROP BIEN !!
-- `955ab535` — ENFIN NON !! IL FAUT QUE TU PARTES !! MAIS T'ES LÀ !! TROP BIEN !!
-- `3a3f1846` — LE ROND ARGENTÉ !!
-- `dc23299c` — DANS LE FRIGO !! TOUT AU FOND !! SUR LA PETITE BOUTEILLE JAUNE !! IL BRILLE QUAND ON OUVRE LA PORTE !! COMME UNE PIÈCE !!
-- `a00412c1` — JE L'AI VU QUAND T'AS PRIS LA TOMATE !! PERSONNE M'A DEMANDÉ !!
-- `f1908fc5` — BOB M'A DIT MERCI !! AVEC SA VRAIE VOIX !!
-- `2f282b63` — T'AS UNE ÉPÉE !! T'AS UN BOUCLIER !! T'AS UN CASQUE !!
-- `d7799c6d` — T'ES UN CHEVALIER !! NON, T'ES BOB !! C'EST PAREIL !!
-- `7dfba269` — BOB !! T'AS UNE ÉPÉE !!
-- `8a2620ee` — C'EST UNE BAGUETTE !! C'EST UNE ÉPÉE !! C'EST LES DEUX !!
-- `d79c0d5c` — JE SURVEILLE LA FENÊTRE !! SI LA MOUETTE REVIENT, JE CRIE !!
-- `f5a4eda4` — TRÈS FORT !! COMME TOUT À L'HEURE !! MAIS PLUS FORT !!
-- `0f5138ae` — BOB !!! TU L'AS TUÉE !!!
-- `ffd1586a` — ELLE MARCHE QUE BRANCHÉE !! JE LE SAIS !! JE L'AI JAMAIS DÉBRANCHÉE !! ENFIN, UNE FOIS !! J'AI EU TRÈS PEUR !!
-- `ed34165f` — LE SERPENT BLANC !! SOUS LE BUREAU !! IL EST TRÈS LONG !! C'EST UNE RALLONGE !! C'EST UN SERPENT !!
-- `f246250e` — UN !! DEUX !! TROIS !!
-- `7a806db6` — C'EST UN PHARE !! ON A UN PHARE !! C'EST MOI QUI AI EU L'IDÉE !!
-- `659e78c0` — C'EST CAKEY QUI A EU L'IDÉE !! MAIS C'EST MOI QUI AI CRIÉ !!
-- `cb735190` — BOB !! TU REVIENS, HEIN !!
-- `892149ba` — TU L'AS DIT AVEC TA VOIX DE QUAND ÇA VA ALLER.
-- `ad152890` — LE TUYAU !! IL A TOUCHÉ LE TUYAU !!
-- `a2a30204` — LA CHAUSSETTE !! IL Y AVAIT UNE CHAUSSETTE !!
-- `96e714bc` — IL EST À LA MOITIÉ !! IL EST À LA MOITIÉ !!
-- `75b54420` — IL EST EN BAS !! IL EST EN BAS !!
-- `b29743af` — POURQUOI ELLE S'ARRÊTE ?! POURQUOI ELLE S'ARRÊTE COMME ÇA ?!
-- `bca227ab` — ÇA A FAIT DONG !! BOB A FAIT DONG !!
-- `b5b0f2f6` — MOI JE VOIS MIEUX QUE TOUT LE MONDE !!
-- `e0c5ef4b` — ELLE REGARDE TA TÊTE !! BOB !! ELLE REGARDE TA TÊTE !!
-- `ac7a5aa4` — ELLE VA SUR LA LAMPE !! ELLE VA SUR LA LAMPE !!
-- `724dde35` — ...elle est petite ?!
-- `8ccda29b` — ELLE EST TOUTE PETITE !! BOB !! ELLE EST PLUS PETITE QUE TOI !!
-- `234f5652` — je la vois plus. je vois plus Bob.
-- `02b7efca` — J'AI VU UN OISEAU GÉANT !!
-- `63fceec9` — ILS SONT LÀ !!! ILS SONT LÀ ILS SONT LÀ ILS SONT LÀ !!
-- `25f47d34` — JE M'EN FICHE DE MES OREILLES !!
-- `62cfb387` — POURQUOI ELLE PLEURE ?!
-- `03d360e7` — JOYEUX 8 OCTOBRE !!!
-- `c798ca4b` — ...c'est quoi ?
-- `8f887bc0` — ELLE A DIT MERCI ?!
-- `515693fc` — POURQUOI JE ME TOURNE ?!
-- `2b8a24e9` — C'ÉTAIT QUOI CE BRUIT ?!
-- `36c26bf4` — LE GÂTEAU FAIT PAS CE BRUIT-LÀ !!
-- `43f85884` — ...un train qui roule sur la MER ?!
-- `d867c3ff` — ET APRÈS ?!
-- `f01f618f` — BOB !! T'AS COMBIEN DE MARQUES DE BEC ?!
-- `268e8eb9` — MOI J'EN AI ZÉRO !!
-- `85460655` — ...c'est mieux ou c'est moins bien ?
-- `4e568550` — ALORS J'AI GAGNÉ !!
-- `e561e3a2` — J'AI TOUT VU !! J'AI CRIÉ TOUTE LA NUIT !!
-- `c5414ce2` — j'ai plus de voix.
-- `8e2b8536` — ÇA S'ENTEND PAS !!
-- `343d084d` — ...quand j'ai crié « elle arrive », tu m'as entendu ?
-- `4d9d7185` — ON A FAIT LES MORTS !! TOUS ENSEMBLE !! C'EST LE MEILLEUR JEU DE LA NUIT !!
-- `9c3da0ea` — ENCORE !! ENFIN NON !! ENFIN SI !! ENFIN NON !!
+- ✅ `8e2d6288` — BOB !! T'ES DESCENDU !! MOI AUSSI JE SUIS DESCENDU !! ON EST DEUX !!
+- ✅ `074281f8` — C'EST LA MEILLEURE NUIT DE MA VIE.
+- ✅ `f8d5ce0a` — Tu dis ça avec ta voix de quand ça va pas aller.
+- ✅ `13531ca1` — IL A TAPÉ DANS LE MIROIR !! DEUX FOIS !! VA VOIR !!
+- ✅ `607671db` — OUI !! ...NON !! ATTENDS !!
+- ✅ `900a064c` — BOB. IL S'EST PASSÉ UN TRUC CETTE NUIT.
+- ✅ `372a77c0` — NON MAIS UN VRAI TRUC !! IL Y AVAIT UN OISEAU !!
+- ✅ `3ef1fc32` — GRAND COMME LE FRIGO !! NON !! COMME LE LIT !! NON !!
+- ✅ `2ae701a5` — ...COMME LE FRIGO.
+- ✅ `bf1330a9` — ET IL A TAPÉ DANS LE MIROIR !! DEUX FOIS !! TOC TOC !!
+- ✅ `2146adb2` — ET SAMSAM IL EST PAS DANS LE LIT.
+- ✅ `847eae19` — JE TE RACONTE TOUT !! MAIS ÇA SORT PAS QUAND JE SUIS ASSIS !!
+- ✅ `0cae19e8` — TROUVE-MOI TROIS FOIS ET JE TE DIS TOUT !! PROMIS JURÉ !!
+- ✅ `ecbda59f` — AAAAH !! NON !! COMMENT T'AS FAIT !!
+- ✅ `17bad0ff` — JE DÉPASSE JAMAIS !!
+- ✅ `ecf50036` — ENCORE !! FERME LES YEUX !!
+- ✅ `825ce8b1` — CETTE FOIS J'ÉTAIS VRAIMENT BIEN CACHÉ !!
+- ✅ `5acefd77` — OUI MAIS DOUCEMENT !!
+- ✅ `251f9d16` — DERNIÈRE !! LA PLUS DURE DE L'UNIVERS !!
+- ✅ `07e84418` — Tu m'as trouvé trois fois.
+- ✅ `3728996c` — Personne me trouve jamais trois fois.
+- ✅ `e523b48b` — Personne me cherche jamais trois fois.
+- ✅ `c45c259d` — C'EST VRAI !! TOI TU CHERCHES TOUT LE MONDE !! SURTOUT ROSY !!
+- ✅ `71c0f4ce` — TU LA REGARDES QUAND ELLE DORT !! JE T'AI VU !!
+- ✅ `ae91d492` — LE MUR IL EST DE L'AUTRE CÔTÉ, BOB.
+- ✅ `1f8f8c00` — BON !! L'OISEAU !!
+- ✅ `d068aa93` — Il est entré par la fenêtre de gauche. Celle qui est ouverte. Il a fait DEUX TOURS de l'appartement.
+- ✅ `07379f6f` — Il cherchait ! Il a regardé sur le bureau, dans l'évier, derrière le miroir !
+- ✅ `300908ee` — Et après il a tapé dans le miroir. DEUX FOIS. Avec la tête.
+- ✅ `79c80b86` — IL S'EST PAS COGNÉ !! IL A TAPÉ !! C'EST PAS PAREIL !!
+- ✅ `d7330ad3` — ET PENDANT QUE JE CRIAIS, MOI, J'ENTENDAIS RIEN !!
+- ✅ `821836a3` — SAMSAM IL ENTEND TOUT !! DEMANDE-LUI CE QU'IL A ENTENDU PENDANT QUE JE CRIAIS !!
+- ✅ `3f89310a` — SAMSAM IL EST PAS DANS LE LIT, BOB.
+- ✅ `4173f5dc` — Tu es revenu.
+- ✅ `b79dc091` — Personne revient.
+- ✅ `98337ff0` — ENFIN SI !! TOUT LE MONDE REVIENT !! C'EST UN APPARTEMENT !! ON PEUT PAS PARTIR !!
+- ✅ `aaadc4ea` — Il se regardait pas.
+- ✅ `9062b8de` — Il tournait la tête sur le côté. Comme ça. Pour voir DERRIÈRE son bec.
+- ✅ `9248913a` — Parce qu'il avait un truc dans le bec.
+- ✅ `5ad6a435` — Un truc blanc.
+- ✅ `2ea0a05d` — Et ça bougeait.
+- ✅ `8b41646a` — Ça bougeait beaucoup.
+- ✅ `4b56617c` — J'ai cru que c'était un jeu.
+- ✅ `ab35e37c` — J'ai ri.
+- ✅ `c4b29898` — ...J'aurais pas dû rire ?
+- ✅ `1b937fb3` — J'ai dit à tout le monde qu'il y avait un oiseau.
+- ✅ `8e124a1b` — Toute la nuit, Bob. À tout le monde.
+- ✅ `6b98e1a1` — Va voir Doudou.
+- ✅ `5dc6818f` — Lui il répond jamais, mais il écoute toujours. Moi c'est l'inverse.
+- ✅ `2a675061` — JE SURVEILLE LE PHARE !! S'IL S'ÉTEINT, JE CRIE !!
+- ✅ `8d53b2e9` — IL VA PAS S'ÉTEINDRE !! MAIS JE CRIE QUAND MÊME, AU CAS OÙ !!
+- ✅ `ae3297bf` — Tu vas avoir froid, en bas.
+- ✅ `df790e33` — LE SERPENT BLANC !! SOUS LE BUREAU !! C'EST UNE RALLONGE !!
+- ✅ `636bcac4` — C'EST UN SERPENT !! MAIS C'EST UNE RALLONGE !!
+- ✅ `0c55c318` — LE ROND ARGENTÉ !! TU L'AS !!
+- ✅ `f62474e4` — MAIS IL EST ENCORE SUR LA BOUTEILLE !! IL FAUT QUELQU'UN DE TRÈS FORT !!
+- ✅ `980c3189` — PAS MOI !! MOI JE SUIS TRÈS FORT MAIS PAS POUR ÇA !!
+- ✅ `234a1db7` — BOB !! T'ES PAS PARTI !! TROP BIEN !!
+- ✅ `955ab535` — ENFIN NON !! IL FAUT QUE TU PARTES !! MAIS T'ES LÀ !! TROP BIEN !!
+- ✅ `3a3f1846` — LE ROND ARGENTÉ !!
+- ✅ `dc23299c` — DANS LE FRIGO !! TOUT AU FOND !! SUR LA PETITE BOUTEILLE JAUNE !! IL BRILLE QUAND ON OUVRE LA PORTE !! COMME UNE PIÈCE !!
+- ✅ `a00412c1` — JE L'AI VU QUAND T'AS PRIS LA TOMATE !! PERSONNE M'A DEMANDÉ !!
+- ✅ `f1908fc5` — BOB M'A DIT MERCI !! AVEC SA VRAIE VOIX !!
+- ✅ `2f282b63` — T'AS UNE ÉPÉE !! T'AS UN BOUCLIER !! T'AS UN CASQUE !!
+- ✅ `d7799c6d` — T'ES UN CHEVALIER !! NON, T'ES BOB !! C'EST PAREIL !!
+- ✅ `7dfba269` — BOB !! T'AS UNE ÉPÉE !!
+- ✅ `8a2620ee` — C'EST UNE BAGUETTE !! C'EST UNE ÉPÉE !! C'EST LES DEUX !!
+- ✅ `d79c0d5c` — JE SURVEILLE LA FENÊTRE !! SI LA MOUETTE REVIENT, JE CRIE !!
+- ✅ `f5a4eda4` — TRÈS FORT !! COMME TOUT À L'HEURE !! MAIS PLUS FORT !!
+- ✅ `0f5138ae` — BOB !!! TU L'AS TUÉE !!!
+- ✅ `ffd1586a` — ELLE MARCHE QUE BRANCHÉE !! JE LE SAIS !! JE L'AI JAMAIS DÉBRANCHÉE !! ENFIN, UNE FOIS !! J'AI EU TRÈS PEUR !!
+- ✅ `ed34165f` — LE SERPENT BLANC !! SOUS LE BUREAU !! IL EST TRÈS LONG !! C'EST UNE RALLONGE !! C'EST UN SERPENT !!
+- ✅ `f246250e` — UN !! DEUX !! TROIS !!
+- ✅ `7a806db6` — C'EST UN PHARE !! ON A UN PHARE !! C'EST MOI QUI AI EU L'IDÉE !!
+- ✅ `659e78c0` — C'EST CAKEY QUI A EU L'IDÉE !! MAIS C'EST MOI QUI AI CRIÉ !!
+- ✅ `cb735190` — BOB !! TU REVIENS, HEIN !!
+- ✅ `892149ba` — TU L'AS DIT AVEC TA VOIX DE QUAND ÇA VA ALLER.
+- ✅ `ad152890` — LE TUYAU !! IL A TOUCHÉ LE TUYAU !!
+- ✅ `a2a30204` — LA CHAUSSETTE !! IL Y AVAIT UNE CHAUSSETTE !!
+- ✅ `96e714bc` — IL EST À LA MOITIÉ !! IL EST À LA MOITIÉ !!
+- ✅ `75b54420` — IL EST EN BAS !! IL EST EN BAS !!
+- ✅ `b29743af` — POURQUOI ELLE S'ARRÊTE ?! POURQUOI ELLE S'ARRÊTE COMME ÇA ?!
+- ✅ `bca227ab` — ÇA A FAIT DONG !! BOB A FAIT DONG !!
+- ✅ `b5b0f2f6` — MOI JE VOIS MIEUX QUE TOUT LE MONDE !!
+- ✅ `e0c5ef4b` — ELLE REGARDE TA TÊTE !! BOB !! ELLE REGARDE TA TÊTE !!
+- ✅ `ac7a5aa4` — ELLE VA SUR LA LAMPE !! ELLE VA SUR LA LAMPE !!
+- ✅ `724dde35` — ...elle est petite ?!
+- ✅ `8ccda29b` — ELLE EST TOUTE PETITE !! BOB !! ELLE EST PLUS PETITE QUE TOI !!
+- ✅ `234f5652` — je la vois plus. je vois plus Bob.
+- ✅ `02b7efca` — J'AI VU UN OISEAU GÉANT !!
+- ✅ `63fceec9` — ILS SONT LÀ !!! ILS SONT LÀ ILS SONT LÀ ILS SONT LÀ !!
+- ✅ `25f47d34` — JE M'EN FICHE DE MES OREILLES !!
+- ✅ `62cfb387` — POURQUOI ELLE PLEURE ?!
+- ✅ `03d360e7` — JOYEUX 8 OCTOBRE !!!
+- ✅ `c798ca4b` — ...c'est quoi ?
+- ✅ `8f887bc0` — ELLE A DIT MERCI ?!
+- ✅ `515693fc` — POURQUOI JE ME TOURNE ?!
+- ✅ `2b8a24e9` — C'ÉTAIT QUOI CE BRUIT ?!
+- ✅ `36c26bf4` — LE GÂTEAU FAIT PAS CE BRUIT-LÀ !!
+- ✅ `43f85884` — ...un train qui roule sur la MER ?!
+- ✅ `d867c3ff` — ET APRÈS ?!
+- ✅ `f01f618f` — BOB !! T'AS COMBIEN DE MARQUES DE BEC ?!
+- ✅ `268e8eb9` — MOI J'EN AI ZÉRO !!
+- ✅ `85460655` — ...c'est mieux ou c'est moins bien ?
+- ✅ `4e568550` — ALORS J'AI GAGNÉ !!
+- ✅ `e561e3a2` — J'AI TOUT VU !! J'AI CRIÉ TOUTE LA NUIT !!
+- ✅ `c5414ce2` — j'ai plus de voix.
+- ✅ `8e2b8536` — ÇA S'ENTEND PAS !!
+- ✅ `343d084d` — ...quand j'ai crié « elle arrive », tu m'as entendu ?
+- ✅ `4d9d7185` — ON A FAIT LES MORTS !! TOUS ENSEMBLE !! C'EST LE MEILLEUR JEU DE LA NUIT !!
+- ✅ `9c3da0ea` — ENCORE !! ENFIN NON !! ENFIN SI !! ENFIN NON !!
 
 ## cakey (136 répliques)
 
 **Voix :** Grande peluche, fille, l'âme de la fête. Voix féminine chaleureuse et enjouée, malicieuse (elle garde des surprises).
 
-- `b383760d` — Je garde le gâteau. Personne n'y touche.
-- `8db77d94` — Fraisy est déjà passée deux fois. Elle m'a dit « je vérifie juste qu'il va bien ».
-- `4fbcdb8c` — Il va très bien. Il attend Rosy, comme tout le monde.
-- `4ab33cdc` — Tu fais ta tête de quand tu réfléchis trop, Bob.
-- `bfb2c2c7` — Samsam entend tout. Et il ne dit jamais rien pour rien.
-- `0db77d08` — Va au bout. Je note tout ce qu'on fêtera après.
-- `d9c74cd0` — Tu l'as couvert ? Avec une chaussette ?
-- `c67c7e0c` — Oh, Bob. Celle-là, on la fête pour de vrai.
-- `87adae2d` — Va l'écouter. Il parle lentement, mais il ne parle jamais pour rien.
-- `96e80151` — Une chaussette en laine ! Parfait.
-- `bbcc29a5` — On la fête quand elle sera sur Samsam.
-- `748d820c` — Depuis tout ce temps ? Il doit avoir si froid.
-- `40577734` — Il ne le dira pas. Il ne le dit jamais.
-- `a1686db5` — Il lui faut quelque chose de chaud, Bob. En laine. Et grand : c'est Samsam.
-- `b569a3ba` — Sous le rideau ? Sous la fenêtre ouverte ?
-- `3f942674` — Va vite, Bob. Et regarde s'il a froid. Lui, il ne le dira pas.
-- `6ab28bfc` — Une tomate ! On f—
-- `2b1fe6b6` — Non. Plus tard. Je la note.
-- `e5fa276f` — Fraisy ! Dans la cuisine !
-- `de5aa650` — Et si elle te parle de mon gâteau, dis-lui qu'il n'est toujours pas coupé.
-- `346a549a` — Bluey est passé en courant. Il a dit « MIROIR » sept fois.
-- `699796a7` — Il avait l'air très sûr de lui. Encore plus que d'habitude.
-- `5ecb5285` — Tu joues à cache-cache avec Bluey ? J'adore ce jeu.
-- `892d6d84` — Écoute bien. Il ne sait pas rire en silence. Personne ne lui a jamais appris, et je trouve ça très bien.
-- `0197688e` — Avec plaisir ! Mais j'ai les pattes prises.
-- `92a193ca` — Un gâteau d'anniversaire, Bob. Par terre. Un 8 octobre.
-- `be44d9a1` — Demande à Bluey ! Il est petit, il passe partout, et il est réveillé depuis des heures.
-- `cd6b554c` — Il raconte à tout le monde qu'il a vu un oiseau géant. Moi, je l'ai cru.
-- `ffdfe25f` — Enfin, j'ai fait comme si. Il était tellement content qu'on l'écoute.
-- `5b3a33d0` — Ferme vite ta fenêtre, et après, on fête !
-- `982c41d1` — Ferme vite, et après, on fête !
-- `c93644c6` — Bob ! Tu es réveillé !
-- `112fee31` — Joyeux 8 octobre !
-- `fa0598f7` — Deux heures et quart. Ça fait deux heures et quart que c'est le 8, et deux heures et quart que j'attends que quelqu'un se réveille pour le lui dire.
-- `c16b1e9a` — C'est leur jour, Bob. À Klara, et à celui qu'elle attend.
-- `fc1aba27` — Le seul anniversaire qu'on choisit. C'est mon préféré.
-- `c503c88e` — Merci. C'était exactement comme je l'imaginais.
-- `abec6d6c` — Je sais ! Je compte tout le monde, tout le temps. C'est plus fort que moi : une fête, ça commence par une liste.
-- `28333325` — Et sur ma liste, tout à l'heure, il y avait un Samsam en moins.
-- `eb981dae` — Non. Je surveillais le gâteau.
-- `c343cf00` — Fraisy tourne autour depuis minuit. Elle passe, elle repasse, elle dit « il sent bon, ton gâteau ».
-- `996d6e32` — Il sent bon, c'est vrai. Mais il n'est pas coupé.
-- `f9cbfbcc` — Par contre, Fraisy n'a pas quitté la cuisine de la nuit. Si quelqu'un a vu passer Samsam, c'est elle.
-- `d19c934f` — Tu as trouvé une plume ! On fête ça !
-- `f4550f88` — Plus tard. D'accord. De toute façon, ce soir, il y a déjà une surprise pour toi, alors—
-- `31f3a7e6` — Non. Aucune. Personne ne te prépare rien. Surtout rien qui se mange.
-- `c2a2c362` — Oh non.
-- `53e71e7c` — Oublie, Bob. Je ne dis jamais une surprise. Jamais. C'est ma règle.
-- `39c307e5` — Enfin, j'en ai deux. L'autre, c'est qu'on ne coupe pas le gâteau tant qu'il manque quelqu'un.
-- `ba55eb5e` — Alors ramène-moi Samsam. J'ai très, très envie de le couper.
-- `7f801206` — Rosy ? Rosy est occ—
-- `b1f2cab2` — Va voir Doudou, Bob. Doudou sait toujours tout.
-- `b2c965ca` — Moi, je garde le gâteau. Il ne bouge pas d'ici.
-- `ff63f1c9` — Doudou t'a dit.
-- `5ab18062` — Elle est venue me voir il y a une semaine. Elle voulait te faire une surprise pour le 8, et elle ne savait pas quoi.
-- `aca21375` — Je lui ai dit : une crêpe. Au sucre. Bob adore ça, et une crêpe, ça se partage.
-- `b644f5e1` — Elle a quand même redemandé à Fraisy. Au sucre ou à la confiture. Tu la connais : elle vérifie toujours tout deux fois.
-- `a06dd5ee` — Et elle a répété toute la semaine la phrase qu'elle voulait te dire en te la donnant.
-- `eb2ea0e1` — Ça, c'est à elle de te la dire.
-- `54e37169` — Bob. Tout le monde. Depuis des mois.
-- `5da5a2ba` — Tous les matins, tu ramasses sa rose quand elle la fait tomber, et tu la lui remets dans les pattes avant qu'elle se réveille.
-- `5d43b780` — Et elle a appris toutes tes blagues par cœur. Même les nulles.
-- `2cb7d38c` — Elle rit quand même. C'est à ça qu'on sait.
-- `06f7ffdd` — Et tu veux savoir le plus beau ?
-- `3172df5c` — Il y a trois semaines, toi aussi, tu es venu me voir. Tu voulais un élastique. « Un joli. »
-- `59d9b671` — Je t'en ai trouvé quatorze. Aucun n'était assez bien pour elle.
-- `256faa19` — Deux surprises. Le même soir. Chacun pour l'autre. Et aucun des deux ne savait.
-- `a5a2e524` — J'ai gardé les deux. Ce sont les plus beaux secrets qu'on m'ait jamais confiés.
-- `a5e227a6` — Parce que c'était à vous de le dire.
-- `7743b7fe` — Et parce que c'était joli à regarder.
-- `b7d75e08` — Et tu sais ce que ça veut dire ?
-- `a236a41a` — Qu'elle compte toujours te la donner.
-- `1b68d5ce` — Je garde le gâteau. Personne n'y touche. Pas même Fraisy.
-- `729128e6` — On le coupera quand vous serez rentrés. Tous les deux.
-- `2bb989c0` — Alors dépêche-toi, Bob. J'ai très, très envie de le couper.
-- `a8c2e755` — Je ne te dis pas au revoir, Bob.
-- `340820f3` — On ne dit pas au revoir à quelqu'un qu'on attend. On dit : à tout à l'heure.
-- `9c08c1a2` — À tout à l'heure, Bob. Je garde le gâteau.
-- `8d47130d` — Sous le bureau, Bob ! Bluey l'a vue, la rallonge.
-- `9ad9c0dd` — Il voit tout, Bluey. Un jour, on va tous se mettre à l'écouter, et ce sera une très belle fête.
-- `aa678ae6` — Bob ! Tu es encore là. Je suis contente, et je ne devrais pas l'être. Je suis contente quand même.
-- `b51e5213` — Un casque...
-- `552aaf89` — Oh ! Tu te souviens de tes quatorze élastiques ?
-- `9d17081d` — Je les ai trouvés dans la boîte à couture de Klara. Celle que sa maman lui a offerte. Dans la penderie, derrière les pulls.
-- `070b07b5` — Dedans, il y a un dé à coudre. Tout petit, tout dur, et à mon avis exactement de la taille de ta tête.
-- `537db54c` — Mais fais très, très attention, Bob. Cette boîte, Klara y tient. Chaque aiguille a sa place.
-- `b814bcb9` — Je sais. C'est pour ça que c'est à toi que je le dis.
-- `a4799f5f` — La boîte à couture, Bob. Dans la penderie, derrière les pulls.
-- `7d430676` — Doucement, surtout. Tu fais toujours tout doucement quand ça compte.
-- `eb773a4a` — Je tiens la liste de tout ce qu'on fêtera en rentrant.
-- `66f849e8` — Rosy. Toi. Le 8. La crêpe, si elle a survécu. Et maintenant, ton casque.
-- `73afd189` — Ça va faire une très longue fête. Tant mieux.
-- `c592e03a` — Alors elle reste là-haut, Bob.
-- `097cbc3a` — Tu en auras une. Pas dans tes pattes : à la fenêtre.
-- `429d5939` — On la branche, on la pose sur le rebord, tournée vers dehors, et on la laisse allumée toute la nuit. Comme un phare.
-- `1d516fa2` — D'en bas, tu la verras. Et tu sauras toujours par où remonter.
-- `1c3b6771` — On laisse toujours une lumière allumée pour ceux qu'on attend.
-- `1ba06f4a` — Pourquoi tu crois que Klara la laisse allumée toutes les nuits ?
-- `0afe23ad` — Tout le monde à la fenêtre ! Samsam, tu tiendras le bout. Fraisy, Bluey, avec moi : on va tirer.
-- `84d7ebf7` — Tous ensemble ! À trois !
-- `bdb2c6a1` — Bluey, on n'a pas encore dit un et deux.
-- `7a31ce06` — Samsam, tu viens de faire la moitié du travail.
-- `9622a241` — Voilà. Maintenant, on t'attend.
-- `84d63803` — C'était mon idée, Bluey.
-- `73af09c6` — Et la pétale, Bob ? Elle sert à quoi ?
-- `df920630` — comme tous les matins.
-- `454cefec` — Doucement, Bob !
-- `c33e1252` — On te voit, Bob !
-- `f894edd9` — Bob ! On te voit !
-- `57014571` — au dernier moment, Bob. tu l'as levé au tout dernier moment.
-- `499ea193` — on est là, Bob ! on voit tout !
-- `0b27f15d` — Bob. j'ai une idée.
-- `6324fce5` — elle va vers ce qui brille. alors on va lui donner quelque chose de beaucoup plus brillant que toi.
-- `f5068ad9` — la veilleuse.
-- `32647bff` — je sais.
-- `3f913734` — je sais que c'est sa lumière à elle. je sais qu'elle est allumée toutes les nuits depuis qu'on est là.
-- `138e84c5` — on la lui rendra allumée. c'est tout ce que je promets.
-- `ca48a4e9` — on te voit, Bob.
-- `0e934371` — on te voit très bien.
-- `b63ee832` — rien du tout. pas une fois.
-- `cf01f1d3` — on a été très forts.
-- `e7753a83` — il en reste, Bob. il en restera toujours.
-- `4343be20` — c'est le principe d'un gâteau qu'on partage : il est plus grand après.
-- `7e7c76d3` — je sais. mais dis-le à personne.
-- `6f739386` — Bluey. Fraisy. Doudou. Samsam. Rosy.
-- `1e3e90cd` — j'ai du glaçage dans l'œil.
-- `8bb58471` — Samsam, tu peux te lever ?
-- `5fcbd582` — on coupe ici.
-- `cd3265ae` — voilà. joyeux 8 octobre, tout le monde.
-- `0092a293` — maintenant c'est bien.
-- `963f93d8` — il m'a dit « un joli ».
-- `f1eea514` — je lui en ai trouvé quatorze.
-- `92b3d759` — il a mis vingt minutes à choisir. je l'ai laissé faire.
-- `adb1146a` — aujourd'hui, il fait tous les bruits qu'on veut.
-- `b77f6ce2` — Le gâteau n'a rien. Je l'ai tenu en l'air tout du long.
-- `97f84187` — Elle s'est rendormie en souriant. Elle devait rêver de quelque chose de joli.
+- ✅ `b383760d` — Je garde le gâteau. Personne n'y touche.
+- ✅ `8db77d94` — Fraisy est déjà passée deux fois. Elle m'a dit « je vérifie juste qu'il va bien ».
+- ✅ `4fbcdb8c` — Il va très bien. Il attend Rosy, comme tout le monde.
+- ✅ `4ab33cdc` — Tu fais ta tête de quand tu réfléchis trop, Bob.
+- ✅ `bfb2c2c7` — Samsam entend tout. Et il ne dit jamais rien pour rien.
+- ✅ `0db77d08` — Va au bout. Je note tout ce qu'on fêtera après.
+- ✅ `d9c74cd0` — Tu l'as couvert ? Avec une chaussette ?
+- ✅ `c67c7e0c` — Oh, Bob. Celle-là, on la fête pour de vrai.
+- ✅ `87adae2d` — Va l'écouter. Il parle lentement, mais il ne parle jamais pour rien.
+- ✅ `96e80151` — Une chaussette en laine ! Parfait.
+- ✅ `bbcc29a5` — On la fête quand elle sera sur Samsam.
+- ✅ `748d820c` — Depuis tout ce temps ? Il doit avoir si froid.
+- ✅ `40577734` — Il ne le dira pas. Il ne le dit jamais.
+- ✅ `a1686db5` — Il lui faut quelque chose de chaud, Bob. En laine. Et grand : c'est Samsam.
+- ✅ `b569a3ba` — Sous le rideau ? Sous la fenêtre ouverte ?
+- ✅ `3f942674` — Va vite, Bob. Et regarde s'il a froid. Lui, il ne le dira pas.
+- ✅ `6ab28bfc` — Une tomate ! On f—
+- ✅ `2b1fe6b6` — Non. Plus tard. Je la note.
+- ✅ `e5fa276f` — Fraisy ! Dans la cuisine !
+- ✅ `de5aa650` — Et si elle te parle de mon gâteau, dis-lui qu'il n'est toujours pas coupé.
+- ✅ `346a549a` — Bluey est passé en courant. Il a dit « MIROIR » sept fois.
+- ✅ `699796a7` — Il avait l'air très sûr de lui. Encore plus que d'habitude.
+- ✅ `5ecb5285` — Tu joues à cache-cache avec Bluey ? J'adore ce jeu.
+- ✅ `892d6d84` — Écoute bien. Il ne sait pas rire en silence. Personne ne lui a jamais appris, et je trouve ça très bien.
+- ✅ `0197688e` — Avec plaisir ! Mais j'ai les pattes prises.
+- ✅ `92a193ca` — Un gâteau d'anniversaire, Bob. Par terre. Un 8 octobre.
+- ✅ `be44d9a1` — Demande à Bluey ! Il est petit, il passe partout, et il est réveillé depuis des heures.
+- ✅ `cd6b554c` — Il raconte à tout le monde qu'il a vu un oiseau géant. Moi, je l'ai cru.
+- ✅ `ffdfe25f` — Enfin, j'ai fait comme si. Il était tellement content qu'on l'écoute.
+- ✅ `5b3a33d0` — Ferme vite ta fenêtre, et après, on fête !
+- ✅ `982c41d1` — Ferme vite, et après, on fête !
+- ✅ `c93644c6` — Bob ! Tu es réveillé !
+- ✅ `112fee31` — Joyeux 8 octobre !
+- ✅ `fa0598f7` — Deux heures et quart. Ça fait deux heures et quart que c'est le 8, et deux heures et quart que j'attends que quelqu'un se réveille pour le lui dire.
+- ✅ `c16b1e9a` — C'est leur jour, Bob. À Klara, et à celui qu'elle attend.
+- ✅ `fc1aba27` — Le seul anniversaire qu'on choisit. C'est mon préféré.
+- ✅ `c503c88e` — Merci. C'était exactement comme je l'imaginais.
+- ✅ `abec6d6c` — Je sais ! Je compte tout le monde, tout le temps. C'est plus fort que moi : une fête, ça commence par une liste.
+- ✅ `28333325` — Et sur ma liste, tout à l'heure, il y avait un Samsam en moins.
+- ✅ `eb981dae` — Non. Je surveillais le gâteau.
+- ✅ `c343cf00` — Fraisy tourne autour depuis minuit. Elle passe, elle repasse, elle dit « il sent bon, ton gâteau ».
+- ✅ `996d6e32` — Il sent bon, c'est vrai. Mais il n'est pas coupé.
+- ✅ `f9cbfbcc` — Par contre, Fraisy n'a pas quitté la cuisine de la nuit. Si quelqu'un a vu passer Samsam, c'est elle.
+- ✅ `d19c934f` — Tu as trouvé une plume ! On fête ça !
+- ✅ `f4550f88` — Plus tard. D'accord. De toute façon, ce soir, il y a déjà une surprise pour toi, alors—
+- ✅ `31f3a7e6` — Non. Aucune. Personne ne te prépare rien. Surtout rien qui se mange.
+- ✅ `c2a2c362` — Oh non.
+- ✅ `53e71e7c` — Oublie, Bob. Je ne dis jamais une surprise. Jamais. C'est ma règle.
+- ✅ `39c307e5` — Enfin, j'en ai deux. L'autre, c'est qu'on ne coupe pas le gâteau tant qu'il manque quelqu'un.
+- ✅ `ba55eb5e` — Alors ramène-moi Samsam. J'ai très, très envie de le couper.
+- ✅ `7f801206` — Rosy ? Rosy est occ—
+- ✅ `b1f2cab2` — Va voir Doudou, Bob. Doudou sait toujours tout.
+- ✅ `b2c965ca` — Moi, je garde le gâteau. Il ne bouge pas d'ici.
+- ✅ `ff63f1c9` — Doudou t'a dit.
+- ✅ `5ab18062` — Elle est venue me voir il y a une semaine. Elle voulait te faire une surprise pour le 8, et elle ne savait pas quoi.
+- ✅ `aca21375` — Je lui ai dit : une crêpe. Au sucre. Bob adore ça, et une crêpe, ça se partage.
+- ✅ `b644f5e1` — Elle a quand même redemandé à Fraisy. Au sucre ou à la confiture. Tu la connais : elle vérifie toujours tout deux fois.
+- ✅ `a06dd5ee` — Et elle a répété toute la semaine la phrase qu'elle voulait te dire en te la donnant.
+- ✅ `eb2ea0e1` — Ça, c'est à elle de te la dire.
+- ✅ `54e37169` — Bob. Tout le monde. Depuis des mois.
+- ✅ `5da5a2ba` — Tous les matins, tu ramasses sa rose quand elle la fait tomber, et tu la lui remets dans les pattes avant qu'elle se réveille.
+- ✅ `5d43b780` — Et elle a appris toutes tes blagues par cœur. Même les nulles.
+- ✅ `2cb7d38c` — Elle rit quand même. C'est à ça qu'on sait.
+- ✅ `06f7ffdd` — Et tu veux savoir le plus beau ?
+- ✅ `3172df5c` — Il y a trois semaines, toi aussi, tu es venu me voir. Tu voulais un élastique. « Un joli. »
+- ✅ `59d9b671` — Je t'en ai trouvé quatorze. Aucun n'était assez bien pour elle.
+- ✅ `256faa19` — Deux surprises. Le même soir. Chacun pour l'autre. Et aucun des deux ne savait.
+- ✅ `a5a2e524` — J'ai gardé les deux. Ce sont les plus beaux secrets qu'on m'ait jamais confiés.
+- ✅ `a5e227a6` — Parce que c'était à vous de le dire.
+- ✅ `7743b7fe` — Et parce que c'était joli à regarder.
+- ✅ `b7d75e08` — Et tu sais ce que ça veut dire ?
+- ✅ `a236a41a` — Qu'elle compte toujours te la donner.
+- ✅ `1b68d5ce` — Je garde le gâteau. Personne n'y touche. Pas même Fraisy.
+- ✅ `729128e6` — On le coupera quand vous serez rentrés. Tous les deux.
+- ✅ `2bb989c0` — Alors dépêche-toi, Bob. J'ai très, très envie de le couper.
+- ✅ `a8c2e755` — Je ne te dis pas au revoir, Bob.
+- ✅ `340820f3` — On ne dit pas au revoir à quelqu'un qu'on attend. On dit : à tout à l'heure.
+- ✅ `9c08c1a2` — À tout à l'heure, Bob. Je garde le gâteau.
+- ✅ `8d47130d` — Sous le bureau, Bob ! Bluey l'a vue, la rallonge.
+- ✅ `9ad9c0dd` — Il voit tout, Bluey. Un jour, on va tous se mettre à l'écouter, et ce sera une très belle fête.
+- ✅ `aa678ae6` — Bob ! Tu es encore là. Je suis contente, et je ne devrais pas l'être. Je suis contente quand même.
+- ✅ `b51e5213` — Un casque...
+- ✅ `552aaf89` — Oh ! Tu te souviens de tes quatorze élastiques ?
+- ✅ `9d17081d` — Je les ai trouvés dans la boîte à couture de Klara. Celle que sa maman lui a offerte. Dans la penderie, derrière les pulls.
+- ✅ `070b07b5` — Dedans, il y a un dé à coudre. Tout petit, tout dur, et à mon avis exactement de la taille de ta tête.
+- ✅ `537db54c` — Mais fais très, très attention, Bob. Cette boîte, Klara y tient. Chaque aiguille a sa place.
+- ✅ `b814bcb9` — Je sais. C'est pour ça que c'est à toi que je le dis.
+- ✅ `a4799f5f` — La boîte à couture, Bob. Dans la penderie, derrière les pulls.
+- ✅ `7d430676` — Doucement, surtout. Tu fais toujours tout doucement quand ça compte.
+- ✅ `eb773a4a` — Je tiens la liste de tout ce qu'on fêtera en rentrant.
+- ✅ `66f849e8` — Rosy. Toi. Le 8. La crêpe, si elle a survécu. Et maintenant, ton casque.
+- ✅ `73afd189` — Ça va faire une très longue fête. Tant mieux.
+- ✅ `c592e03a` — Alors elle reste là-haut, Bob.
+- ✅ `097cbc3a` — Tu en auras une. Pas dans tes pattes : à la fenêtre.
+- ✅ `429d5939` — On la branche, on la pose sur le rebord, tournée vers dehors, et on la laisse allumée toute la nuit. Comme un phare.
+- ✅ `1d516fa2` — D'en bas, tu la verras. Et tu sauras toujours par où remonter.
+- ✅ `1c3b6771` — On laisse toujours une lumière allumée pour ceux qu'on attend.
+- ✅ `1ba06f4a` — Pourquoi tu crois que Klara la laisse allumée toutes les nuits ?
+- ✅ `0afe23ad` — Tout le monde à la fenêtre ! Samsam, tu tiendras le bout. Fraisy, Bluey, avec moi : on va tirer.
+- ✅ `84d7ebf7` — Tous ensemble ! À trois !
+- ✅ `bdb2c6a1` — Bluey, on n'a pas encore dit un et deux.
+- ✅ `7a31ce06` — Samsam, tu viens de faire la moitié du travail.
+- ✅ `9622a241` — Voilà. Maintenant, on t'attend.
+- ✅ `84d63803` — C'était mon idée, Bluey.
+- ✅ `73af09c6` — Et la pétale, Bob ? Elle sert à quoi ?
+- ✅ `df920630` — comme tous les matins.
+- ✅ `454cefec` — Doucement, Bob !
+- ✅ `c33e1252` — On te voit, Bob !
+- ✅ `f894edd9` — Bob ! On te voit !
+- ✅ `57014571` — au dernier moment, Bob. tu l'as levé au tout dernier moment.
+- ✅ `499ea193` — on est là, Bob ! on voit tout !
+- ✅ `0b27f15d` — Bob. j'ai une idée.
+- ✅ `6324fce5` — elle va vers ce qui brille. alors on va lui donner quelque chose de beaucoup plus brillant que toi.
+- ✅ `f5068ad9` — la veilleuse.
+- ✅ `32647bff` — je sais.
+- ✅ `3f913734` — je sais que c'est sa lumière à elle. je sais qu'elle est allumée toutes les nuits depuis qu'on est là.
+- ✅ `138e84c5` — on la lui rendra allumée. c'est tout ce que je promets.
+- ✅ `ca48a4e9` — on te voit, Bob.
+- ✅ `0e934371` — on te voit très bien.
+- ✅ `b63ee832` — rien du tout. pas une fois.
+- ✅ `cf01f1d3` — on a été très forts.
+- ✅ `e7753a83` — il en reste, Bob. il en restera toujours.
+- ✅ `4343be20` — c'est le principe d'un gâteau qu'on partage : il est plus grand après.
+- ✅ `7e7c76d3` — je sais. mais dis-le à personne.
+- ✅ `6f739386` — Bluey. Fraisy. Doudou. Samsam. Rosy.
+- ✅ `1e3e90cd` — j'ai du glaçage dans l'œil.
+- ✅ `8bb58471` — Samsam, tu peux te lever ?
+- ✅ `5fcbd582` — on coupe ici.
+- ✅ `cd3265ae` — voilà. joyeux 8 octobre, tout le monde.
+- ✅ `0092a293` — maintenant c'est bien.
+- ✅ `963f93d8` — il m'a dit « un joli ».
+- ✅ `f1eea514` — je lui en ai trouvé quatorze.
+- ✅ `92b3d759` — il a mis vingt minutes à choisir. je l'ai laissé faire.
+- ✅ `adb1146a` — aujourd'hui, il fait tous les bruits qu'on veut.
+- ✅ `b77f6ce2` — Le gâteau n'a rien. Je l'ai tenu en l'air tout du long.
+- ✅ `97f84187` — Elle s'est rendormie en souriant. Elle devait rêver de quelque chose de joli.
 
 ## doudou (122 répliques)
 
 **Voix :** Très vieil ourson abîmé, le sage. Voix masculine âgée, grave et un peu éraillée, calme, parle lentement.
 
-- `a2c429b1` — Cakey d'abord, mon grand.
-- `9f653c4f` — Tu es encore là, Bob.
-- `2f1cc817` — Non. Tu as peur.
-- `6f0e20f7` — C'est bien. Ceux qui n'ont pas peur oublient de faire attention.
-- `958851ae` — Assieds-toi deux secondes.
-- `7cd68bca` — Je sais. Personne ne l'a jamais.
-- `b044af98` — Écoute tout le monde d'abord, Bob. Même Bluey.
-- `f6f0b643` — Surtout Bluey. C'est celui qu'on écoute le moins, et c'est celui qui voit le mieux.
-- `333d1d2b` — Il y a quelque chose de blanc, coincé dans le cadre du miroir.
-- `a4517738` — Depuis le début de la nuit.
-- `7e94b7e2` — Je suis vieux. Je regarde. C'est à peu près tout ce que je sais faire.
-- `7590e08d` — Va le chercher, mon grand.
-- `03f44768` — C'est une plume de mouette, mon grand.
-- `5248fa90` — Assieds-toi. Je vais te raconter quelque chose, et tu vas comprendre.
-- `0fae4485` — Un jour, je suis allé à Sylt, une île tout au nord. On y va en train : les rails passent sur la mer.
-- `1553965f` — J'étais dans un sac, avec Klara et celui qui m'a amené ici. Ils marchaient vers la plage, une crêpe chacun, et ils riaient.
-- `756d0592` — Une mouette tournait au-dessus d'eux. D'un coup, elle a plongé sur la dame qui venait en face, et elle est repartie avec sa crêpe.
-- `0e20f851` — Klara a tellement ri qu'elle a dû se tenir à lui pour ne pas tomber.
-- `478ac065` — Ce jour-là, j'ai appris une chose : une mouette ne résiste jamais à une crêpe. Elle la sent de très loin, et elle vient la prendre.
-- `2c0ceafe` — Même à Kiel. Même par une fenêtre ouverte, au deuxième étage.
-- `f5fc6ea7` — C'était Rosy, mon grand. Cette crêpe, c'était ta surprise.
-- `89b5525c` — La mouette l'a sentie. Elle est entrée par la fenêtre de gauche, et elle est allée droit à la cuisine. Samsam a entendu ses griffes sur le plan de travail.
-- `44248a92` — Rosy tenait la crêpe. La mouette a tiré. Rosy n'a pas lâché.
-- `23d00aad` — Oui. Mais c'était la tienne.
-- `360b2668` — Alors la mouette a tout emporté : la crêpe, et Rosy accrochée à la crêpe. C'est ça, le « truc blanc qui bougeait » que Bluey a vu dans son bec.
-- `5be3dd90` — Rosy a crié le nom de Samsam, pour ne pas te réveiller. Et en repartant, la mouette a forcé la fenêtre. C'est pour ça que le loquet est tordu vers l'extérieur.
-- `108e2c77` — Là où les mouettes rangent tout ce qu'elles volent : dans leur nid.
-- `b2e1fefa` — En bas, dans la cour, il y a de grands arbres. Le nid est tout en haut du plus grand. Je l'ai vu briller depuis la fenêtre.
-- `0f3130ec` — Oui, mon grand.
-- `44f0d34c` — Je sais.
-- `a567eadb` — La première fois que je suis venu ici, tu m'as présenté tout le monde.
-- `65c05d3d` — « Samsam. Fraisy. Bluey. Cakey. » Très fort, très clair.
-- `27503729` — Et « Rosy », tout bas, en regardant tes pieds.
-- `fde282a1` — Je n'habite même pas ici, Bob. Et même moi, je le savais.
-- `5c9ed134` — Pour le reste, va voir Cakey. Elle sait tout ce qui se fête.
-- `1d130722` — Alors il te faudra une corde pour descendre, une lumière pour y voir, quelque chose pour te défendre, et quelque chose pour te protéger.
-- `214d82a0` — Et tu reviens. Tu m'entends, Bob ? Tu reviens.
-- `1696b0b2` — Tu vois cette couture, sur mon bras ? Et celle-là, sur mon oreille ?
-- `619cfcae` — Un jour, je suis sorti dehors sans rien. Je suis revenu avec elles.
-- `592e890d` — Tu as le temps de bien faire, mon grand. C'est le seul qui compte.
-- `9d190d85` — Une lumière pour y voir. Quelque chose pour te défendre. Quelque chose pour te protéger. Après, tu descends.
-- `6bad6cd0` — Donne-moi le pyjama. Je vais préparer la corde pendant que tu cherches.
-- `384f4e95` — Ici. Klara a toujours ce qu'il faut, mon grand.
-- `754d8404` — Demande aux autres où elle le range. Ils le savent mieux que toi et moi.
-- `239f2587` — Et doucement, surtout. Klara dort juste là.
-- `0632f25a` — Une assiette qui tombe, un bureau qui cogne, et elle se réveille.
-- `75891d71` — La première chose qu'on apprend, quand on est une peluche : si un humain se réveille, on ne bouge plus. On fait le mort.
-- `1d850b4d` — Tout le monde ici sait le faire. Mais mieux vaut ne pas avoir à le faire, mon grand.
-- `79b17581` — Le nœud est prêt. Il t'attend, comme nous tous.
-- `4377e061` — Quand tu veux, mon grand. Pas avant.
-- `04da8d94` — Va, mon grand. On est tous là.
-- `f7dc5ca7` — Tu as tout, Bob. Sauf la lumière.
-- `4e698a63` — La première nuit où je suis venu ici, j'ai eu peur. Je ne connaissais rien de l'appartement, et il faisait très noir.
-- `4286c89d` — Klara ne savait même pas que j'avais peur. Elle ne m'a rien dit.
-- `55eaef35` — Elle a juste laissé sa veilleuse allumée. Toute la nuit. Comme tous les soirs.
-- `aa835be2` — Je me suis endormi en la regardant.
-- `d10b4cba` — C'est la seule lumière d'ici qui ne s'éteint jamais, mon grand.
-- `22821fea` — Ne t'occupe pas de moi. Je suis lent, mais je ne m'arrête pas.
-- `5412f88c` — Il reste le plus dur : le nœud du bout, celui qui tient tout.
-- `af77fbb5` — Celui-là, je le ferai quand tu seras prêt. Pas avant.
-- `722ba279` — Il faut du courant jusqu'ici, mon grand.
-- `052b452e` — Pas encore, mon grand. Il te manque 
-- `6cfb33da` — Il faut toujours quelqu'un pour crier, Bluey. Sinon personne ne se réveille.
-- `78fdfa5f` — Le nœud est prêt, Bob. Quand tu veux.
-- `68f1aeb4` — Viens là, mon grand.
-- `a0b5cce2` — Il tiendra. Toi, tiens-le.
-- `6d41dfa6` — Trop vite, mon grand.
-- `10e01f77` — Il faut passer à gauche de ce truc-là.
-- `4b65439d` — La corde tient, mon grand. Le reste, c'est toi.
-- `baa72f68` — Quand ça souffle, on ne descend pas. On se colle, et on attend.
-- `d742bf49` — Le vent s'en va toujours avant nous.
-- `28807408` — Tu te souviens du train qui va à la mer, mon grand ? Celui qui roule sur l'eau.
-- `9465a90a` — Celui-là. J'étais dans le sac, et le sac était ouvert.
-- `83644376` — D'un côté il y avait de l'eau. De l'autre côté il y avait de l'eau. Et le train n'avançait pas.
-- `a4e58267` — J'ai regardé mes pattes pendant vingt minutes.
-- `ae5d8583` — Et puis les rails sont revenus sur la terre, tout le monde est descendu, et elle riait déjà.
-- `127a86d6` — Ça se termine toujours, ces endroits-là. Celui-ci aussi.
-- `bae73b2d` — Elle a déjà choisi, Bluey.
-- `6a96c52a` — À Sylt, elle avait choisi la dame qui venait en face bien avant de descendre. Nous, on l'a vue viser. On n'a rien dit. On a serré nos crêpes.
-- `226735a5` — Elle ne change jamais d'avis en route, mon grand. Elle tombe là où tu étais.
-- `edafd7d1` — Ou alors tu lèves le couvercle et tu ne bouges plus d'un pouce. Il arrêtera son bec. Il l'arrêtera à chaque fois.
-- `343dec46` — Mais il est lourd, et tes bras sont des bras d'ours en peluche. Tu ne le tiendras pas longtemps en l'air.
-- `88713d19` — Mon grand.
-- `96ac2896` — Quand j'ai traversé, je n'ai pas marché une seule fois.
-- `f10977d5` — On m'a porté tout le long. Dans un sac, dans un train, dans des bras.
-- `fa8b44f7` — Je n'ai jamais choisi le chemin. J'ai juste tenu bon pendant qu'on m'emmenait.
-- `314f31c1` — Alors attends qu'elle descende.
-- `5f24fa96` — Alors regarde bien, Bluey. Et dis-lui tout ce que tu vois.
-- `9b5a122b` — La dame qui venait en face, à Sylt. Elle avait ses lunettes de soleil posées sur les cheveux.
-- `3a445e13` — Elles brillaient. C'est là que la mouette a regardé en premier.
-- `db599476` — Mon grand. Elle ira vers la lumière.
-- `f4c22656` — Alors ne sois pas dedans.
-- `c4a9cba0` — Tu ne gagnes pas.
-- `d45e5a5d` — Tu tiens. Elle finira par en avoir assez de cette lampe, et ce jour-là elle descendra s'en occuper elle-même.
-- `46611cb9` — C'est à ce moment-là que tout change. Jusque-là, reste hors de la lumière, et respire.
-- `30b6c648` — Alors c'est toi qui brilleras le plus, et elle viendra sur toi.
-- `a3393d8e` — Ça ne te fera pas avancer. Mais ça te fera un couvercle qui sonne, et un moment de tranquillité.
-- `8086eefa` — Mon grand. Elle se pose.
-- `9403be10` — Tout ce que je t'ai dit sur les piqués, tu peux l'oublier.
-- `82f21a34` — Elle a une aile qui balaie, mon grand. Large, et basse.
-- `baa17846` — Elle crie avant. Elle crie toujours avant.
-- `3c7bbf54` — Ne recule pas jusqu'au mur. Passe derrière elle — elle met un temps fou à se retourner.
-- `c02c12b9` — Ferme la fenêtre, mon grand.
-- `51318afd` — Le 8, c'est une fois par an. C'est même toute l'idée.
-- `09180495` — Non, Bluey.
-- `26e10462` — Elle a rendu.
-- `fa11e3d7` — Viens par là, Bluey. Je vais te raconter un train qui roule sur la mer.
-- `ab8bb212` — Sur la mer. Vingt minutes. Il n'y a que de l'eau des deux côtés.
-- `133c6a87` — Après, on arrive.
-- `1dd1f905` — Bonne journée, mon grand.
-- `88352e2c` — Assieds-toi, mon grand.
-- `7794ed25` — Quand je suis arrivé ici, j'ai mis trois jours à comprendre où j'étais.
-- `713c7fbe` — Ce n'est pas le voyage qui est long. C'est l'arrivée.
-- `27432763` — Maintenant c'est chez moi.
-- `523806dd` — Ça prend le temps que ça prend, et un matin c'est fait.
-- `077d56ad` — Tu as vu la mer, cette nuit.
-- `fe72b2a2` — C'est de ce côté-là qu'on est arrivés, avec Klara. Par le train, par le nord.
-- `33dbe71f` — Elle avait un sac trop lourd et un papier avec une adresse dessus.
-- `81147ffe` — Elle a regardé l'immeuble longtemps avant de monter.
-- `d3eb4711` — Elle comptait les fenêtres.
-- `36d34340` — Moi, je n'ai pas couru. À mon âge, on fait le mort sur place. Personne ne voit la différence.
-- `8587deff` — Elle a le sommeil de ceux qui se sentent chez eux, mon grand. Mais ne tire pas trop sur la corde.
+- ✅ `a2c429b1` — Cakey d'abord, mon grand.
+- ✅ `9f653c4f` — Tu es encore là, Bob.
+- ✅ `2f1cc817` — Non. Tu as peur.
+- ✅ `6f0e20f7` — C'est bien. Ceux qui n'ont pas peur oublient de faire attention.
+- ✅ `958851ae` — Assieds-toi deux secondes.
+- ✅ `7cd68bca` — Je sais. Personne ne l'a jamais.
+- ✅ `b044af98` — Écoute tout le monde d'abord, Bob. Même Bluey.
+- ✅ `f6f0b643` — Surtout Bluey. C'est celui qu'on écoute le moins, et c'est celui qui voit le mieux.
+- ✅ `333d1d2b` — Il y a quelque chose de blanc, coincé dans le cadre du miroir.
+- ✅ `a4517738` — Depuis le début de la nuit.
+- ✅ `7e94b7e2` — Je suis vieux. Je regarde. C'est à peu près tout ce que je sais faire.
+- ✅ `7590e08d` — Va le chercher, mon grand.
+- ✅ `03f44768` — C'est une plume de mouette, mon grand.
+- ✅ `5248fa90` — Assieds-toi. Je vais te raconter quelque chose, et tu vas comprendre.
+- ✅ `0fae4485` — Un jour, je suis allé à Sylt, une île tout au nord. On y va en train : les rails passent sur la mer.
+- ✅ `1553965f` — J'étais dans un sac, avec Klara et celui qui m'a amené ici. Ils marchaient vers la plage, une crêpe chacun, et ils riaient.
+- ✅ `756d0592` — Une mouette tournait au-dessus d'eux. D'un coup, elle a plongé sur la dame qui venait en face, et elle est repartie avec sa crêpe.
+- ✅ `0e20f851` — Klara a tellement ri qu'elle a dû se tenir à lui pour ne pas tomber.
+- ✅ `478ac065` — Ce jour-là, j'ai appris une chose : une mouette ne résiste jamais à une crêpe. Elle la sent de très loin, et elle vient la prendre.
+- ✅ `2c0ceafe` — Même à Kiel. Même par une fenêtre ouverte, au deuxième étage.
+- ✅ `f5fc6ea7` — C'était Rosy, mon grand. Cette crêpe, c'était ta surprise.
+- ✅ `89b5525c` — La mouette l'a sentie. Elle est entrée par la fenêtre de gauche, et elle est allée droit à la cuisine. Samsam a entendu ses griffes sur le plan de travail.
+- ✅ `44248a92` — Rosy tenait la crêpe. La mouette a tiré. Rosy n'a pas lâché.
+- ✅ `23d00aad` — Oui. Mais c'était la tienne.
+- ✅ `360b2668` — Alors la mouette a tout emporté : la crêpe, et Rosy accrochée à la crêpe. C'est ça, le « truc blanc qui bougeait » que Bluey a vu dans son bec.
+- ✅ `5be3dd90` — Rosy a crié le nom de Samsam, pour ne pas te réveiller. Et en repartant, la mouette a forcé la fenêtre. C'est pour ça que le loquet est tordu vers l'extérieur.
+- ✅ `108e2c77` — Là où les mouettes rangent tout ce qu'elles volent : dans leur nid.
+- ✅ `b2e1fefa` — En bas, dans la cour, il y a de grands arbres. Le nid est tout en haut du plus grand. Je l'ai vu briller depuis la fenêtre.
+- ✅ `0f3130ec` — Oui, mon grand.
+- ✅ `44f0d34c` — Je sais.
+- ✅ `a567eadb` — La première fois que je suis venu ici, tu m'as présenté tout le monde.
+- ✅ `65c05d3d` — « Samsam. Fraisy. Bluey. Cakey. » Très fort, très clair.
+- ✅ `27503729` — Et « Rosy », tout bas, en regardant tes pieds.
+- ✅ `fde282a1` — Je n'habite même pas ici, Bob. Et même moi, je le savais.
+- ✅ `5c9ed134` — Pour le reste, va voir Cakey. Elle sait tout ce qui se fête.
+- ✅ `1d130722` — Alors il te faudra une corde pour descendre, une lumière pour y voir, quelque chose pour te défendre, et quelque chose pour te protéger.
+- ✅ `214d82a0` — Et tu reviens. Tu m'entends, Bob ? Tu reviens.
+- ✅ `1696b0b2` — Tu vois cette couture, sur mon bras ? Et celle-là, sur mon oreille ?
+- ✅ `619cfcae` — Un jour, je suis sorti dehors sans rien. Je suis revenu avec elles.
+- ✅ `592e890d` — Tu as le temps de bien faire, mon grand. C'est le seul qui compte.
+- ✅ `9d190d85` — Une lumière pour y voir. Quelque chose pour te défendre. Quelque chose pour te protéger. Après, tu descends.
+- ✅ `6bad6cd0` — Donne-moi le pyjama. Je vais préparer la corde pendant que tu cherches.
+- ✅ `384f4e95` — Ici. Klara a toujours ce qu'il faut, mon grand.
+- ✅ `754d8404` — Demande aux autres où elle le range. Ils le savent mieux que toi et moi.
+- ✅ `239f2587` — Et doucement, surtout. Klara dort juste là.
+- ✅ `0632f25a` — Une assiette qui tombe, un bureau qui cogne, et elle se réveille.
+- ✅ `75891d71` — La première chose qu'on apprend, quand on est une peluche : si un humain se réveille, on ne bouge plus. On fait le mort.
+- ✅ `1d850b4d` — Tout le monde ici sait le faire. Mais mieux vaut ne pas avoir à le faire, mon grand.
+- ✅ `79b17581` — Le nœud est prêt. Il t'attend, comme nous tous.
+- ✅ `4377e061` — Quand tu veux, mon grand. Pas avant.
+- ✅ `04da8d94` — Va, mon grand. On est tous là.
+- ✅ `f7dc5ca7` — Tu as tout, Bob. Sauf la lumière.
+- ✅ `4e698a63` — La première nuit où je suis venu ici, j'ai eu peur. Je ne connaissais rien de l'appartement, et il faisait très noir.
+- ✅ `4286c89d` — Klara ne savait même pas que j'avais peur. Elle ne m'a rien dit.
+- ✅ `55eaef35` — Elle a juste laissé sa veilleuse allumée. Toute la nuit. Comme tous les soirs.
+- ✅ `aa835be2` — Je me suis endormi en la regardant.
+- ✅ `d10b4cba` — C'est la seule lumière d'ici qui ne s'éteint jamais, mon grand.
+- ✅ `22821fea` — Ne t'occupe pas de moi. Je suis lent, mais je ne m'arrête pas.
+- ✅ `5412f88c` — Il reste le plus dur : le nœud du bout, celui qui tient tout.
+- ✅ `af77fbb5` — Celui-là, je le ferai quand tu seras prêt. Pas avant.
+- ✅ `722ba279` — Il faut du courant jusqu'ici, mon grand.
+- ✅ `052b452e` — Pas encore, mon grand. Il te manque 
+- ✅ `6cfb33da` — Il faut toujours quelqu'un pour crier, Bluey. Sinon personne ne se réveille.
+- ✅ `78fdfa5f` — Le nœud est prêt, Bob. Quand tu veux.
+- ✅ `68f1aeb4` — Viens là, mon grand.
+- ✅ `a0b5cce2` — Il tiendra. Toi, tiens-le.
+- ✅ `6d41dfa6` — Trop vite, mon grand.
+- ✅ `10e01f77` — Il faut passer à gauche de ce truc-là.
+- ✅ `4b65439d` — La corde tient, mon grand. Le reste, c'est toi.
+- ✅ `baa72f68` — Quand ça souffle, on ne descend pas. On se colle, et on attend.
+- ✅ `d742bf49` — Le vent s'en va toujours avant nous.
+- ✅ `28807408` — Tu te souviens du train qui va à la mer, mon grand ? Celui qui roule sur l'eau.
+- ✅ `9465a90a` — Celui-là. J'étais dans le sac, et le sac était ouvert.
+- ✅ `83644376` — D'un côté il y avait de l'eau. De l'autre côté il y avait de l'eau. Et le train n'avançait pas.
+- ✅ `a4e58267` — J'ai regardé mes pattes pendant vingt minutes.
+- ✅ `ae5d8583` — Et puis les rails sont revenus sur la terre, tout le monde est descendu, et elle riait déjà.
+- ✅ `127a86d6` — Ça se termine toujours, ces endroits-là. Celui-ci aussi.
+- ✅ `bae73b2d` — Elle a déjà choisi, Bluey.
+- ✅ `6a96c52a` — À Sylt, elle avait choisi la dame qui venait en face bien avant de descendre. Nous, on l'a vue viser. On n'a rien dit. On a serré nos crêpes.
+- ✅ `226735a5` — Elle ne change jamais d'avis en route, mon grand. Elle tombe là où tu étais.
+- ✅ `edafd7d1` — Ou alors tu lèves le couvercle et tu ne bouges plus d'un pouce. Il arrêtera son bec. Il l'arrêtera à chaque fois.
+- ✅ `343dec46` — Mais il est lourd, et tes bras sont des bras d'ours en peluche. Tu ne le tiendras pas longtemps en l'air.
+- ✅ `88713d19` — Mon grand.
+- ✅ `96ac2896` — Quand j'ai traversé, je n'ai pas marché une seule fois.
+- ✅ `f10977d5` — On m'a porté tout le long. Dans un sac, dans un train, dans des bras.
+- ✅ `fa8b44f7` — Je n'ai jamais choisi le chemin. J'ai juste tenu bon pendant qu'on m'emmenait.
+- ✅ `314f31c1` — Alors attends qu'elle descende.
+- ✅ `5f24fa96` — Alors regarde bien, Bluey. Et dis-lui tout ce que tu vois.
+- ✅ `9b5a122b` — La dame qui venait en face, à Sylt. Elle avait ses lunettes de soleil posées sur les cheveux.
+- ✅ `3a445e13` — Elles brillaient. C'est là que la mouette a regardé en premier.
+- ✅ `db599476` — Mon grand. Elle ira vers la lumière.
+- ✅ `f4c22656` — Alors ne sois pas dedans.
+- ✅ `c4a9cba0` — Tu ne gagnes pas.
+- ✅ `d45e5a5d` — Tu tiens. Elle finira par en avoir assez de cette lampe, et ce jour-là elle descendra s'en occuper elle-même.
+- ✅ `46611cb9` — C'est à ce moment-là que tout change. Jusque-là, reste hors de la lumière, et respire.
+- ✅ `30b6c648` — Alors c'est toi qui brilleras le plus, et elle viendra sur toi.
+- ✅ `a3393d8e` — Ça ne te fera pas avancer. Mais ça te fera un couvercle qui sonne, et un moment de tranquillité.
+- ✅ `8086eefa` — Mon grand. Elle se pose.
+- ✅ `9403be10` — Tout ce que je t'ai dit sur les piqués, tu peux l'oublier.
+- ✅ `82f21a34` — Elle a une aile qui balaie, mon grand. Large, et basse.
+- ✅ `baa17846` — Elle crie avant. Elle crie toujours avant.
+- ✅ `3c7bbf54` — Ne recule pas jusqu'au mur. Passe derrière elle — elle met un temps fou à se retourner.
+- ✅ `c02c12b9` — Ferme la fenêtre, mon grand.
+- ✅ `51318afd` — Le 8, c'est une fois par an. C'est même toute l'idée.
+- ✅ `09180495` — Non, Bluey.
+- ✅ `26e10462` — Elle a rendu.
+- ✅ `fa11e3d7` — Viens par là, Bluey. Je vais te raconter un train qui roule sur la mer.
+- ✅ `ab8bb212` — Sur la mer. Vingt minutes. Il n'y a que de l'eau des deux côtés.
+- ✅ `133c6a87` — Après, on arrive.
+- ✅ `1dd1f905` — Bonne journée, mon grand.
+- ✅ `88352e2c` — Assieds-toi, mon grand.
+- ✅ `7794ed25` — Quand je suis arrivé ici, j'ai mis trois jours à comprendre où j'étais.
+- ✅ `713c7fbe` — Ce n'est pas le voyage qui est long. C'est l'arrivée.
+- ✅ `27432763` — Maintenant c'est chez moi.
+- ✅ `523806dd` — Ça prend le temps que ça prend, et un matin c'est fait.
+- ✅ `077d56ad` — Tu as vu la mer, cette nuit.
+- ✅ `fe72b2a2` — C'est de ce côté-là qu'on est arrivés, avec Klara. Par le train, par le nord.
+- ✅ `33dbe71f` — Elle avait un sac trop lourd et un papier avec une adresse dessus.
+- ✅ `81147ffe` — Elle a regardé l'immeuble longtemps avant de monter.
+- ✅ `d3eb4711` — Elle comptait les fenêtres.
+- ✅ `36d34340` — Moi, je n'ai pas couru. À mon âge, on fait le mort sur place. Personne ne voit la différence.
+- ✅ `8587deff` — Elle a le sommeil de ceux qui se sentent chez eux, mon grand. Mais ne tire pas trop sur la corde.
 
 ## fraisy (71 répliques)
 
 **Voix :** Petite lapine, oreilles en fraise. Voix aiguë de petite fille, espiègle, gourmande, rieuse, un peu chaotique.
 
-- `692ca3e9` — Tu sais ce qui m'énerve ? Maintenant j'ai plus faim, alors je réfléchis, et c'est horrible.
-- `2ec00aff` — Comment vous faites, vous, toute la journée ?
-- `a78cb9f1` — Alors ? La tomate du milieu ?
-- `197d8178` — Elle est au milieu, Bob. C'est dans le nom.
-- `b1b1f5aa` — Oh, Bob ! Dis, il reste du pain ? Non parce que moi je dis ça, je dis rien, mais il reste jamais de pain.
-- `03351984` — « Plus tard ». Tu sais que le pain il t'attend pas, toi ?
-- `4ddb5675` — Ah oui. Ça.
-- `25803aa5` — Bah je l'ai vu. Il traversait.
-- `d63b6170` — L'appartement. Du lit vers la fenêtre. Je l'ai regardé faire pendant une heure et quart, j'avais rien d'autre à faire, vu qu'il n'y a PLUS DE CRÊPES.
-- `0a8fd85d` — Non parce que ça aussi c'est un sujet.
-- `1b9063dd` — Et Cakey ne coupera pas son gâteau tant qu'il manque quelqu'un. Alors moi aussi, je compte. Toute la nuit. Et ça ne tombe jamais juste.
-- `1c546622` — Il va pas vite, tu sais bien.
-- `1694b4b4` — Il a pas répondu.
-- `9aa61919` — Il avait pas assez d'air pour répondre ET avancer. Alors il a choisi d'avancer.
-- `bce58bd5` — Écoute, je te dirais bien, mais là tout de suite j'ai un cerveau de décoration.
-- `d25b27a4` — Il marche au sucre, mon cerveau. Et il n'y a plus de crêpes. Tu vois le problème.
-- `55772cb5` — Alors vas-y. Décris-moi le frigo. Je t'écoute.
-- `14dd3020` — Celle du milieu.
-- `d6311d38` — Tu vois que c'était pas compliqué.
-- `360a7f2b` — Samsam. Il est allé jusqu'à la fenêtre de gauche, et il s'est couché dessous. Le rideau lui est tombé dessus. Il n'a pas bougé depuis.
-- `2ff5d722` — C'est pas un rideau, Bob. Enfin si. Mais pas que.
-- `7cd2dc07` — Ah, et les crêpes ! Vers minuit, quelqu'un est venu prendre la dernière. Sur la pointe des pattes.
-- `9e09e305` — Elle m'a demandé si tu la préférais au sucre ou à la confiture.
-- `191c54a2` — Sucre. Évidemment. Je te connais.
-- `11996f97` — Demande à Samsam pourquoi il traversait. Moi il m'a pas répondu.
-- `9f48b230` — À toi il répondra. Il répond toujours à tout le monde, c'est sa maladie.
-- `8c25361e` — ...Et pour les crêpes, personne me demande rien, hein. C'est bien. C'est très bien.
-- `b54f3159` — Tu sais ce que je vais faire pendant que t'es pas là ? Rien.
-- `85097bf8` — Enfin, finir le jus. Mais à part ça, rien. Je vais regarder la fenêtre.
-- `ecfe5c91` — C'est long, de regarder une fenêtre. Je sais pas comment fait Bluey.
-- `de7cf9de` — On tire quand tu veux ! Moi je tire très fort. Enfin, très fort pour ma taille.
-- `1aa9b817` — On le boit à deux, avec Samsam. Une gorgée chacun.
-- `5162284d` — Bon. Deux pour moi, une pour lui. Il a dit oui.
-- `b185ef89` — Il dit oui à tout, Samsam. Alors je lui en redonne une, pour que ce soit juste.
-- `5a899871` — Tu l'as ! La baguette !
-- `d512ea2f` — Tu sais qu'on peut manger avec ? Enfin. Toi, tu vas taper avec. C'est bien aussi.
-- `cd1fe791` — Si tu as faim en bas, tu pourras toujours... non. Il en faut deux. Oublie.
-- `99c9f990` — Au fond de l'évier ! Sous tout le reste ! Sous le verre qui est dans l'autre verre !
-- `e5983338` — Doucement, par contre. Si la pile tombe, ça va réveiller Klara, et Klara endormie, c'est sacré.
-- `9a7cb063` — Bob ! T'es revenu ! T'es pas parti ? T'as oublié quelque chose ? Moi j'oublie tout le temps quelque chose. Surtout le dessert.
-- `a1bfbd8e` — Une arme. Une ARME. D'accord.
-- `4ecb2d3d` — Une fourchette ! Non, trop de piques, tu vas te piquer toi-même. Une cuillère ! Non, une cuillère c'est pour la glace. Il reste de la glace ?
-- `af4b0f57` — Pardon. Je sais ! Au fond de l'évier, tout en dessous de la vaisselle, il y a une baguette. Des sushis de mardi.
-- `d6910d37` — Je le sais parce que je suis allée vérifier s'il restait du riz dessus.
-- `6dd3a7e8` — Plus maintenant.
-- `d4f1d973` — J'ai entendu un bouchon !
-- `396d4d69` — Du jus de mangue ! À deux heures du matin ! C'est le meilleur moment pour du jus de mangue, tout le monde le sait.
-- `9b66e8c7` — Samsam, t'en veux ? T'en veux. On partage.
-- `3fe821f5` — Bob, tu gardes le couvercle, et nous on garde ce qu'il y a dedans. C'est équitable.
-- `e69d19de` — Et si tu vois la crêpe— non. Rien. Ramène Rosy.
-- `40e2a3ea` — Mais si la crêpe est là aussi, ce serait bête de la laisser. Je dis ça.
-- `69d3a96a` — C'ÉTAIT DE LA TERRE ? IL Y AVAIT QUOI DEDANS ?
-- `c7f7dc46` — C'EST MOI QUI LA FAIS TOURNER ! enfin — c'est Cakey qui tient, mais c'est moi qui pousse. c'est presque pareil.
-- `1e4ecdd3` — ROSY ! t'as une odeur de brindille ! t'as une odeur de brindille et de— attends, tu sens la mer ?
-- `edaa8643` — elle pleure pas, Bluey, elle a du glaçage dans l'œil. c'est très fréquent.
-- `764ea531` — joyeux 8 octobre ! est-ce qu'on peut le refaire demain ?
-- `04a9b33e` — c'est rien. c'est le vent. c'est toujours le vent. sauf quand c'est pas le vent.
-- `c66ac187` — personne ne bouge. personne ne bouge, personne ne bouge, person—
-- `98b54ad9` — Bluey. BLUEY. tourne-toi.
-- `ec5fa5d9` — parce que ce moment-là, il est pas pour nous. il est pour eux deux.
-- `2cb768c5` — rien. c'était le gâteau.
-- `45ae83db` — je m'en occupe !
-- `2c03ff93` — c'est une façon de nettoyer.
-- `2e7a0e3d` — alors. la crêpe.
-- `388462c5` — j'y ai pas touché.
-- `29391da6` — j'y ai presque pas touché.
-- `3f1efeaa` — j'ai vérifié qu'elle était bonne. c'est différent. si elle était pas bonne tu aurais été déçu et j'ai pris ce risque pour toi.
-- `cd2adef1` — de rien !! elle est très bonne !! il en reste les trois quarts !!
-- `b772ad48` — ...les deux tiers.
-- `8ac67440` — J'ai fait la morte tellement bien que j'ai failli m'endormir pour de vrai.
-- `daab7d2d` — Si elle se réveille pour de bon, on lui propose un jus de mangue. Ça calme tout le monde.
+- ✅ `692ca3e9` — Tu sais ce qui m'énerve ? Maintenant j'ai plus faim, alors je réfléchis, et c'est horrible.
+- ✅ `2ec00aff` — Comment vous faites, vous, toute la journée ?
+- ✅ `a78cb9f1` — Alors ? La tomate du milieu ?
+- ✅ `197d8178` — Elle est au milieu, Bob. C'est dans le nom.
+- ✅ `b1b1f5aa` — Oh, Bob ! Dis, il reste du pain ? Non parce que moi je dis ça, je dis rien, mais il reste jamais de pain.
+- ✅ `03351984` — « Plus tard ». Tu sais que le pain il t'attend pas, toi ?
+- ✅ `4ddb5675` — Ah oui. Ça.
+- ✅ `25803aa5` — Bah je l'ai vu. Il traversait.
+- ✅ `d63b6170` — L'appartement. Du lit vers la fenêtre. Je l'ai regardé faire pendant une heure et quart, j'avais rien d'autre à faire, vu qu'il n'y a PLUS DE CRÊPES.
+- ✅ `0a8fd85d` — Non parce que ça aussi c'est un sujet.
+- ✅ `1b9063dd` — Et Cakey ne coupera pas son gâteau tant qu'il manque quelqu'un. Alors moi aussi, je compte. Toute la nuit. Et ça ne tombe jamais juste.
+- ✅ `1c546622` — Il va pas vite, tu sais bien.
+- ✅ `1694b4b4` — Il a pas répondu.
+- ✅ `9aa61919` — Il avait pas assez d'air pour répondre ET avancer. Alors il a choisi d'avancer.
+- ✅ `bce58bd5` — Écoute, je te dirais bien, mais là tout de suite j'ai un cerveau de décoration.
+- ✅ `d25b27a4` — Il marche au sucre, mon cerveau. Et il n'y a plus de crêpes. Tu vois le problème.
+- ✅ `55772cb5` — Alors vas-y. Décris-moi le frigo. Je t'écoute.
+- ✅ `14dd3020` — Celle du milieu.
+- ✅ `d6311d38` — Tu vois que c'était pas compliqué.
+- ✅ `360a7f2b` — Samsam. Il est allé jusqu'à la fenêtre de gauche, et il s'est couché dessous. Le rideau lui est tombé dessus. Il n'a pas bougé depuis.
+- ✅ `2ff5d722` — C'est pas un rideau, Bob. Enfin si. Mais pas que.
+- ✅ `7cd2dc07` — Ah, et les crêpes ! Vers minuit, quelqu'un est venu prendre la dernière. Sur la pointe des pattes.
+- ✅ `9e09e305` — Elle m'a demandé si tu la préférais au sucre ou à la confiture.
+- ✅ `191c54a2` — Sucre. Évidemment. Je te connais.
+- ✅ `11996f97` — Demande à Samsam pourquoi il traversait. Moi il m'a pas répondu.
+- ✅ `9f48b230` — À toi il répondra. Il répond toujours à tout le monde, c'est sa maladie.
+- ✅ `8c25361e` — ...Et pour les crêpes, personne me demande rien, hein. C'est bien. C'est très bien.
+- ✅ `b54f3159` — Tu sais ce que je vais faire pendant que t'es pas là ? Rien.
+- ✅ `85097bf8` — Enfin, finir le jus. Mais à part ça, rien. Je vais regarder la fenêtre.
+- ✅ `ecfe5c91` — C'est long, de regarder une fenêtre. Je sais pas comment fait Bluey.
+- ✅ `de7cf9de` — On tire quand tu veux ! Moi je tire très fort. Enfin, très fort pour ma taille.
+- ✅ `1aa9b817` — On le boit à deux, avec Samsam. Une gorgée chacun.
+- ✅ `5162284d` — Bon. Deux pour moi, une pour lui. Il a dit oui.
+- ✅ `b185ef89` — Il dit oui à tout, Samsam. Alors je lui en redonne une, pour que ce soit juste.
+- ✅ `5a899871` — Tu l'as ! La baguette !
+- ✅ `d512ea2f` — Tu sais qu'on peut manger avec ? Enfin. Toi, tu vas taper avec. C'est bien aussi.
+- ✅ `cd1fe791` — Si tu as faim en bas, tu pourras toujours... non. Il en faut deux. Oublie.
+- ✅ `99c9f990` — Au fond de l'évier ! Sous tout le reste ! Sous le verre qui est dans l'autre verre !
+- ✅ `e5983338` — Doucement, par contre. Si la pile tombe, ça va réveiller Klara, et Klara endormie, c'est sacré.
+- ✅ `9a7cb063` — Bob ! T'es revenu ! T'es pas parti ? T'as oublié quelque chose ? Moi j'oublie tout le temps quelque chose. Surtout le dessert.
+- ✅ `a1bfbd8e` — Une arme. Une ARME. D'accord.
+- ✅ `4ecb2d3d` — Une fourchette ! Non, trop de piques, tu vas te piquer toi-même. Une cuillère ! Non, une cuillère c'est pour la glace. Il reste de la glace ?
+- ✅ `af4b0f57` — Pardon. Je sais ! Au fond de l'évier, tout en dessous de la vaisselle, il y a une baguette. Des sushis de mardi.
+- ✅ `d6910d37` — Je le sais parce que je suis allée vérifier s'il restait du riz dessus.
+- ✅ `6dd3a7e8` — Plus maintenant.
+- ✅ `d4f1d973` — J'ai entendu un bouchon !
+- ✅ `396d4d69` — Du jus de mangue ! À deux heures du matin ! C'est le meilleur moment pour du jus de mangue, tout le monde le sait.
+- ✅ `9b66e8c7` — Samsam, t'en veux ? T'en veux. On partage.
+- ✅ `3fe821f5` — Bob, tu gardes le couvercle, et nous on garde ce qu'il y a dedans. C'est équitable.
+- ✅ `e69d19de` — Et si tu vois la crêpe— non. Rien. Ramène Rosy.
+- ✅ `40e2a3ea` — Mais si la crêpe est là aussi, ce serait bête de la laisser. Je dis ça.
+- ✅ `69d3a96a` — C'ÉTAIT DE LA TERRE ? IL Y AVAIT QUOI DEDANS ?
+- ✅ `c7f7dc46` — C'EST MOI QUI LA FAIS TOURNER ! enfin — c'est Cakey qui tient, mais c'est moi qui pousse. c'est presque pareil.
+- ✅ `1e4ecdd3` — ROSY ! t'as une odeur de brindille ! t'as une odeur de brindille et de— attends, tu sens la mer ?
+- ✅ `edaa8643` — elle pleure pas, Bluey, elle a du glaçage dans l'œil. c'est très fréquent.
+- ✅ `764ea531` — joyeux 8 octobre ! est-ce qu'on peut le refaire demain ?
+- ✅ `04a9b33e` — c'est rien. c'est le vent. c'est toujours le vent. sauf quand c'est pas le vent.
+- ✅ `c66ac187` — personne ne bouge. personne ne bouge, personne ne bouge, person—
+- ✅ `98b54ad9` — Bluey. BLUEY. tourne-toi.
+- ✅ `ec5fa5d9` — parce que ce moment-là, il est pas pour nous. il est pour eux deux.
+- ✅ `2cb768c5` — rien. c'était le gâteau.
+- ✅ `45ae83db` — je m'en occupe !
+- ✅ `2c03ff93` — c'est une façon de nettoyer.
+- ✅ `2e7a0e3d` — alors. la crêpe.
+- ✅ `388462c5` — j'y ai pas touché.
+- ✅ `29391da6` — j'y ai presque pas touché.
+- ✅ `3f1efeaa` — j'ai vérifié qu'elle était bonne. c'est différent. si elle était pas bonne tu aurais été déçu et j'ai pris ce risque pour toi.
+- ✅ `cd2adef1` — de rien !! elle est très bonne !! il en reste les trois quarts !!
+- ✅ `b772ad48` — ...les deux tiers.
+- ✅ `8ac67440` — J'ai fait la morte tellement bien que j'ai failli m'endormir pour de vrai.
+- ✅ `daab7d2d` — Si elle se réveille pour de bon, on lui propose un jus de mangue. Ça calme tout le monde.
 
 ## rosy (28 répliques)
 
 **Voix :** Lapine blanche avec une rose. Voix féminine douce, tendre, posée, un peu rêveuse.
 
-- `db01ab2a` — Bob— Bob, elle—
-- `1557cec7` — Est-ce que quelqu'un a froid ? Bluey, tu as les oreilles gelées.
-- `486af4b1` — Bob. C'est—
-- `77cdabe6` — Bob, tu devrais t'asseoir. Tu as descendu un mur.
-- `fb24e1f7` — Deux fois.
-- `c022b605` — Il me va ?
-- `3c5a45a1` — Tu as dit ça très vite.
-- `d7671094` — Je t'ai fait quelque chose. Enfin — j'ai essayé. C'est dans la cuisine, et je ne sais pas si ça a tenu.
-- `9c84a63e` — C'est une crêpe.
-- `1d4e0079` — Je sais que c'est bête. Mais Doudou a raconté Sylt une fois, et tu as fait une tête, et—
-- `856c4f02` — Et je me suis dit que le 8, une crêpe, c'était—
-- `90a836ad` — Tu l'as gardé trois semaines.
-- `3152f454` — Bob, aujourd'hui tu as été enlevé par une mouette.
-- `160b20ef` — Bob, tu es— qu'est-ce que tu fais ic—
-- `c9bd2343` — Est-ce que tout le monde va bien ? Est-ce que Bluey a dormi ? Il ne dort jamais quand il y a du bruit.
-- `3561bee4` — Et Samsam ? Il a froid sans son pyjama, il ne le dira pas mais il a froid.
-- `f1dba9e1` — Et la fenêtre. Bob. Est-ce que quelqu'un a pensé à fermer la fenêtre ?
-- `ae488538` — Alors ça va.
-- `ade2d458` — Aïe— non, ça va. Continue.
-- `64d2d3b0` — Continue, Bob.
-- `fd07fef9` — Bob. Ta baguette est cassée.
-- `6b9a6037` — Tu l'as cassée pour venir ?
-- `0a0eb91e` — Tu as une marque de bec sur ton couvercle.
-- `3ad17b6e` — Bob. Comment est-ce qu'on descend ?
-- `39b9ab2c` — Tu as de la terre partout. Et de l'herbe dans le dos.
-- `9f92108f` — Doudou va te brosser. Il va râler, et il va te brosser quand même.
-- `a2848b10` — C'était celle de ce matin.
-- `f30fb3fb` — Est-ce que tu viens de discuter avec une mouette ?
+- ✅ `db01ab2a` — Bob— Bob, elle—
+- ✅ `1557cec7` — Est-ce que quelqu'un a froid ? Bluey, tu as les oreilles gelées.
+- ✅ `486af4b1` — Bob. C'est—
+- ✅ `77cdabe6` — Bob, tu devrais t'asseoir. Tu as descendu un mur.
+- ✅ `fb24e1f7` — Deux fois.
+- ✅ `c022b605` — Il me va ?
+- ✅ `3c5a45a1` — Tu as dit ça très vite.
+- ✅ `d7671094` — Je t'ai fait quelque chose. Enfin — j'ai essayé. C'est dans la cuisine, et je ne sais pas si ça a tenu.
+- ✅ `9c84a63e` — C'est une crêpe.
+- ✅ `1d4e0079` — Je sais que c'est bête. Mais Doudou a raconté Sylt une fois, et tu as fait une tête, et—
+- ✅ `856c4f02` — Et je me suis dit que le 8, une crêpe, c'était—
+- ✅ `90a836ad` — Tu l'as gardé trois semaines.
+- ✅ `3152f454` — Bob, aujourd'hui tu as été enlevé par une mouette.
+- ✅ `160b20ef` — Bob, tu es— qu'est-ce que tu fais ic—
+- ✅ `c9bd2343` — Est-ce que tout le monde va bien ? Est-ce que Bluey a dormi ? Il ne dort jamais quand il y a du bruit.
+- ✅ `3561bee4` — Et Samsam ? Il a froid sans son pyjama, il ne le dira pas mais il a froid.
+- ✅ `f1dba9e1` — Et la fenêtre. Bob. Est-ce que quelqu'un a pensé à fermer la fenêtre ?
+- ✅ `ae488538` — Alors ça va.
+- ✅ `ade2d458` — Aïe— non, ça va. Continue.
+- ✅ `64d2d3b0` — Continue, Bob.
+- ✅ `fd07fef9` — Bob. Ta baguette est cassée.
+- ✅ `6b9a6037` — Tu l'as cassée pour venir ?
+- ✅ `0a0eb91e` — Tu as une marque de bec sur ton couvercle.
+- ✅ `3ad17b6e` — Bob. Comment est-ce qu'on descend ?
+- ✅ `39b9ab2c` — Tu as de la terre partout. Et de l'herbe dans le dos.
+- ✅ `9f92108f` — Doudou va te brosser. Il va râler, et il va te brosser quand même.
+- ✅ `a2848b10` — C'était celle de ce matin.
+- ✅ `f30fb3fb` — Est-ce que tu viens de discuter avec une mouette ?
 
 ## samsam (66 répliques)
 
 **Voix :** Très gros ourson gris en pyjama, garçon. Voix grave, lente, gentille et rassurante, un peu timide.
 
-- `c863e9a9` — Je vais y arriver.
-- `6e95083c` — Tu es encore là.
-- `83e60352` — Réfléchis à côté de moi, alors. J'aime bien.
-- `699b7391` — ...j'ai... la fenêtre est... il faut que...
-- `406e0657` — Elle est chaude.
-- `9cf5396b` — Je n'avais pas froid.
-- `09f04514` — Merci, Bob.
-- `afb4dc68` — Lui, il criait. Donc lui, il n'entendait rien.
-- `e8b3e985` — Moi j'ai entendu des doigts sur le plan de travail. Durs. Trois.
-- `2247e4f7` — Puis de la vaisselle qui bouge dans l'évier.
-- `cac72f97` — Puis un cri, dedans. Ce n'était pas Bluey.
-- `f7274c0a` — Et beaucoup plus tard, un deuxième cri. Dehors. Loin.
-- `5104510b` — Et pas dans la même direction que le premier.
-- `e6cafa8e` — Quelqu'un a crié mon nom.
-- `d3ea6386` — Une fois.
-- `27be6d3d` — Tu sais qu'elle dort contre toi, Bob ? Tous les soirs. Elle attend que tu sois endormi, et elle se rapproche.
-- `877b4e27` — Elle croit que personne ne le voit.
-- `4344d58a` — Alors quand elle a crié mon nom, et pas le tien, j'ai compris qu'elle ne voulait surtout pas te réveiller.
-- `e71153a6` — Je me suis levé à ta place.
-- `a18be8d9` — J'ai mis du temps.
-- `5fcfecd0` — Je ne sais pas. Longtemps.
-- `f613def6` — Quand je suis arrivé, le rideau était déjà par terre, et la fenêtre était déjà ouverte.
-- `120c8d71` — Je continuais.
-- `7a05e5a5` — Mais j'y allais.
-- `93732369` — Je suis désolé, Bob.
-- `89efaca2` — Je sais.
-- `5d8b55d1` — C'est ça qui est embêtant.
-- `f0f99820` — Retourne voir Bluey.
-- `20a63b9f` — Il a VU. Moi j'ai seulement entendu.
-- `342260bd` — Et personne ne lui a jamais rien demandé.
-- `059b4e8a` — Demande-lui ce que l'oiseau regardait dans le miroir.
-- `3b3dd3e6` — On ne tape pas deux fois dans un miroir pour se regarder soi.
-- `c23fcfe3` — Tu y vas.
-- `26f381d0` — Il est grand. Il est très grand. Découpé en bandes, ça fait une corde.
-- `d93a3db5` — Je l'aime beaucoup, ce pyjama.
-- `7b5e5de4` — Mais à côté de Rosy, Bob, c'est un bout de tissu.
-- `597e30fa` — Prends-le. S'il te plaît.
-- `abea31db` — C'est le seul endroit où je peux aller.
-- `1286893e` — Mon pyjama est très solide.
-- `ea1f2105` — Il a tenu toutes mes nuits. Il tiendra la tienne.
-- `90e8d6ef` — Je tiendrai le bout.
-- `0445f49b` — Je ne peux pas tirer debout. Mais je peux tenir.
-- `ab8a966c` — Il fait moins froid, à deux.
-- `f2b90695` — Tu cherches.
-- `e97aa8a4` — Si tu as quelque chose de lourd à porter. Ou de dur à ouvrir.
-- `9e64da32` — Je ne bouge pas. Mais je suis là.
-- `609ef4d6` — Pardon. C'était long.
-- `d99992ae` — Pardon. Je ne pouvais pas me lever.
-- `6608ccdc` — Merci, Cakey.
-- `7150822d` — Pardon de ne pas pouvoir descendre avec toi.
-- `1210f661` — Je suis là. Tout du long.
-- `04b70f99` — Le rond dans l'herbe. Regarde-le, et pas elle.
-- `cd26588f` — Je tiens la rallonge, Bob.
-- `3fb16187` — Je ne peux pas descendre. Mais je peux tenir.
-- `7c7142db` — Pardon, j'ai tenu aussi fort que j'ai pu.
-- `47a865a7` — JE L'AI. JE LA TIENS DES DEUX PATTES.
-- `bcb72e0b` — QUAND TU PASSES, TU ATTRAPES.
-- `3b540cc0` — JE TE TIENS.
-- `6e2d530f` — BOB. JE TE TIENS.
-- `b5754486` — Tu es rentré.
-- `41c0634f` — J'ai senti quand tu es arrivé au bout. La corde a fait un bruit différent.
-- `7496181c` — Je n'avais rien d'autre à faire.
-- `516edadf` — Mon pyjama sent la pluie.
-- `00aadda7` — C'est la première fois qu'il va quelque part.
-- `54cdf758` — Pour une fois, ne pas pouvoir me lever, ça m'a arrangé.
-- `3bdafadd` — Elle a dit un mot en dormant. Je crois que c'était un prénom.
+- ✅ `c863e9a9` — Je vais y arriver.
+- ✅ `6e95083c` — Tu es encore là.
+- ✅ `83e60352` — Réfléchis à côté de moi, alors. J'aime bien.
+- ✅ `699b7391` — ...j'ai... la fenêtre est... il faut que...
+- ✅ `406e0657` — Elle est chaude.
+- ✅ `9cf5396b` — Je n'avais pas froid.
+- ✅ `09f04514` — Merci, Bob.
+- ✅ `afb4dc68` — Lui, il criait. Donc lui, il n'entendait rien.
+- ✅ `e8b3e985` — Moi j'ai entendu des doigts sur le plan de travail. Durs. Trois.
+- ✅ `2247e4f7` — Puis de la vaisselle qui bouge dans l'évier.
+- ✅ `cac72f97` — Puis un cri, dedans. Ce n'était pas Bluey.
+- ✅ `f7274c0a` — Et beaucoup plus tard, un deuxième cri. Dehors. Loin.
+- ✅ `5104510b` — Et pas dans la même direction que le premier.
+- ✅ `e6cafa8e` — Quelqu'un a crié mon nom.
+- ✅ `d3ea6386` — Une fois.
+- ✅ `27be6d3d` — Tu sais qu'elle dort contre toi, Bob ? Tous les soirs. Elle attend que tu sois endormi, et elle se rapproche.
+- ✅ `877b4e27` — Elle croit que personne ne le voit.
+- ✅ `4344d58a` — Alors quand elle a crié mon nom, et pas le tien, j'ai compris qu'elle ne voulait surtout pas te réveiller.
+- ✅ `e71153a6` — Je me suis levé à ta place.
+- ✅ `a18be8d9` — J'ai mis du temps.
+- ✅ `5fcfecd0` — Je ne sais pas. Longtemps.
+- ✅ `f613def6` — Quand je suis arrivé, le rideau était déjà par terre, et la fenêtre était déjà ouverte.
+- ✅ `120c8d71` — Je continuais.
+- ✅ `7a05e5a5` — Mais j'y allais.
+- ✅ `93732369` — Je suis désolé, Bob.
+- ✅ `89efaca2` — Je sais.
+- ✅ `5d8b55d1` — C'est ça qui est embêtant.
+- ✅ `f0f99820` — Retourne voir Bluey.
+- ✅ `20a63b9f` — Il a VU. Moi j'ai seulement entendu.
+- ✅ `342260bd` — Et personne ne lui a jamais rien demandé.
+- ✅ `059b4e8a` — Demande-lui ce que l'oiseau regardait dans le miroir.
+- ✅ `3b3dd3e6` — On ne tape pas deux fois dans un miroir pour se regarder soi.
+- ✅ `c23fcfe3` — Tu y vas.
+- ✅ `26f381d0` — Il est grand. Il est très grand. Découpé en bandes, ça fait une corde.
+- ✅ `d93a3db5` — Je l'aime beaucoup, ce pyjama.
+- ✅ `7b5e5de4` — Mais à côté de Rosy, Bob, c'est un bout de tissu.
+- ✅ `597e30fa` — Prends-le. S'il te plaît.
+- ✅ `abea31db` — C'est le seul endroit où je peux aller.
+- ✅ `1286893e` — Mon pyjama est très solide.
+- ✅ `ea1f2105` — Il a tenu toutes mes nuits. Il tiendra la tienne.
+- ✅ `90e8d6ef` — Je tiendrai le bout.
+- ✅ `0445f49b` — Je ne peux pas tirer debout. Mais je peux tenir.
+- ✅ `ab8a966c` — Il fait moins froid, à deux.
+- ✅ `f2b90695` — Tu cherches.
+- ✅ `e97aa8a4` — Si tu as quelque chose de lourd à porter. Ou de dur à ouvrir.
+- ✅ `9e64da32` — Je ne bouge pas. Mais je suis là.
+- ✅ `609ef4d6` — Pardon. C'était long.
+- ✅ `d99992ae` — Pardon. Je ne pouvais pas me lever.
+- ✅ `6608ccdc` — Merci, Cakey.
+- ✅ `7150822d` — Pardon de ne pas pouvoir descendre avec toi.
+- ✅ `1210f661` — Je suis là. Tout du long.
+- ✅ `04b70f99` — Le rond dans l'herbe. Regarde-le, et pas elle.
+- ✅ `cd26588f` — Je tiens la rallonge, Bob.
+- ✅ `3fb16187` — Je ne peux pas descendre. Mais je peux tenir.
+- ✅ `7c7142db` — Pardon, j'ai tenu aussi fort que j'ai pu.
+- ✅ `47a865a7` — JE L'AI. JE LA TIENS DES DEUX PATTES.
+- ✅ `bcb72e0b` — QUAND TU PASSES, TU ATTRAPES.
+- ✅ `3b540cc0` — JE TE TIENS.
+- ✅ `6e2d530f` — BOB. JE TE TIENS.
+- ✅ `b5754486` — Tu es rentré.
+- ✅ `41c0634f` — J'ai senti quand tu es arrivé au bout. La corde a fait un bruit différent.
+- ✅ `7496181c` — Je n'avais rien d'autre à faire.
+- ✅ `516edadf` — Mon pyjama sent la pluie.
+- ✅ `00aadda7` — C'est la première fois qu'il va quelque part.
+- ✅ `54cdf758` — Pour une fois, ne pas pouvoir me lever, ça m'a arrangé.
+- ✅ `3bdafadd` — Elle a dit un mot en dormant. Je crois que c'était un prénom.
