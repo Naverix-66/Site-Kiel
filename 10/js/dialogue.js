@@ -145,6 +145,9 @@ function lancerDialogue(repliques, quandFini) {
     dialogue.repliques = repliques;
     dialogue.index = -1;
     dialogue.quandFini = quandFini || null;
+
+    // Les voix de ce dialogue se téléchargent pendant qu'on lit.
+    if (typeof prechargerVoix === "function") prechargerVoix(repliques);
     dialogue.ecouteurs = [];
     dialogue.choix = null;
     dialogue.zonesChoix = [];
@@ -434,7 +437,9 @@ function repliqueSuivante() {
     // Les sons (sons.js) : un clic pour chaque réplique suivante, et le
     // babillage de celui qui parle pendant que le texte s'écrit.
     if (typeof jouerSon === "function" && dialogue.index > 0) jouerSon("clic");
-    if (typeof demarrerBavardage === "function") demarrerBavardage(replique.qui);
+    // Une réplique doublée (voix.js) remplace le babillage.
+    const doublee = typeof jouerVoix === "function" && jouerVoix(replique);
+    if (!doublee && typeof demarrerBavardage === "function") demarrerBavardage(replique.qui);
 }
 
 
@@ -692,6 +697,7 @@ function fermerDialogue() {
     dialogue.zonesChoix = [];
     dialogue.quandFini = null;
 
+    if (typeof arreterVoix === "function") arreterVoix();
     if (typeof arreterBavardage === "function") arreterBavardage();
     if (typeof aLaFinDuDialogue === "function") aLaFinDuDialogue();
 }
