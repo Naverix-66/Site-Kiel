@@ -232,7 +232,14 @@ async function appelGemini(cle, modele, voix, consigne) {
             if (part) return Buffer.from(part.inlineData.data, "base64");
             console.warn("\nRéponse sans audio, nouvel essai.");
         } else if (rep.status === 429 || rep.status >= 500) {
-            // Trop de requêtes (quota par minute) ou serveur occupé : on souffle.
+            const detail = await rep.text();
+            // « limit: 0 » : ce modèle n'est pas du tout dans l'offre gratuite.
+            // « PerDay » : le quota du jour est épuisé. Attendre ne sert à rien.
+            if (/limit: 0\b/.test(detail) || /PerDay/i.test(detail)) {
+                console.error("\nGemini refuse (quota) :\n" + detail.slice(0, 800));
+                return null;
+            }
+            // Sinon, trop de requêtes à la minute ou serveur occupé : on souffle.
             console.warn("\nGemini " + rep.status + ", pause d'une minute (essai " + essai + "/4)…");
             await attendre(60000);
         } else {
