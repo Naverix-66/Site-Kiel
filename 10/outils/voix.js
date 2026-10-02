@@ -11,8 +11,21 @@
       js/voix_dispo.js, la liste que lit le jeu.
 
    Relancer après avoir déposé de nouveaux fichiers audio.
+
+   GÉNÉRER AVEC PIPER (voir REGLAGES plus bas) :
+
+       node outils/voix.js --echantillon      3 répliques par peluche
+       node outils/voix.js --generer          toutes celles qui manquent
+
+   Il faut piper (pip install piper-tts, dans le venv activé) et
+   ffmpeg. Les modèles .onnx sont cherchés dans ~/piper-voix, ou
+   dans le dossier donné par la variable PIPER_VOIX.
+   Pour réécouter une peluche après un réglage : supprimer ses
+   fichiers (voir A_ENREGISTRER.md) et relancer.
    ============================================================ */
 const fs = require("fs");
+const os = require("os");
+const { spawnSync } = require("child_process");
 const path = require("path");
 
 const RACINE = path.join(__dirname, "..");
@@ -28,6 +41,20 @@ const PORTRAITS = {
     rosy:   "Lapine blanche avec une rose. Voix féminine douce, tendre, posée, un peu rêveuse.",
     samsam: "Très gros ourson gris en pyjama, garçon. Voix grave, lente, gentille et rassurante, un peu timide.",
     doudou: "Très vieil ourson abîmé, le sage. Voix masculine âgée, grave et un peu éraillée, calme, parle lentement.",
+};
+
+// Piper, peluche par peluche. À régler À L'OREILLE :
+//   modele   le fichier .onnx (sans extension) dans ~/piper-voix
+//   locuteur pour les modèles à plusieurs voix (upmc : 0 ou 1)
+//   lenteur  --length-scale de Piper : > 1 plus lent, < 1 plus rapide
+//   hauteur  1 = naturelle, 1.4 = bien plus aigu, 0.8 = plus grave
+const REGLAGES = {
+    bluey:  { modele: "fr_FR-tom-medium",   lenteur: 0.85, hauteur: 1.55 },
+    fraisy: { modele: "fr_FR-siwis-medium", lenteur: 0.9,  hauteur: 1.3 },
+    cakey:  { modele: "fr_FR-upmc-medium",  locuteur: 0, lenteur: 1.0, hauteur: 1.1 },
+    rosy:   { modele: "fr_FR-siwis-medium", lenteur: 1.15, hauteur: 1.08 },
+    samsam: { modele: "fr_FR-upmc-medium",  locuteur: 1, lenteur: 1.2, hauteur: 0.85 },
+    doudou: { modele: "fr_FR-gilles-low",   lenteur: 1.3,  hauteur: 0.9 },
 };
 
 // FNV-1a 32 bits — IDENTIQUE à empreinteVoix() de js/voix.js.
@@ -68,6 +95,48 @@ fs.readdirSync(DOSSIER_VOIX).forEach(function (f) {
     if (EXTENSIONS.includes(ext)) presents[path.basename(f, ext)] = f;
 });
 
+// 2. Générer avec Piper (seulement avec --generer / --echantillon)
+const ECHANTILLON = process.argv.includes("--echantillon");
+if (ECHANTILLON || process.argv.includes("--generer")) {
+    const dossierModeles = process.env.PIPER_VOIX || path.join(os.homedir(), "piper-voix");
+    const ffmpegFiltres = spawnSync("ffmpeg", ["-hide_banner", "-filters"], { encoding: "utf8" });
+    if (ffmpegFiltres.error) { console.error("ffmpeg introuvable."); process.exit(1); }
+    // rubberband change la hauteur sans changer la vitesse. Sans lui,
+    // on accélère le son (effet « chipmunk ») : moins propre, mais ça marche.
+    const rubberband = /rubberband/.test(ffmpegFiltres.stdout);
+    const tmp = path.join(os.tmpdir(), "voix_peluche.wav");
+
+    Object.keys(repliques).sort().forEach(function (qui) {
+        const r = REGLAGES[qui];
+        if (!r) { console.warn("Pas de réglage pour " + qui + ", ignoré."); return; }
+        const modele = path.join(dossierModeles, r.modele + ".onnx");
+        if (!fs.existsSync(modele)) { console.error("Modèle introuvable : " + modele); process.exit(1); }
+
+        // La fréquence d'échantillonnage du modèle (16 000 pour « low », 22 050 sinon).
+        const frequence = JSON.parse(fs.readFileSync(modele + ".json", "utf8")).audio.sample_rate;
+        let liste = repliques[qui].filter(x => !presents[x.cle]);
+        if (ECHANTILLON) liste = liste.slice(0, 3);
+        liste.forEach(function (x, i) {
+            process.stdout.write("\r" + qui + " " + (i + 1) + "/" + liste.length + "   ");
+            const args = ["-m", "piper", "-m", modele, "-f", tmp, "--length-scale", String(r.lenteur)];
+            if (r.locuteur !== undefined) args.push("--speaker", String(r.locuteur));
+            // Le texte passe par l'entrée standard : marche avec toutes les versions de Piper.
+            const p = spawnSync(process.env.PIPER_PYTHON || "python3", args, { input: x.texte, encoding: "utf8" });
+            if (p.status !== 0) { console.error("\nPiper a échoué :\n" + p.stderr); process.exit(1); }
+
+            const filtre = rubberband
+                ? "rubberband=pitch=" + r.hauteur
+                : "asetrate=" + frequence + "*" + r.hauteur + ",aresample=" + frequence;
+            const sortie = path.join(DOSSIER_VOIX, x.cle + ".mp3");
+            const f = spawnSync("ffmpeg", ["-y", "-loglevel", "error", "-i", tmp, "-af", filtre,
+                "-ac", "1", "-codec:a", "libmp3lame", "-q:a", "6", sortie], { encoding: "utf8" });
+            if (f.status !== 0) { console.error("\nffmpeg a échoué :\n" + f.stderr); process.exit(1); }
+            presents[x.cle] = x.cle + ".mp3";
+        });
+        if (liste.length) console.log("");
+    });
+}
+
 let md = "# Répliques à enregistrer\n\n" +
     "Généré par `node outils/voix.js` — ne pas modifier à la main.\n\n" +
     "Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué " +
@@ -87,7 +156,7 @@ Object.keys(repliques).sort().forEach(function (qui) {
 md = md.replace("✅ = fichier", faits + " / " + total + " faites. ✅ = fichier");
 fs.writeFileSync(path.join(DOSSIER_VOIX, "A_ENREGISTRER.md"), md);
 
-// 2. La liste des voix disponibles, pour le jeu ----------------
+// 3. La liste des voix disponibles, pour le jeu ----------------
 const dispo = {};
 vues.forEach(function (cle) { if (presents[cle]) dispo[cle] = presents[cle]; });
 fs.writeFileSync(path.join(RACINE, "js", "voix_dispo.js"),
