@@ -101,7 +101,7 @@ function texteAPrononcer(texte) {
         .replace(/…/g, "...")
         .replace(/([!?])[!?]+/g, "$1")           // « !!! » -> « ! »
         // Un mot en MAJUSCULES risque d'être épelé comme un sigle.
-        .replace(/\p{Lu}{2,}/gu, m => m.toLowerCase());
+        .replace(/\p{Lu}{2,}/gu, m => m[0] + m.slice(1).toLowerCase());   // BOB -> Bob
 }
 
 // Un mot seul (« Bob. », « Oui. ») ou une onomatopée (« Mmmh. », « Oh ! »)
