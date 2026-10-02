@@ -104,6 +104,16 @@ function texteAPrononcer(texte) {
         .replace(/\p{Lu}{2,}/gu, m => m.toLowerCase());
 }
 
+// Un mot seul (« Bob. », « Oui. ») ou une onomatopée (« Mmmh. », « Oh ! »)
+// sort mal d'une synthèse vocale : trop court pour qu'elle trouve son
+// intonation. Ces répliques ne sont pas doublées et gardent le babillage,
+// qui les rend d'ailleurs mieux qu'une voix.
+const ONOMATOPEES = /^(oh+|ah+|eh+|hé+|hm+|mm+h*|euh+|pff+|oups|ouf|aïe|bah|ben|hein)$/i;
+function tropCourt(texte) {
+    const mots = texte.split(/\s+/).map(m => m.replace(/[^\p{L}'0-9]/gu, "")).filter(Boolean);
+    return mots.length <= 1 || mots.every(m => ONOMATOPEES.test(m));
+}
+
 // FNV-1a 32 bits — IDENTIQUE à empreinteVoix() de js/voix.js.
 function empreinteVoix(qui, texte) {
     const s = (qui + "|" + texte).normalize("NFC");
@@ -128,6 +138,7 @@ fs.readdirSync(path.join(RACINE, "js")).filter(f => f.endsWith(".js")).sort().fo
         if (MUETS.includes(qui)) continue;
         const texte = JSON.parse('"' + m[2].replace(/\\'/g, "'") + '"');
         if (!/\p{L}/u.test(texte)) continue;   // « ... » : un silence, rien à dire
+        if (tropCourt(texte)) continue;          // gardera le babillage
         const cle = empreinteVoix(qui, texte);
         if (vues.has(cle)) continue;
         vues.add(cle);

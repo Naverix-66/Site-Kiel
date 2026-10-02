@@ -3,9 +3,9 @@
 Généré par `node outils/voix.js` — ne pas modifier à la main.
 
 Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3` conseillé ; `.ogg`, `.wav`, `.m4a` acceptés), puis on relance le script.
-0 / 579 faites. ✅ = fichier déjà présent.
+0 / 534 faites. ✅ = fichier déjà présent.
 
-## bluey (116 répliques)
+## bluey (111 répliques)
 
 **Voix :** Tout petit ourson bleu, garçon. Voix très aiguë d'enfant de 5 ans, surexcitée, parle vite, crie souvent. Débit rapide.
 
@@ -81,7 +81,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `0f5138ae` — BOB !!! TU L'AS TUÉE !!!
 - `ffd1586a` — ELLE MARCHE QUE BRANCHÉE !! JE LE SAIS !! JE L'AI JAMAIS DÉBRANCHÉE !! ENFIN, UNE FOIS !! J'AI EU TRÈS PEUR !!
 - `ed34165f` — LE SERPENT BLANC !! SOUS LE BUREAU !! IL EST TRÈS LONG !! C'EST UNE RALLONGE !! C'EST UN SERPENT !!
-- `1a72b04b` — TROIS !!
 - `f246250e` — UN !! DEUX !! TROIS !!
 - `7a806db6` — C'EST UN PHARE !! ON A UN PHARE !! C'EST MOI QUI AI EU L'IDÉE !!
 - `659e78c0` — C'EST CAKEY QUI A EU L'IDÉE !! MAIS C'EST MOI QUI AI CRIÉ !!
@@ -106,9 +105,7 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `03d360e7` — JOYEUX 8 OCTOBRE !!!
 - `c798ca4b` — ...c'est quoi ?
 - `8f887bc0` — ELLE A DIT MERCI ?!
-- `acfb6841` — QUATORZE ?!
 - `515693fc` — POURQUOI JE ME TOURNE ?!
-- `1d1483eb` — ...d'accord.
 - `2b8a24e9` — C'ÉTAIT QUOI CE BRUIT ?!
 - `36c26bf4` — LE GÂTEAU FAIT PAS CE BRUIT-LÀ !!
 - `43f85884` — ...un train qui roule sur la MER ?!
@@ -120,13 +117,11 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `e561e3a2` — J'AI TOUT VU !! J'AI CRIÉ TOUTE LA NUIT !!
 - `c5414ce2` — j'ai plus de voix.
 - `8e2b8536` — ÇA S'ENTEND PAS !!
-- `acddcd3f` — Bob.
 - `343d084d` — ...quand j'ai crié « elle arrive », tu m'as entendu ?
-- `38331ce1` — D'ACCORD !!
 - `4d9d7185` — ON A FAIT LES MORTS !! TOUS ENSEMBLE !! C'EST LE MEILLEUR JEU DE LA NUIT !!
 - `9c3da0ea` — ENCORE !! ENFIN NON !! ENFIN SI !! ENFIN NON !!
 
-## cakey (146 répliques)
+## cakey (136 répliques)
 
 **Voix :** Grande peluche, fille, l'âme de la fête. Voix féminine chaleureuse et enjouée, malicieuse (elle garde des surprises).
 
@@ -200,7 +195,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `a5a2e524` — J'ai gardé les deux. Ce sont les plus beaux secrets qu'on m'ait jamais confiés.
 - `a5e227a6` — Parce que c'était à vous de le dire.
 - `7743b7fe` — Et parce que c'était joli à regarder.
-- `caa8750b` — Non.
 - `b7d75e08` — Et tu sais ce que ça veut dire ?
 - `a236a41a` — Qu'elle compte toujours te la donner.
 - `1b68d5ce` — Je garde le gâteau. Personne n'y touche. Pas même Fraisy.
@@ -238,7 +232,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `73af09c6` — Et la pétale, Bob ? Elle sert à quoi ?
 - `df920630` — comme tous les matins.
 - `454cefec` — Doucement, Bob !
-- `4b99ff30` — Oh !
 - `c33e1252` — On te voit, Bob !
 - `f894edd9` — Bob ! On te voit !
 - `57014571` — au dernier moment, Bob. tu l'as levé au tout dernier moment.
@@ -249,7 +242,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `32647bff` — je sais.
 - `3f913734` — je sais que c'est sa lumière à elle. je sais qu'elle est allumée toutes les nuits depuis qu'on est là.
 - `138e84c5` — on la lui rendra allumée. c'est tout ce que je promets.
-- `36bad79f` — oh.
 - `ca48a4e9` — on te voit, Bob.
 - `0e934371` — on te voit très bien.
 - `b63ee832` — rien du tout. pas une fois.
@@ -257,27 +249,20 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `e7753a83` — il en reste, Bob. il en restera toujours.
 - `4343be20` — c'est le principe d'un gâteau qu'on partage : il est plus grand après.
 - `7e7c76d3` — je sais. mais dis-le à personne.
-- `435f128f` — bon.
 - `6f739386` — Bluey. Fraisy. Doudou. Samsam. Rosy.
-- `a38231f3` — Bob.
-- `5faefd0e` — six.
 - `1e3e90cd` — j'ai du glaçage dans l'œil.
 - `8bb58471` — Samsam, tu peux te lever ?
-- `0d6bf077` — parfait.
 - `5fcbd582` — on coupe ici.
-- `389dfba6` — oui ?
 - `cd3265ae` — voilà. joyeux 8 octobre, tout le monde.
-- `d6efd49c` — voilà.
 - `0092a293` — maintenant c'est bien.
 - `963f93d8` — il m'a dit « un joli ».
 - `f1eea514` — je lui en ai trouvé quatorze.
 - `92b3d759` — il a mis vingt minutes à choisir. je l'ai laissé faire.
-- `25fbcce6` — pardon.
 - `adb1146a` — aujourd'hui, il fait tous les bruits qu'on veut.
 - `b77f6ce2` — Le gâteau n'a rien. Je l'ai tenu en l'air tout du long.
 - `97f84187` — Elle s'est rendormie en souriant. Elle devait rêver de quelque chose de joli.
 
-## doudou (128 répliques)
+## doudou (122 répliques)
 
 **Voix :** Très vieil ourson abîmé, le sage. Voix masculine âgée, grave et un peu éraillée, calme, parle lentement.
 
@@ -301,7 +286,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `0e20f851` — Klara a tellement ri qu'elle a dû se tenir à lui pour ne pas tomber.
 - `478ac065` — Ce jour-là, j'ai appris une chose : une mouette ne résiste jamais à une crêpe. Elle la sent de très loin, et elle vient la prendre.
 - `2c0ceafe` — Même à Kiel. Même par une fenêtre ouverte, au deuxième étage.
-- `9d28401c` — Oui.
 - `f5fc6ea7` — C'était Rosy, mon grand. Cette crêpe, c'était ta surprise.
 - `89b5525c` — La mouette l'a sentie. Elle est entrée par la fenêtre de gauche, et elle est allée droit à la cuisine. Samsam a entendu ses griffes sur le plan de travail.
 - `44248a92` — Rosy tenait la crêpe. La mouette a tiré. Rosy n'a pas lâché.
@@ -319,7 +303,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `5c9ed134` — Pour le reste, va voir Cakey. Elle sait tout ce qui se fête.
 - `1d130722` — Alors il te faudra une corde pour descendre, une lumière pour y voir, quelque chose pour te défendre, et quelque chose pour te protéger.
 - `214d82a0` — Et tu reviens. Tu m'entends, Bob ? Tu reviens.
-- `47a25408` — Bob.
 - `1696b0b2` — Tu vois cette couture, sur mon bras ? Et celle-là, sur mon oreille ?
 - `619cfcae` — Un jour, je suis sorti dehors sans rien. Je suis revenu avec elles.
 - `592e890d` — Tu as le temps de bien faire, mon grand. C'est le seul qui compte.
@@ -373,7 +356,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `5f24fa96` — Alors regarde bien, Bluey. Et dis-lui tout ce que tu vois.
 - `9b5a122b` — La dame qui venait en face, à Sylt. Elle avait ses lunettes de soleil posées sur les cheveux.
 - `3a445e13` — Elles brillaient. C'est là que la mouette a regardé en premier.
-- `a5ef7ba0` — Cakey.
 - `db599476` — Mon grand. Elle ira vers la lumière.
 - `f4c22656` — Alors ne sois pas dedans.
 - `c4a9cba0` — Tu ne gagnes pas.
@@ -387,9 +369,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `baa17846` — Elle crie avant. Elle crie toujours avant.
 - `3c7bbf54` — Ne recule pas jusqu'au mur. Passe derrière elle — elle met un temps fou à se retourner.
 - `c02c12b9` — Ferme la fenêtre, mon grand.
-- `8c99c807` — Voilà.
-- `70e5aedd` — Rien.
-- `b1186538` — Non.
 - `51318afd` — Le 8, c'est une fois par an. C'est même toute l'idée.
 - `09180495` — Non, Bluey.
 - `26e10462` — Elle a rendu.
@@ -410,7 +389,7 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `36d34340` — Moi, je n'ai pas couru. À mon âge, on fait le mort sur place. Personne ne voit la différence.
 - `8587deff` — Elle a le sommeil de ceux qui se sentent chez eux, mon grand. Mais ne tire pas trop sur la corde.
 
-## fraisy (76 répliques)
+## fraisy (71 répliques)
 
 **Voix :** Petite lapine, oreilles en fraise. Voix aiguë de petite fille, espiègle, gourmande, rieuse, un peu chaotique.
 
@@ -426,7 +405,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `0a8fd85d` — Non parce que ça aussi c'est un sujet.
 - `1b9063dd` — Et Cakey ne coupera pas son gâteau tant qu'il manque quelqu'un. Alors moi aussi, je compte. Toute la nuit. Et ça ne tombe jamais juste.
 - `1c546622` — Il va pas vite, tu sais bien.
-- `6cfece3a` — Oui.
 - `1694b4b4` — Il a pas répondu.
 - `9aa61919` — Il avait pas assez d'air pour répondre ET avancer. Alors il a choisi d'avancer.
 - `bce58bd5` — Écoute, je te dirais bien, mais là tout de suite j'ai un cerveau de décoration.
@@ -434,12 +412,10 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `55772cb5` — Alors vas-y. Décris-moi le frigo. Je t'écoute.
 - `14dd3020` — Celle du milieu.
 - `d6311d38` — Tu vois que c'était pas compliqué.
-- `488f2a82` — Bon.
 - `360a7f2b` — Samsam. Il est allé jusqu'à la fenêtre de gauche, et il s'est couché dessous. Le rideau lui est tombé dessus. Il n'a pas bougé depuis.
 - `2ff5d722` — C'est pas un rideau, Bob. Enfin si. Mais pas que.
 - `7cd2dc07` — Ah, et les crêpes ! Vers minuit, quelqu'un est venu prendre la dernière. Sur la pointe des pattes.
 - `9e09e305` — Elle m'a demandé si tu la préférais au sucre ou à la confiture.
-- `e5ebe804` — Mmmh.
 - `191c54a2` — Sucre. Évidemment. Je te connais.
 - `11996f97` — Demande à Samsam pourquoi il traversait. Moi il m'a pas répondu.
 - `9f48b230` — À toi il répondra. Il répond toujours à tout le monde, c'est sa maladie.
@@ -475,8 +451,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `764ea531` — joyeux 8 octobre ! est-ce qu'on peut le refaire demain ?
 - `04a9b33e` — c'est rien. c'est le vent. c'est toujours le vent. sauf quand c'est pas le vent.
 - `c66ac187` — personne ne bouge. personne ne bouge, personne ne bouge, person—
-- `9ff9499c` — OH.
-- `912f40b9` — oh. oh oh oh.
 - `98b54ad9` — Bluey. BLUEY. tourne-toi.
 - `ec5fa5d9` — parce que ce moment-là, il est pas pour nous. il est pour eux deux.
 - `2cb768c5` — rien. c'était le gâteau.
@@ -491,7 +465,7 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `8ac67440` — J'ai fait la morte tellement bien que j'ai failli m'endormir pour de vrai.
 - `daab7d2d` — Si elle se réveille pour de bon, on lui propose un jus de mangue. Ça calme tout le monde.
 
-## rosy (35 répliques)
+## rosy (28 répliques)
 
 **Voix :** Lapine blanche avec une rose. Voix féminine douce, tendre, posée, un peu rêveuse.
 
@@ -502,19 +476,16 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `fb24e1f7` — Deux fois.
 - `c022b605` — Il me va ?
 - `3c5a45a1` — Tu as dit ça très vite.
-- `7f6a54a9` — Bob.
 - `d7671094` — Je t'ai fait quelque chose. Enfin — j'ai essayé. C'est dans la cuisine, et je ne sais pas si ça a tenu.
 - `9c84a63e` — C'est une crêpe.
 - `1d4e0079` — Je sais que c'est bête. Mais Doudou a raconté Sylt une fois, et tu as fait une tête, et—
 - `856c4f02` — Et je me suis dit que le 8, une crêpe, c'était—
 - `90a836ad` — Tu l'as gardé trois semaines.
 - `3152f454` — Bob, aujourd'hui tu as été enlevé par une mouette.
-- `aa7bf688` — Bob ?
 - `160b20ef` — Bob, tu es— qu'est-ce que tu fais ic—
 - `c9bd2343` — Est-ce que tout le monde va bien ? Est-ce que Bluey a dormi ? Il ne dort jamais quand il y a du bruit.
 - `3561bee4` — Et Samsam ? Il a froid sans son pyjama, il ne le dira pas mais il a froid.
 - `f1dba9e1` — Et la fenêtre. Bob. Est-ce que quelqu'un a pensé à fermer la fenêtre ?
-- `53803a49` — Oh.
 - `ae488538` — Alors ça va.
 - `ade2d458` — Aïe— non, ça va. Continue.
 - `64d2d3b0` — Continue, Bob.
@@ -522,27 +493,19 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `6b9a6037` — Tu l'as cassée pour venir ?
 - `0a0eb91e` — Tu as une marque de bec sur ton couvercle.
 - `3ad17b6e` — Bob. Comment est-ce qu'on descend ?
-- `37921f3d` — Elle ?
 - `39b9ab2c` — Tu as de la terre partout. Et de l'herbe dans le dos.
 - `9f92108f` — Doudou va te brosser. Il va râler, et il va te brosser quand même.
-- `8b740949` — Non.
-- `9538174b` — Bob—
 - `a2848b10` — C'était celle de ce matin.
 - `f30fb3fb` — Est-ce que tu viens de discuter avec une mouette ?
-- `a0201439` — Oui.
 
-## samsam (78 répliques)
+## samsam (66 répliques)
 
 **Voix :** Très gros ourson gris en pyjama, garçon. Voix grave, lente, gentille et rassurante, un peu timide.
 
-- `93d306c2` — ...Bob.
-- `1b2b253d` — J'arrive.
 - `c863e9a9` — Je vais y arriver.
 - `6e95083c` — Tu es encore là.
 - `83e60352` — Réfléchis à côté de moi, alors. J'aime bien.
 - `699b7391` — ...j'ai... la fenêtre est... il faut que...
-- `4d3ee6f6` — Non.
-- `c4840022` — D'accord.
 - `406e0657` — Elle est chaude.
 - `9cf5396b` — Je n'avais pas froid.
 - `09f04514` — Merci, Bob.
@@ -552,9 +515,7 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `cac72f97` — Puis un cri, dedans. Ce n'était pas Bluey.
 - `f7274c0a` — Et beaucoup plus tard, un deuxième cri. Dehors. Loin.
 - `5104510b` — Et pas dans la même direction que le premier.
-- `a955a572` — Oui.
 - `e6cafa8e` — Quelqu'un a crié mon nom.
-- `b07481ab` — Elle.
 - `d3ea6386` — Une fois.
 - `27be6d3d` — Tu sais qu'elle dort contre toi, Bob ? Tous les soirs. Elle attend que tu sois endormi, et elle se rapproche.
 - `877b4e27` — Elle croit que personne ne le voit.
@@ -564,7 +525,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `5fcfecd0` — Je ne sais pas. Longtemps.
 - `f613def6` — Quand je suis arrivé, le rideau était déjà par terre, et la fenêtre était déjà ouverte.
 - `120c8d71` — Je continuais.
-- `7ffa495a` — Dehors.
 - `7a05e5a5` — Mais j'y allais.
 - `93732369` — Je suis désolé, Bob.
 - `89efaca2` — Je sais.
@@ -573,7 +533,6 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `20a63b9f` — Il a VU. Moi j'ai seulement entendu.
 - `342260bd` — Et personne ne lui a jamais rien demandé.
 - `059b4e8a` — Demande-lui ce que l'oiseau regardait dans le miroir.
-- `0b457d6e` — Bob.
 - `3b3dd3e6` — On ne tape pas deux fois dans un miroir pour se regarder soi.
 - `c23fcfe3` — Tu y vas.
 - `26f381d0` — Il est grand. Il est très grand. Découpé en bandes, ça fait une corde.
@@ -589,19 +548,15 @@ Chaque réplique s'enregistre dans **assets/voix/** sous le nom indiqué (`.mp3`
 - `f2b90695` — Tu cherches.
 - `e97aa8a4` — Si tu as quelque chose de lourd à porter. Ou de dur à ouvrir.
 - `9e64da32` — Je ne bouge pas. Mais je suis là.
-- `9bef78e1` — Voilà.
 - `609ef4d6` — Pardon. C'était long.
 - `d99992ae` — Pardon. Je ne pouvais pas me lever.
-- `5760bb64` — Oh.
 - `6608ccdc` — Merci, Cakey.
 - `7150822d` — Pardon de ne pas pouvoir descendre avec toi.
 - `1210f661` — Je suis là. Tout du long.
 - `04b70f99` — Le rond dans l'herbe. Regarde-le, et pas elle.
 - `cd26588f` — Je tiens la rallonge, Bob.
 - `3fb16187` — Je ne peux pas descendre. Mais je peux tenir.
-- `be1bba19` — Pardon.
 - `7c7142db` — Pardon, j'ai tenu aussi fort que j'ai pu.
-- `6e1fc6ee` — BOB.
 - `47a865a7` — JE L'AI. JE LA TIENS DES DEUX PATTES.
 - `bcb72e0b` — QUAND TU PASSES, TU ATTRAPES.
 - `3b540cc0` — JE TE TIENS.
