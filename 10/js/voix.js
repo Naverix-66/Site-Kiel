@@ -32,6 +32,7 @@ const voix = {
     tampons: {},      // empreinte -> AudioBuffer décodé
     enCours: {},      // empreinte -> true pendant le téléchargement
     lecture: null,    // la voix qui joue
+    attendue: null,   // empreinte de la réplique affichée dont la voix n'est pas encore arrivée
 };
 
 function fichierDeVoix(replique) {
@@ -39,30 +40,51 @@ function fichierDeVoix(replique) {
     return VOIX_DISPO[empreinteVoix(replique.qui, replique.texte)] || null;
 }
 
+function chargerVoix(r) {
+    const fichier = fichierDeVoix(r);
+    if (!fichier || !son.ctx) return;
+    const cle = empreinteVoix(r.qui, r.texte);
+    if (voix.tampons[cle] || voix.enCours[cle]) return;
+    voix.enCours[cle] = true;
+    fetch("assets/voix/" + fichier)
+        .then(function (rep) { return rep.arrayBuffer(); })
+        .then(function (b) { return son.ctx.decodeAudioData(b); })
+        .then(function (tampon) {
+            voix.tampons[cle] = tampon;
+            // La réplique s'est affichée AVANT que sa voix arrive (c'est
+            // le cas de la première de chaque dialogue) : si elle est
+            // toujours à l'écran, on la lance maintenant, à la place du
+            // babillage qui avait pris le relais.
+            if (voix.attendue === cle) {
+                voix.attendue = null;
+                if (typeof arreterBavardage === "function") arreterBavardage();
+                lancerVoix(tampon);
+            }
+        })
+        .catch(function () { console.warn("Voix illisible : " + fichier); })
+        .finally(function () { delete voix.enCours[cle]; });
+}
+
 function prechargerVoix(repliques) {
-    if (!son.ctx) return;
-    repliques.forEach(function (r) {
-        const fichier = fichierDeVoix(r);
-        if (!fichier) return;
-        const cle = empreinteVoix(r.qui, r.texte);
-        if (voix.tampons[cle] || voix.enCours[cle]) return;
-        voix.enCours[cle] = true;
-        fetch("assets/voix/" + fichier)
-            .then(function (rep) { return rep.arrayBuffer(); })
-            .then(function (b) { return son.ctx.decodeAudioData(b); })
-            .then(function (tampon) { voix.tampons[cle] = tampon; })
-            .catch(function () { console.warn("Voix illisible : " + fichier); })
-            .finally(function () { delete voix.enCours[cle]; });
-    });
+    repliques.forEach(chargerVoix);
 }
 
 // Renvoie true si une voix joue : dialogue.js saute alors le babillage.
 function jouerVoix(replique) {
     arreterVoix();
     if (!son.ctx || !replique.qui) return false;
-    const tampon = voix.tampons[empreinteVoix(replique.qui, replique.texte)];
-    if (!tampon) return false;
+    const cle = empreinteVoix(replique.qui, replique.texte);
+    const tampon = voix.tampons[cle];
+    if (!tampon) {
+        // Pas encore arrivée : elle partira toute seule à l'arrivée.
+        if (fichierDeVoix(replique)) { voix.attendue = cle; chargerVoix(replique); }
+        return false;
+    }
+    lancerVoix(tampon);
+    return true;
+}
 
+function lancerVoix(tampon) {
     const source = son.ctx.createBufferSource();
     source.buffer = tampon;
     const gain = son.ctx.createGain();
@@ -71,10 +93,10 @@ function jouerVoix(replique) {
     gain.connect(son.maitre);
     source.start();
     voix.lecture = { source: source, gain: gain };
-    return true;
 }
 
 function arreterVoix() {
+    voix.attendue = null;
     if (!voix.lecture) return;
     const v = voix.lecture;
     voix.lecture = null;

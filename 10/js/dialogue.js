@@ -68,6 +68,8 @@ const dialogue = {
     choix: null,          // la liste de choix ouverte, ou null
     choixSelection: 0,
     zonesChoix: [],       // rectangles écran, pour savoir où on a touché
+    zonePasser: null,     // le rectangle écran du bouton « Passer »
+    passe: false,         // vrai pendant que passerDialogue() fait défiler
 
     largeurEcran: 0,
     hauteurEcran: 0,
@@ -125,6 +127,7 @@ function oublierLeDialogue() {
     dialogue.index = -1;
     dialogue.choix = null;
     dialogue.zonesChoix = [];
+    dialogue.zonePasser = null;
     dialogue.quandFini = null;
     dialogue.ecouteurs = [];
     dialogue.verrou = 0;
@@ -233,6 +236,16 @@ function construireInterfaceDialogue() {
         opacity(0),
     ]);
 
+    // « Passer » : en haut à droite de la boîte, pour qui a déjà lu.
+    ui.passer = add([
+        text("Passer >>", { size: echelleInterface() - 3 }),
+        pos(0, 0),
+        anchor("topright"),
+        fixed(),
+        z(Z_INTERFACE + 2),
+        color(...COULEUR_ACCENT_FONCE),
+    ]);
+
     ui.options = [];
 
     return ui;
@@ -291,6 +304,14 @@ function placerInterfaceDialogue() {
     dialogue.yCorps = y + 14 + (taille - 3) + 8;
 
     ui.fleche.pos = vec2(x + largeur - 24, y + hauteur - 20);
+
+    ui.passer.textSize = taille - 3;
+    ui.passer.pos = vec2(x + largeur - 14, y + 10);
+    // La zone touchable déborde un peu du texte : un doigt n'est pas une souris.
+    dialogue.zonePasser = {
+        x: x + largeur - 14 - ui.passer.width - 10, y: y,
+        largeur: ui.passer.width + 24, hauteur: taille + 16,
+    };
 
     dialogue.largeurEcran = width();
     dialogue.hauteurEcran = height();
@@ -436,6 +457,7 @@ function repliqueSuivante() {
 
     // Les sons (sons.js) : un clic pour chaque réplique suivante, et le
     // babillage de celui qui parle pendant que le texte s'écrit.
+    if (dialogue.passe) return;   // on fait défiler (passerDialogue) : pas de son
     if (typeof jouerSon === "function" && dialogue.index > 0) jouerSon("clic");
     // Une réplique doublée (voix.js) remplace le babillage.
     const doublee = typeof jouerVoix === "function" && jouerVoix(replique);
@@ -508,6 +530,7 @@ function brancherEntreesDialogue() {
     e.push(onKeyPress("space", entreeValider));
     e.push(onKeyPress("enter", entreeValider));
     e.push(onKeyPress("e", entreeValider));
+    e.push(onKeyPress("escape", passerDialogue));
 
     e.push(onKeyPress("up", function () { deplacerSelection(-1); }));
     e.push(onKeyPress("down", function () { deplacerSelection(1); }));
@@ -550,6 +573,13 @@ function entreeValider() {
    ------------------------------------------------------------ */
 function entreePointeur(position) {
     if (!dialogue.actif || dialogue.verrou > 0) return;
+
+    const zp = dialogue.zonePasser;
+    if (zp && position.x >= zp.x && position.x <= zp.x + zp.largeur
+        && position.y >= zp.y && position.y <= zp.y + zp.hauteur) {
+        passerDialogue();
+        return;
+    }
 
     if (dialogue.choix && dialogue.fini) {
         for (let i = 0; i < dialogue.zonesChoix.length; i++) {
@@ -669,6 +699,41 @@ function validerChoix(i) {
 
 
 /* ============================================================
+   passerDialogue() — le bouton « Passer », ou Échap
+   ============================================================
+   On ne saute PAS simplement à la fin : chaque réplique peut porter
+   un « quand » (un objet qui bouge, un état de l'histoire qui change)
+   et le jeu en a besoin. On fait donc défiler les répliques une à une,
+   sans son, exactement comme un joueur très rapide, et :
+   - on s'ARRÊTE sur un choix : on ne choisit jamais à la place du joueur ;
+   - on ne déborde pas sur le dialogue suivant, si la fin de celui-ci
+     en lance un autre (c'est « repliques » qui le garantit).
+   ============================================================ */
+function passerDialogue() {
+    if (!dialogue.actif || dialogue.verrou > 0) return;
+    const repliques = dialogue.repliques;
+
+    dialogue.passe = true;
+    if (typeof arreterVoix === "function") arreterVoix();
+    if (typeof arreterBavardage === "function") arreterBavardage();
+
+    while (dialogue.actif && dialogue.repliques === repliques) {
+        const replique = repliques[dialogue.index];
+        if (replique.choix) {
+            if (!dialogue.fini) {
+                dialogue.reveles = dialogue.texteComplet.length;
+                dialogue.ui.corps.text = dialogue.texteComplet;
+                auTexteFini();
+            }
+            break;
+        }
+        repliqueSuivante();
+    }
+    dialogue.passe = false;
+}
+
+
+/* ============================================================
    fermerDialogue()
    ============================================================ */
 function fermerDialogue() {
@@ -683,6 +748,7 @@ function fermerDialogue() {
         destroy(ui.nom);
         destroy(ui.corps);
         destroy(ui.fleche);
+        destroy(ui.passer);
         if (ui.image) destroy(ui.image);
         ui.options.forEach(function (option) {
             destroy(option.fond);
@@ -695,6 +761,7 @@ function fermerDialogue() {
     dialogue.repliques = [];
     dialogue.choix = null;
     dialogue.zonesChoix = [];
+    dialogue.zonePasser = null;
     dialogue.quandFini = null;
 
     if (typeof arreterVoix === "function") arreterVoix();
