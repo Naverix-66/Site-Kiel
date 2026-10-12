@@ -536,6 +536,14 @@ button {
     transition: translate var(--duree-sortie) cubic-bezier(.45, 0, .25, 1);
 }
 
+/* Pendant la lecture, on retire le "filter" de toute la lettre : sinon, à
+   chaque lettre qui apparaît, le navigateur recalculerait l'ombre de la
+   feuille entière (c'est ce qui rendait l'écriture saccadée). L'ombre
+   passe en box-shadow sur la feuille, bien moins coûteux. */
+.en-lecture .lettre {
+    filter: none;
+}
+
 .lettre-sortie .lettre {
     translate: 0 var(--y-sortie);
     rotate: -1.5deg;
@@ -679,6 +687,9 @@ button {
             transparent calc(66.666% + 12px)),
         var(--grain),
         var(--papier);
+    box-shadow:
+        0 16px 30px -4px rgba(120, 75, 65, .14),
+        0 2px 4px rgba(120, 75, 65, .08);
 }
 
 .en-lecture .lettre__feuille {
@@ -704,13 +715,35 @@ button {
     outline: none;
     scrollbar-width: thin;
     scrollbar-color: rgba(193, 127, 119, .3) transparent;
-
-    /* Le texte s'efface doucement en haut et en bas de la zone */
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18px, #000 calc(100% - 42px), transparent);
-            mask-image: linear-gradient(to bottom, transparent, #000 18px, #000 calc(100% - 42px), transparent);
 }
 
 .en-lecture .lettre__contenu {
+    visibility: visible;
+}
+
+/* Le texte s'efface doucement en haut et en bas de la zone.
+   C'est un morceau de papier posé PAR-DESSUS le texte :
+   contrairement à un mask-image sur la zone qui défile, ils ne
+   forcent pas à tout redessiner à chaque pixel de défilement. */
+.lettre::after {
+    content: "";
+    position: absolute;
+    inset:
+        calc(var(--lettre-l) * .14)
+        calc(var(--lettre-l) * .075)
+        calc(var(--lettre-l) * .08);
+    /* Le même papier (grain compris) que la feuille, visible seulement
+       en haut et en bas grâce au masque. Ce calque ne bouge jamais :
+       le navigateur le dessine une fois et le réutilise. */
+    background: var(--grain), var(--papier);
+    background-position: calc(var(--lettre-l) * -.075) calc(var(--lettre-l) * -.14);
+    -webkit-mask-image: linear-gradient(to bottom, #000, transparent 18px, transparent calc(100% - 42px), #000);
+            mask-image: linear-gradient(to bottom, #000, transparent 18px, transparent calc(100% - 42px), #000);
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.en-lecture .lettre::after {
     visibility: visible;
 }
 
@@ -759,27 +792,38 @@ button {
 /* -- Chaque mot --
    Le JS entoure chaque mot d'un <span class="mot">, avec une très
    légère inclinaison au hasard (--penche, --decale) : ça casse
-   l'alignement "parfait" de l'ordinateur et fait plus manuscrit. */
+   l'alignement "parfait" de l'ordinateur et fait plus manuscrit.
+   inline-block : un mot ne se coupe jamais en fin de ligne. */
 .mot {
-    --encre-finale: var(--encre-lettre);
-
     display: inline-block;
     /* text-indent s'hérite : sans ce 0, CHAQUE mot (inline-block) aurait
        son propre retrait de paragraphe, et des espaces énormes entre eux */
     text-indent: 0;
-    /* un peu d'air sur les côtés pour que le masque ne coupe pas les boucles des lettres */
-    padding: 0 .1em;
-    margin: 0 -.1em;
-    opacity: 0;
     rotate: var(--penche, 0deg);
     translate: 0 var(--decale, 0px);
 }
 
-.lettre__date .mot {
+/* -- Chaque lettre --
+   Dans chaque mot, le JS entoure chaque lettre d'un <span class="c">
+   et lui donne son moment d'apparition (--d). Quand on ajoute
+   .en-ecriture sur le texte, TOUTES les animations démarrent en même
+   temps, chacune avec son délai : c'est le navigateur qui joue toute
+   l'écriture, sans que le JS ait à intervenir pendant ce temps.
+
+   On n'anime QUE "opacity" : la carte graphique sait l'animer seule,
+   sans redessiner la page → l'écriture reste fluide. Les lettres
+   restent "inline" (pas inline-block) pour que la police garde ses
+   liaisons naturelles d'une lettre à l'autre. */
+.c {
+    --encre-finale: var(--encre-lettre);
+    opacity: 0;
+}
+
+.lettre__date .c {
     --encre-finale: #8C6F67;
 }
 
-.lettre__texte em .mot {
+.lettre__texte em .c {
     --encre-finale: var(--encre-soulignee);
     text-decoration: underline;
     text-decoration-color: rgba(193, 127, 119, .55);
@@ -787,57 +831,15 @@ button {
     text-underline-offset: .14em;
 }
 
-/* Le mot "s'écrit" : un masque dégradé glisse de gauche à droite
-   (comme la plume qui avance), puis l'encre sèche (couleur + net). */
-.mot.est-ecrit {
-    opacity: 1;
-    -webkit-mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
-            mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
-    -webkit-mask-size: 260% 100%;
-            mask-size: 260% 100%;
-    -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-    -webkit-mask-position: 0 0;
-            mask-position: 0 0;
-    animation:
-        ecrire var(--duree-mot) cubic-bezier(.35, .1, .35, 1) both,
-        secher calc(var(--duree-mot) + 1.4s) ease-out both;
-}
-
-@keyframes ecrire {
-    from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
-    to   { -webkit-mask-position: 0 0;    mask-position: 0 0; }
-}
-
-@keyframes secher {
-    from { color: var(--encre-fraiche); filter: blur(.7px); }
-    to   { color: var(--encre-finale);  filter: none; }
-}
-
-/* Bouton "afficher toute la lettre" : simple fondu, sans effet plume */
-.mot.est-ecrit.instant {
-    -webkit-mask-image: none;
-            mask-image: none;
+.en-ecriture .c {
     color: var(--encre-finale);
-    animation: apparaitre .9s ease both;
+    animation: poser-lettre var(--duree-lettre) cubic-bezier(.2, .6, .3, 1) var(--d) both;
 }
 
-@keyframes apparaitre {
+@keyframes poser-lettre {
     from { opacity: 0; }
     to   { opacity: 1; }
 }
-
-/* Une fois l'encre sèche, le JS ajoute .sec : on enlève masque et
-   animation pour que le navigateur n'ait plus rien à recalculer
-   (plus fluide quand la lettre est longue). */
-.mot.est-ecrit.sec {
-    -webkit-mask-image: none;
-            mask-image: none;
-    animation: none;
-    opacity: 1;
-    color: var(--encre-finale);
-}
-
 
 /* -- Le petit cœur dessiné à la main après la signature -- */
 .coeur-dessine {

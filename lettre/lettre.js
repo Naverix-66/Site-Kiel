@@ -24,10 +24,9 @@ const DUREES = {
 
 /* Rythme de l'écriture */
 const ECRITURE = {
-    msParLettre: 58,          // temps pour "écrire" une lettre d’un mot
-    dureeMin: 240,            // un mot très court prend au moins ce temps
-    dureeMax: 850,            // un mot très long ne dépasse pas ce temps
-    espace: 70,               // petite respiration entre deux mots
+    msParLettre: 55,          // écart entre deux lettres d'un même mot
+    dureeLettre: 260,         // durée du fondu d'apparition de chaque lettre
+    espace: 90,               // petite respiration entre deux mots
     pauseVirgule: 300,        // après , ; :
     pausePoint: 700,          // après . ! ? …
     pauseParagraphe: 950,     // avant un nouveau paragraphe
@@ -56,9 +55,12 @@ const MOUVEMENT_REDUIT = window.matchMedia("(prefers-reduced-motion: reduce)").m
 /* ============================================================
    ÉTAT
    ============================================================ */
-let mots = [];                  // tous les <span class="mot">, dans l'ordre
-let indexMot = 0;               // le prochain mot à écrire
-let minuteurEcriture = null;    // pour pouvoir arrêter l'écriture (bouton "afficher tout")
+let mots = [];                  // [{ element, lettres, debut }] : chaque mot et son moment d'apparition
+let dureeTotale = 0;            // durée totale de l'écriture (ms)
+let debutEcriture = 0;          // moment où l'écriture a commencé
+let indexMot = 0;               // le dernier mot dont l'écriture a commencé
+let cibleDefilement = 0;        // où la feuille doit descendre (défilement doux)
+let boucle = null;              // la boucle requestAnimationFrame
 let lettreOuverte = false;      // empêche de lancer l'ouverture deux fois
 let derniereActionLectrice = 0; // moment où elle a fait défiler la lettre elle-même
 
@@ -103,6 +105,7 @@ function transmettreLesDureesAuCSS() {
     racine.setProperty("--duree-envol", DUREES.envol + "ms");
     racine.setProperty("--duree-depli", DUREES.depli + "ms");
     racine.setProperty("--delai-volets", DUREES.entreVolets + "ms");
+    racine.setProperty("--duree-lettre", (MOUVEMENT_REDUIT ? 1 : ECRITURE.dureeLettre) + "ms");
 }
 
 
@@ -184,7 +187,15 @@ function decouperEnMots() {
 
             const mot = document.createElement("span");
             mot.className = "mot";
-            mot.textContent = morceau;
+
+            // Chaque lettre dans son propre <span class="c">.
+            // Array.from découpe correctement les accents et les émojis.
+            Array.from(morceau).forEach(function (caractere) {
+                const lettre = document.createElement("span");
+                lettre.className = "c";
+                lettre.textContent = caractere;
+                mot.append(lettre);
+            });
 
             // Légère inclinaison au hasard : effet "écrit à la main"
             mot.style.setProperty("--penche", hasard(-1.2, 1.2).toFixed(2) + "deg");
@@ -196,26 +207,26 @@ function decouperEnMots() {
         noeud.replaceWith(fragment);
     });
 
-    return Array.from(texte.querySelectorAll(".mot"));
+    return Array.from(texte.querySelectorAll(".mot")).map(function (element) {
+        return { element: element, lettres: Array.from(element.querySelectorAll(".c")), debut: 0 };
+    });
 }
 
 
 /* ============================================================
    RYTHME D'ÉCRITURE
+   ============================================================
+   On calcule À L'AVANCE le moment d'apparition de chaque lettre
+   (en ms depuis le début de l'écriture) et on le donne au CSS
+   dans --d. Ensuite, le navigateur joue tout seul.
    ============================================================ */
-
-/* Un mot long met plus de temps à s'écrire qu'un mot court */
-function dureeDEcriture(mot) {
-    const duree = mot.textContent.length * ECRITURE.msParLettre;
-    return Math.min(ECRITURE.dureeMax, Math.max(ECRITURE.dureeMin, duree));
-}
 
 /* Pause à faire APRÈS ce mot, selon sa ponctuation et le paragraphe suivant */
 function pauseApres(mot, motSuivant) {
     let pause = ECRITURE.espace;
 
     // Dernier signe du mot, en ignorant guillemets/parenthèses fermants
-    const dernierSigne = mot.textContent.replace(/[»”") ]+$/, "").slice(-1);
+    const dernierSigne = mot.element.textContent.replace(/[»”")\u202F]+$/, "").slice(-1);
 
     if (dernierSigne !== "" && ".!?…".includes(dernierSigne)) {
         pause += ECRITURE.pausePoint;
@@ -224,60 +235,69 @@ function pauseApres(mot, motSuivant) {
     }
 
     // Le mot suivant est dans un autre paragraphe : grande respiration
-    if (motSuivant && mot.closest("p") !== motSuivant.closest("p")) {
+    if (motSuivant && mot.element.closest("p") !== motSuivant.element.closest("p")) {
         pause += ECRITURE.pauseParagraphe;
     }
 
     return pause;
 }
 
+function calculerLeRythme() {
+    let instant = 0;
+
+    mots.forEach(function (mot, i) {
+        mot.debut = instant;
+
+        mot.lettres.forEach(function (lettre) {
+            lettre.style.setProperty("--d", Math.round(instant) + "ms");
+            instant += ECRITURE.msParLettre;
+        });
+
+        instant += pauseApres(mot, mots[i + 1]);
+    });
+
+    dureeTotale = instant + ECRITURE.dureeLettre;
+}
+
 
 /* ============================================================
-   ÉCRITURE MOT À MOT
+   ÉCRITURE
    ============================================================ */
 function commencerAEcrire() {
+    debutEcriture = performance.now();
+    cibleDefilement = contenu.scrollTop;
+
+    // Une seule classe, et toutes les lettres démarrent avec leur délai
+    texte.classList.add("en-ecriture");
+
     if (MOUVEMENT_REDUIT) {
         toutAfficher();
         return;
     }
-    ecrireLeMotSuivant();
+    boucle = requestAnimationFrame(suivreLEcriture);
 }
 
-function ecrireLeMotSuivant() {
-    if (indexMot >= mots.length) {
-        terminerLaLettre();
-        return;
-    }
-
-    const mot = mots[indexMot];
-    const motSuivant = mots[indexMot + 1];
-    const duree = dureeDEcriture(mot);
-
-    // La durée est donnée au CSS, qui fait l'animation "plume"
-    mot.style.setProperty("--duree-mot", duree + "ms");
-    mot.classList.add("est-ecrit");
-    suivreLEcriture(mot);
-
-    indexMot++;
-
-    // Le mot suivant commence un peu AVANT que celui-ci soit fini :
-    // l'écriture reste fluide, comme une vraie main qui enchaîne.
-    minuteurEcriture = setTimeout(ecrireLeMotSuivant, duree * 0.8 + pauseApres(mot, motSuivant));
-}
-
-/* Bouton "afficher toute la lettre" : tout le reste apparaît d'un coup */
+/* Bouton "afficher toute la lettre" : les lettres pas encore écrites
+   apparaissent toutes maintenant, en un fondu rapide en cascade */
 function toutAfficher() {
-    clearTimeout(minuteurEcriture);
+    const maintenant = performance.now() - debutEcriture;
+    let decalage = 0;
 
-    mots.slice(indexMot).forEach(function (mot) {
-        mot.classList.add("est-ecrit", "instant");
+    mots.forEach(function (mot) {
+        mot.lettres.forEach(function (lettre) {
+            const debutPrevu = parseFloat(lettre.style.getPropertyValue("--d"));
+            if (debutPrevu > maintenant) {
+                lettre.style.setProperty("--d", Math.round(maintenant + decalage) + "ms");
+                decalage = MOUVEMENT_REDUIT ? 0 : Math.min(decalage + 1.5, 500);
+            }
+        });
     });
-    indexMot = mots.length;
 
     terminerLaLettre();
 }
 
 function terminerLaLettre() {
+    cancelAnimationFrame(boucle);
     scene.classList.add("lettre-terminee");
 }
 
@@ -285,27 +305,50 @@ function terminerLaLettre() {
 /* ============================================================
    DÉFILEMENT AUTOMATIQUE
    ============================================================
-   Quand le mot qu'on vient d'écrire arrive vers le bas de la
-   zone visible, on fait descendre la lettre en douceur.
-   Si elle fait défiler elle-même (pour relire), on arrête de
-   la suivre quelques secondes pour ne pas lui "voler" la page.
+   À chaque image (requestAnimationFrame, ~60 fois par seconde) :
+   - on repère le mot en train de s'écrire ;
+   - s'il arrive vers le bas de la zone visible, on fixe une
+     nouvelle "cible" un peu plus bas ;
+   - on rapproche la feuille de cette cible de 6 % de l'écart à
+     chaque image : ça donne un glissement continu qui ralentit
+     tout seul en arrivant (au lieu de démarrer/s'arrêter d'un coup).
+   Si elle fait défiler elle-même, on la laisse tranquille un moment.
    ============================================================ */
-function suivreLEcriture(mot) {
-    const ilYAPeu = Date.now() - derniereActionLectrice < ECRITURE.repitApresScroll;
-    if (ilYAPeu) {
+function suivreLEcriture() {
+    const ecoule = performance.now() - debutEcriture;
+
+    if (ecoule > dureeTotale) {
+        terminerLaLettre();
         return;
     }
 
-    // offsetTop est mesuré depuis le haut du contenu de .lettre__contenu
-    const basDuMot = mot.offsetTop + mot.offsetHeight;
-    const limiteVisible = contenu.scrollTop + contenu.clientHeight * 0.8;
-
-    if (basDuMot > limiteVisible) {
-        contenu.scrollTo({
-            top: basDuMot - contenu.clientHeight * 0.62,
-            behavior: "smooth",
-        });
+    while (indexMot < mots.length - 1 && mots[indexMot + 1].debut <= ecoule) {
+        indexMot++;
     }
+
+    const elleLitASonRythme = Date.now() - derniereActionLectrice < ECRITURE.repitApresScroll;
+
+    if (elleLitASonRythme) {
+        cibleDefilement = contenu.scrollTop;
+    } else {
+        const mot = mots[indexMot].element;
+        const basDuMot = mot.offsetTop + mot.offsetHeight;
+
+        if (basDuMot > cibleDefilement + contenu.clientHeight * 0.8) {
+            cibleDefilement = basDuMot - contenu.clientHeight * 0.62;
+        }
+
+        // Certains navigateurs arrondissent scrollTop au pixel : on avance
+        // donc toujours d'au moins 1 px, sinon la feuille resterait bloquée
+        // à quelques pixels de sa cible.
+        const ecart = cibleDefilement - contenu.scrollTop;
+        if (Math.abs(ecart) >= 1) {
+            const pas = ecart * 0.06;
+            contenu.scrollTop += Math.abs(pas) < 1 ? Math.sign(ecart) : pas;
+        }
+    }
+
+    boucle = requestAnimationFrame(suivreLEcriture);
 }
 
 function noterUneActionDeLectrice() {
@@ -442,6 +485,7 @@ function lancerLesEclats() {
    ============================================================ */
 transmettreLesDureesAuCSS();
 mots = decouperEnMots();
+calculerLeRythme();
 calculerLEchelle();
 semerLesPetales();
 
@@ -458,14 +502,6 @@ boutonRejouer.addEventListener("click", function () {
 // Si elle fait défiler la lettre elle-même, on le note
 ["wheel", "touchstart", "touchmove", "keydown", "mousedown"].forEach(function (evenement) {
     contenu.addEventListener(evenement, noterUneActionDeLectrice, { passive: true });
-});
-
-// Quand l'encre d'un mot est sèche, on fait le ménage (voir .sec dans le CSS)
-texte.addEventListener("animationend", function (evenement) {
-    const nom = evenement.animationName;
-    if (nom === "secher" || nom === "apparaitre") {
-        evenement.target.classList.add("sec");
-    }
 });
 
 // On attend les polices (max 2,5 s) avant de faire apparaître la scène,
