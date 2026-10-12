@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <!-- Page non répertoriée : on demande aux moteurs de recherche de ne pas l'indexer.
+         Elle reste accessible à toute personne qui a le lien. -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <title>Pour toi ♡</title>
+
+    <!-- Polices Google Fonts :
+         - Caveat : écriture manuscrite naturelle, pour le texte de la lettre
+         - Pinyon Script : calligraphie, pour "Pour toi" sur l'enveloppe
+         - Cormorant Garamond + Jost : les mêmes que sur le reste du site -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..600&family=Cormorant+Garamond:ital,wght@1,500&family=Jost:wght@300;400&family=Pinyon+Script&display=swap">
+
+    <link rel="stylesheet" href="lettre.css">
+</head>
+<body>
+
+    <!--
+        Dessins réutilisés plusieurs fois (le cachet de cire, le brin de fleur).
+        On les définit UNE fois ici avec <symbol>, puis on les appelle avec <use>.
+        Attention : pas de display:none sur ce SVG, sinon Chrome n'affiche plus
+        les dégradés qu'il contient. On le rend juste invisible (taille 0).
+    -->
+    <svg class="definitions" width="0" height="0" aria-hidden="true" focusable="false">
+        <defs>
+            <radialGradient id="degrade-cire" cx="38%" cy="32%" r="75%">
+                <stop offset="0" stop-color="#DE9A93"/>
+                <stop offset="0.45" stop-color="#C47D77"/>
+                <stop offset="1" stop-color="#A35F5A"/>
+            </radialGradient>
+            <radialGradient id="degrade-cire-creux" cx="62%" cy="68%" r="70%">
+                <stop offset="0" stop-color="#C98680"/>
+                <stop offset="1" stop-color="#AA6560"/>
+            </radialGradient>
+            <linearGradient id="degrade-coeur-cire" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#B66E69"/>
+                <stop offset="1" stop-color="#D99690"/>
+            </linearGradient>
+        </defs>
+
+        <!-- Le cachet de cire : une goutte irrégulière, un anneau pressé, un cœur en relief -->
+        <symbol id="cachet" viewBox="0 0 100 100">
+            <path d="M50 4 C62 3 70 9 78 12 C88 16 92 26 95 36 C98 46 96 55 95 63 C93 74 88 82 79 88 C70 94 60 97 50 96 C40 97 29 94 21 88 C12 82 6 72 5 62 C3 52 4 43 7 34 C11 24 17 15 27 10 C35 6 42 4 50 4 Z" fill="url(#degrade-cire)"/>
+            <circle cx="50" cy="50" r="31" fill="url(#degrade-cire-creux)"/>
+            <circle cx="50" cy="50" r="31" fill="none" stroke="#934F4A" stroke-opacity=".35" stroke-width="1.6"/>
+            <circle cx="50.8" cy="50.8" r="32.5" fill="none" stroke="#F4C3BD" stroke-opacity=".45" stroke-width="1"/>
+            <path d="M50 66 C40 58 33 52 33 44 C33 38 38 34 43 34 C46 34 49 36 50 39 C51 36 54 34 57 34 C62 34 67 38 67 44 C67 52 60 58 50 66 Z" fill="url(#degrade-coeur-cire)"/>
+            <path d="M37 41 C38 37 41 36 43.5 36.5" fill="none" stroke="#FFFFFF" stroke-opacity=".45" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M22 26 C27 18 35 13 43 11" fill="none" stroke="#FFFFFF" stroke-opacity=".35" stroke-width="2.4" stroke-linecap="round"/>
+        </symbol>
+
+        <!-- Un petit brin de fleur séchée, pour décorer le papier -->
+        <symbol id="brin" viewBox="0 0 60 96">
+            <path d="M31 94 C30 76 27 56 31 36 C33 25 31 16 30 9" fill="none" stroke="#B7A08A" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M30 70 C22 66 17 60 16 53 C23 55 28 61 30 70 Z" fill="#CDBDA4" opacity=".85"/>
+            <path d="M31 56 C38 52 43 46 44 39 C37 41 32 47 31 56 Z" fill="#D5C6AE" opacity=".85"/>
+            <path d="M29 42 C23 39 20 34 20 29 C25 31 28 35 29 42 Z" fill="#CDBDA4" opacity=".8"/>
+            <g transform="translate(30 10)">
+                <ellipse rx="4.2" ry="6.5" fill="#E8B4AE" transform="rotate(0)   translate(0 -5)"/>
+                <ellipse rx="4.2" ry="6.5" fill="#E3A9A2" transform="rotate(72)  translate(0 -5)"/>
+                <ellipse rx="4.2" ry="6.5" fill="#E8B4AE" transform="rotate(144) translate(0 -5)"/>
+                <ellipse rx="4.2" ry="6.5" fill="#E3A9A2" transform="rotate(216) translate(0 -5)"/>
+                <ellipse rx="4.2" ry="6.5" fill="#E8B4AE" transform="rotate(288) translate(0 -5)"/>
+                <circle r="2.6" fill="#C9A876"/>
+            </g>
+        </symbol>
+    </svg>
+
+
+    <!-- Pétales qui tombent doucement en arrière-plan (créés par le JS) -->
+    <div class="ambiance" aria-hidden="true"></div>
+
+
+    <main class="scene" id="scene">
+
+        <!-- Petit texte d'invitation au-dessus de l'enveloppe -->
+        <header class="invitation">
+            <p class="invitation__titre">Une lettre t'attend…</p>
+            <p class="invitation__aide">
+                <span class="aide-tactile">touche le cachet pour l'ouvrir</span>
+                <span class="aide-souris">clique sur le cachet pour l'ouvrir</span>
+            </p>
+        </header>
+
+        <!-- Ombre portée au sol : elle reste en bas pendant que l'enveloppe flotte -->
+        <div class="ombre-sol piece-enveloppe" aria-hidden="true"></div>
+
+        <!--
+            .flottant : fait flotter l'enveloppe ET la lettre ensemble avant l'ouverture.
+
+            Les morceaux de l'enveloppe et la lettre sont volontairement FRÈRES
+            (et pas la lettre "dans" une boîte enveloppe), pour pouvoir glisser la
+            lettre ENTRE le fond de l'enveloppe et la poche de devant avec z-index :
+                fond (1) < rabat ouvert (2) < lettre (3) < éclats (4) < poche (5) < rabat fermé (6) < cachet (7)
+            Puis la lettre passe devant tout (8) une fois sortie.
+        -->
+        <div class="flottant flotte">
+
+            <div class="enveloppe" id="enveloppe">
+
+                <!-- L'intérieur de l'enveloppe, visible quand le rabat est ouvert -->
+                <div class="enveloppe__fond piece-enveloppe"></div>
+
+                <!-- Le rabat : deux faces (dehors rose / dedans à pois) pour la rotation 3D -->
+                <div class="enveloppe__rabat piece-enveloppe" aria-hidden="true">
+                    <svg class="rabat__face rabat__face--dehors" viewBox="0 0 400 143" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="degrade-rabat" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#F8DED8"/>
+                                <stop offset="1" stop-color="#F2CBC4"/>
+                            </linearGradient>
+                            <filter id="ombre-rabat" x="-5%" y="-10%" width="110%" height="140%">
+                                <feDropShadow dx="0" dy="2.5" stdDeviation="3" flood-color="#9E5E57" flood-opacity=".22"/>
+                            </filter>
+                        </defs>
+                        <path d="M0 0 H400 L214 132 Q200 143 186 132 Z" fill="url(#degrade-rabat)" filter="url(#ombre-rabat)"/>
+                    </svg>
+                    <svg class="rabat__face rabat__face--dedans" viewBox="0 0 400 143" preserveAspectRatio="none">
+                        <defs>
+                            <pattern id="motif-doublure" width="12" height="12" patternUnits="userSpaceOnUse">
+                                <rect width="12" height="12" fill="#EEC5BE"/>
+                                <circle cx="3" cy="3" r="1.3" fill="#FFFFFF" opacity=".6"/>
+                                <circle cx="9" cy="9" r="1.3" fill="#FFFFFF" opacity=".6"/>
+                            </pattern>
+                        </defs>
+                        <path d="M0 143 H400 L214 11 Q200 0 186 11 Z" fill="url(#motif-doublure)"/>
+                    </svg>
+                </div>
+
+                <!-- La poche de devant : deux côtés + le bas, dessinés en SVG -->
+                <div class="enveloppe__poche piece-enveloppe" aria-hidden="true">
+                    <svg class="poche__dessin" viewBox="0 0 400 256" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="degrade-cote-gauche" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0" stop-color="#F1CCC5"/>
+                                <stop offset="1" stop-color="#F7DBD5"/>
+                            </linearGradient>
+                            <linearGradient id="degrade-cote-droit" x1="1" y1="0" x2="0" y2="0">
+                                <stop offset="0" stop-color="#F1CCC5"/>
+                                <stop offset="1" stop-color="#F7DBD5"/>
+                            </linearGradient>
+                            <linearGradient id="degrade-bas" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#FAE3DE"/>
+                                <stop offset="1" stop-color="#F4D2CB"/>
+                            </linearGradient>
+                            <filter id="ombre-pli" x="-10%" y="-15%" width="120%" height="130%">
+                                <feDropShadow dx="0" dy="-1.5" stdDeviation="2.2" flood-color="#A8665F" flood-opacity=".2"/>
+                            </filter>
+                            <!-- Grain de papier, appliqué uniquement sur la surface de la poche -->
+                            <filter id="grain-papier">
+                                <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="4" result="bruit"/>
+                                <feColorMatrix in="bruit" values="0 0 0 0 .55  0 0 0 0 .35  0 0 0 0 .32  0 0 0 .09 0" result="bruit-colore"/>
+                                <feComposite in="bruit-colore" in2="SourceAlpha" operator="in" result="grain"/>
+                                <feMerge>
+                                    <feMergeNode in="SourceGraphic"/>
+                                    <feMergeNode in="grain"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        <g filter="url(#grain-papier)">
+                            <path d="M0 0 L190 131 Q200 138 190 145 L0 256 Z" fill="url(#degrade-cote-gauche)" filter="url(#ombre-pli)"/>
+                            <path d="M400 0 L210 131 Q200 138 210 145 L400 256 Z" fill="url(#degrade-cote-droit)" filter="url(#ombre-pli)"/>
+                            <path d="M0 256 L186 128 Q200 118 214 128 L400 256 Z" fill="url(#degrade-bas)" filter="url(#ombre-pli)"/>
+                        </g>
+                    </svg>
+                    <p class="enveloppe__mot">Pour toi</p>
+                </div>
+
+                <!-- Le cachet de cire : c'est le bouton qui ouvre la lettre.
+                     Deux moitiés du même dessin, découpées en zigzag, pour qu'il se brise. -->
+                <button class="sceau piece-enveloppe" id="sceau" type="button" aria-label="Ouvrir la lettre">
+                    <svg class="sceau__moitie sceau__moitie--gauche" viewBox="0 0 100 100" aria-hidden="true"><use href="#cachet"/></svg>
+                    <svg class="sceau__moitie sceau__moitie--droite" viewBox="0 0 100 100" aria-hidden="true"><use href="#cachet"/></svg>
+                </button>
+
+                <!-- Petits pétales et cœurs qui s'échappent à l'ouverture (créés par le JS) -->
+                <div class="eclats" aria-hidden="true"></div>
+            </div>
+
+
+            <!--
+                LA LETTRE
+                Pliée en trois comme une vraie lettre : trois volets (haut / milieu / bas).
+                Les volets ne contiennent que du papier vierge : le texte s'écrit
+                APRÈS le dépliage, dans .lettre__contenu, posé par-dessus.
+            -->
+            <article class="lettre" id="lettre">
+
+                <div class="volet volet--milieu"></div>
+                <div class="volet volet--bas"><span class="volet__ombre"></span></div>
+                <div class="volet volet--haut">
+                    <div class="volet__face volet__face--dedans">
+                        <svg class="decor-brin" aria-hidden="true"><use href="#brin"/></svg>
+                        <span class="volet__ombre"></span>
+                    </div>
+                    <div class="volet__face volet__face--dehors">
+                        <span class="dehors__mot">à lire tout doucement</span>
+                    </div>
+                </div>
+
+                <!-- La feuille entière (avec les marques de pli), affichée une fois dépliée -->
+                <div class="lettre__feuille" aria-hidden="true">
+                    <svg class="decor-brin"><use href="#brin"/></svg>
+                </div>
+
+                <!-- tabindex="0" : permet aussi de faire défiler la lettre au clavier -->
+                <div class="lettre__contenu" id="contenu" tabindex="0">
+                    <div class="lettre__texte" id="texte">
+
+                        <!-- ==================================================
+                             ✍️  TON TEXTE ICI  (texte provisoire à remplacer)
+                             ==================================================
+                             - Un paragraphe = une balise <p> ... </p>
+                             - Les virgules et les points créent les pauses toutes seules.
+                             - <em>mot</em> souligne un mot à l'encre rose.
+                             - <br> pour aller à la ligne sans changer de paragraphe.
+                             - Les classes lettre__date / lettre__salutation /
+                               lettre__signature sont facultatives (mise en forme).
+                             ================================================== -->
+
+                        <p class="lettre__date">le 12 octobre</p>
+
+                        <p class="lettre__salutation">Mon amour,</p>
+
+                        <p>Ceci n'est qu'un brouillon : la vraie lettre, celle que j'ai écrite rien que pour toi, viendra bientôt prendre sa place ici.</p>
+
+                        <p>En attendant, ces quelques lignes servent à tout vérifier. Les mots se posent un à un sur le papier, comme si je les écrivais devant toi, avec une petite pause après chaque virgule, et une plus longue à la fin de chaque phrase.</p>
+
+                        <p>Quand l'écriture arrive en bas de la feuille, la lettre descend toute seule, tout doucement, pour que tu n'aies rien d'autre à faire que lire.</p>
+
+                        <p>Et si tu as envie de relire un passage, tu peux remonter quand tu veux : la lettre attendra que tu reviennes.</p>
+
+                        <p>On peut même <em>souligner</em> un mot, pour insister un peu plus fort.</p>
+
+                        <p class="lettre__signature">
+                            Je t'embrasse,<br>
+                            Moi
+                            <svg class="coeur-dessine" viewBox="0 0 40 36" aria-hidden="true">
+                                <path pathLength="1" d="M20 33 C9 25 3 18 3.5 11 C4 5 9 1.8 14.5 3 C17.5 3.8 19.3 6.5 20 9 C21 6 23.5 3 27.5 2.6 C33.5 2.2 37.5 6.5 36.6 12.5 C35.6 19.5 28.5 26.5 20 33"/>
+                            </svg>
+                        </p>
+
+                        <!-- ============ FIN DE TON TEXTE ============ -->
+
+                    </div>
+                </div>
+            </article>
+
+        </div>
+
+        <!-- Boutons discrets en bas de l'écran -->
+        <div class="commandes">
+            <button class="bouton-discret bouton-passer" id="bouton-passer" type="button">afficher toute la lettre</button>
+            <button class="bouton-discret bouton-rejouer" id="bouton-rejouer" type="button">↺ rouvrir l'enveloppe</button>
+        </div>
+
+    </main>
+
+    <script src="lettre.js" defer></script>
+
+</body>
+</html>

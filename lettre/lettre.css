@@ -1,0 +1,964 @@
+/* ============================================================
+   LA LETTRE — styles
+   Même palette "clean girl" que la page d'accueil (fond crème,
+   rose poudré, touches dorées), en version plus douce encore.
+
+   Les durées d'animation (--duree-sceau, --duree-rabat, …) ne
+   sont PAS définies ici : c'est lettre.js qui les injecte, pour
+   n'avoir qu'un seul endroit où régler la vitesse.
+   ============================================================ */
+:root {
+
+    /* -- Couleurs (reprises de css/index.css) -- */
+    --fond: #FBF3EE;
+    --encre: #4B3B36;
+    --encre-claire: #9C8880;
+    --rose: #D9A6A0;
+    --rose-fonce: #C17F77;
+    --or: #C9A876;
+
+    /* -- Couleurs propres à la lettre -- */
+    --papier: #FFFCF7;
+    --encre-lettre: #4E3A35;      /* encre sèche */
+    --encre-fraiche: #7E4640;     /* encre qui vient d'être posée, un peu plus rosée */
+    --encre-soulignee: #B36F69;   /* mots mis en valeur avec <em> */
+    --encre-enveloppe: #B5726C;
+
+    /* -- Polices -- */
+    --police-lettre: 'Caveat', cursive;
+    --police-calligraphie: 'Pinyon Script', cursive;
+    --police-titre: 'Cormorant Garamond', serif;
+    --police-texte: 'Jost', sans-serif;
+
+    /* -- Dimensions --
+       Tout est calculé à partir de la largeur de l'écran pour que
+       la scène s'adapte au téléphone comme à l'ordinateur. */
+    --lettre-l: min(540px, 100vw - 32px);
+    --lettre-h: min(var(--lettre-l) * 1.5, 100svh - 128px);   /* 64px en haut et en bas pour respirer (et pour le bouton) */
+    --volet-h: calc(var(--lettre-h) / 3);       /* la lettre est pliée en 3 */
+
+    --env-l: min(400px, 100vw - 56px);
+    --env-h: calc(var(--env-l) * 0.64);
+    --rabat-h: calc(var(--env-h) * 0.56);
+    --sceau-taille: calc(var(--env-l) * 0.21);
+
+    --decalage: 7svh;      /* l'enveloppe est un peu sous le centre, pour laisser la place à la lettre qui sort */
+    --echelle: 0.66;       /* taille de la lettre pliée dans l'enveloppe (recalculée par le JS) */
+
+    /* Grain de papier : un petit bruit SVG très léger, répété */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .33 0 0 0 0 .28 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+
+    /* Le mouvement de départ de l'enveloppe, partagé par tous ses morceaux */
+    --transition-depart: translate var(--duree-envol) cubic-bezier(.55, 0, .75, .25);
+}
+
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    height: 100%;
+}
+
+body {
+    overflow: hidden;
+    background-color: var(--fond);
+    background-image:
+        radial-gradient(ellipse 60% 50% at 15% 10%, rgba(246, 208, 202, .55), transparent 70%),
+        radial-gradient(ellipse 55% 45% at 88% 90%, rgba(243, 222, 203, .65), transparent 70%),
+        radial-gradient(circle at 50% 55%, rgba(255, 255, 255, .75), transparent 55%);
+    font-family: var(--police-texte);
+    color: var(--encre);
+}
+
+/* Le SVG qui contient les dessins réutilisables : présent mais invisible */
+.definitions {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+button {
+    font: inherit;
+}
+
+
+/* ============================================================
+   PÉTALES EN ARRIÈRE-PLAN
+   Chaque pétale reçoit ses propres valeurs (--x, --taille, …)
+   depuis le JS, pour qu'ils ne tombent pas tous pareil.
+   ============================================================ */
+.ambiance {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.petale {
+    position: absolute;
+    top: 0;
+    left: var(--x);
+    width: var(--taille);
+    height: calc(var(--taille) * .78);
+    border-radius: 85% 8% 85% 8%;
+    background: linear-gradient(135deg, #FADDD8, #EBB0AA);
+    opacity: var(--opacite);
+    animation: tomber var(--duree) linear var(--delai) infinite;
+}
+
+@keyframes tomber {
+    0%   { transform: translate3d(0, -8vh, 0) rotate(0deg) scaleX(1); }
+    25%  { transform: translate3d(var(--derive), 22vh, 0) rotate(90deg) scaleX(.6); }
+    50%  { transform: translate3d(0, 52vh, 0) rotate(190deg) scaleX(1); }
+    75%  { transform: translate3d(calc(var(--derive) * -.6), 80vh, 0) rotate(270deg) scaleX(.7); }
+    100% { transform: translate3d(0, 108vh, 0) rotate(360deg) scaleX(1); }
+}
+
+
+/* ============================================================
+   LA SCÈNE
+   Elle apparaît en fondu une fois les polices chargées
+   (classe .pret ajoutée sur <body> par le JS).
+   ============================================================ */
+.scene {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+}
+
+.pret .scene {
+    opacity: 1;
+}
+
+
+/* -- Invitation au-dessus de l'enveloppe -- */
+.invitation {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(50% - var(--decalage) + var(--env-h) / 2 + 34px);
+    padding: 0 24px;
+    text-align: center;
+    transition: opacity .6s ease, translate .6s ease;
+}
+
+.invitation__titre {
+    margin: 0 0 8px;
+    font-family: var(--police-titre);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.4rem);
+    color: var(--encre);
+}
+
+.invitation__aide {
+    margin: 0;
+    font-weight: 300;
+    font-size: .72rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--encre-claire);
+    animation: respirer 2.8s ease-in-out infinite;
+}
+
+/* "touche" sur téléphone, "clique" à la souris */
+.aide-souris {
+    display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .aide-souris  { display: inline; }
+    .aide-tactile { display: none; }
+}
+
+@keyframes respirer {
+    50% { opacity: .45; }
+}
+
+.sceau-casse .invitation {
+    opacity: 0;
+    translate: 0 -10px;
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   FLOTTEMENT
+   L'enveloppe (et la lettre cachée dedans) flotte doucement.
+   À l'ouverture, le JS fige la position puis la ramène à zéro
+   en douceur (sinon elle "sauterait").
+   ============================================================ */
+.flottant {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.flottant.flotte {
+    animation: flotter 5s ease-in-out infinite;
+}
+
+@keyframes flotter {
+    0%, 100% { transform: translateY(0) rotate(-.4deg); }
+    50%      { transform: translateY(-12px) rotate(.4deg); }
+}
+
+/* Ombre au sol, qui rétrécit quand l'enveloppe monte (même rythme : 5s) */
+.ombre-sol {
+    position: absolute;
+    left: calc(50% - var(--env-l) * .42);
+    top: calc(50% + var(--decalage) + var(--env-h) / 2 + var(--env-l) * .06);
+    width: calc(var(--env-l) * .84);
+    height: calc(var(--env-l) * .07);
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(150, 95, 85, .28), transparent);
+    animation: ombre-respire 5s ease-in-out infinite;
+    transition: var(--transition-depart), opacity .6s ease;
+}
+
+@keyframes ombre-respire {
+    50% { scale: .86; opacity: .65; }
+}
+
+
+/* ============================================================
+   L'ENVELOPPE
+   ⚠️ Pas de transform / opacity / filter sur .enveloppe :
+   ça créerait un "contexte d'empilement", et la lettre (qui est
+   à côté, pas dedans) ne pourrait plus se glisser ENTRE le fond
+   et la poche. Chaque morceau bouge donc individuellement.
+   ============================================================ */
+.enveloppe {
+    position: absolute;
+    left: calc(50% - var(--env-l) / 2);
+    top: calc(50% + var(--decalage) - var(--env-h) / 2);
+    width: var(--env-l);
+    height: var(--env-h);
+    pointer-events: auto;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sceau-casse .enveloppe {
+    cursor: default;
+}
+
+.enveloppe-partie .enveloppe {
+    pointer-events: none;
+}
+
+/* Départ : tous les morceaux glissent vers le bas, hors de l'écran */
+.enveloppe-partie .piece-enveloppe {
+    translate: 0 calc(50svh + var(--env-h) * 1.4);
+}
+
+.enveloppe-partie .ombre-sol {
+    opacity: 0;
+}
+
+
+/* -- L'intérieur (doublure rose à petits pois) -- */
+.enveloppe__fond {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: 6px;
+    background-color: #EEC5BE;
+    background-image:
+        linear-gradient(to bottom, rgba(150, 85, 78, .22), transparent 45%),
+        radial-gradient(circle, rgba(255, 255, 255, .6) 1.3px, transparent 1.7px),
+        radial-gradient(circle, rgba(255, 255, 255, .6) 1.3px, transparent 1.7px);
+    background-size: 100% 100%, 12px 12px, 12px 12px;
+    background-position: 0 0, 0 0, 6px 6px;
+    box-shadow:
+        0 18px 34px -14px rgba(140, 80, 70, .35),
+        0 2px 6px rgba(140, 80, 70, .08);
+    transition: var(--transition-depart);
+}
+
+
+/* -- Le rabat (triangle du haut) --
+   Il tourne autour de son bord supérieur (transform-origin).
+   z-index 6 quand il est fermé (devant la lettre), 2 quand il est
+   ouvert (derrière la lettre). Le changement se fait pile à mi-chemin,
+   quand le rabat est vu par la tranche : invisible à l'œil. */
+.enveloppe__rabat {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 6;
+    width: 100%;
+    height: var(--rabat-h);
+    transform-origin: 50% 0;
+    transform: perspective(1100px) rotateX(0deg);
+    transform-style: preserve-3d;
+    transition:
+        var(--transition-depart),
+        transform var(--duree-rabat) cubic-bezier(.65, 0, .35, 1),
+        z-index 0s linear calc(var(--duree-rabat) * .5);
+}
+
+.rabat-ouvert .enveloppe__rabat {
+    z-index: 2;
+    transform: perspective(1100px) rotateX(180deg);
+}
+
+/* Les deux faces : on ne voit que celle qui est tournée vers nous */
+.rabat__face {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.rabat__face--dedans {
+    transform: rotateX(180deg);
+}
+
+
+/* -- La poche de devant -- */
+.enveloppe__poche {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: var(--transition-depart);
+}
+
+.poche__dessin {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.enveloppe__mot {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8%;
+    margin: 0;
+    text-align: center;
+    font-family: var(--police-calligraphie);
+    font-size: calc(var(--env-l) * .092);
+    color: var(--encre-enveloppe);
+    rotate: -4deg;
+    opacity: .9;
+}
+
+
+/* -- Le cachet de cire -- */
+.sceau {
+    position: absolute;
+    z-index: 7;
+    left: calc(50% - var(--sceau-taille) / 2);
+    top: calc(var(--rabat-h) - var(--sceau-taille) * .62);
+    width: var(--sceau-taille);
+    height: var(--sceau-taille);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    cursor: pointer;
+    filter: drop-shadow(0 3px 3px rgba(120, 55, 50, .35));
+    transition: var(--transition-depart), scale .35s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.sceau:hover {
+    scale: 1.06;
+}
+
+.sceau:focus-visible {
+    outline: 2px solid var(--rose-fonce);
+    outline-offset: 6px;
+}
+
+/* Une onde qui s'élargit pour inviter à cliquer */
+.sceau::before {
+    content: "";
+    position: absolute;
+    inset: -6%;
+    border: 1.5px solid rgba(193, 127, 119, .55);
+    border-radius: 50%;
+    animation: onde 2.6s ease-out infinite;
+}
+
+@keyframes onde {
+    0%   { scale: .85; opacity: .9; }
+    100% { scale: 1.6; opacity: 0; }
+}
+
+/* Les deux moitiés, découpées en zigzag avec clip-path */
+.sceau__moitie {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform-origin: 50% 85%;
+}
+
+.sceau__moitie--gauche {
+    clip-path: polygon(0 0, 54% 0, 47% 18%, 56% 36%, 46% 55%, 55% 74%, 48% 100%, 0 100%);
+}
+
+.sceau__moitie--droite {
+    clip-path: polygon(54% 0, 100% 0, 100% 100%, 48% 100%, 55% 74%, 46% 55%, 56% 36%, 47% 18%);
+}
+
+/* Le cachet se brise : petite pression, il se fend, puis les morceaux tombent */
+.sceau-casse .sceau {
+    scale: 1;
+    pointer-events: none;
+}
+
+.sceau-casse .sceau::before {
+    animation: none;
+    opacity: 0;
+}
+
+.sceau-casse .sceau__moitie--gauche {
+    animation: moitie-gauche var(--duree-sceau) forwards;
+}
+
+.sceau-casse .sceau__moitie--droite {
+    animation: moitie-droite var(--duree-sceau) forwards;
+}
+
+@keyframes moitie-gauche {
+    0%   { transform: none; }
+    18%  { transform: scale(.94); animation-timing-function: ease-out; }
+    40%  { transform: translate(-8%, 2%) rotate(-10deg); opacity: 1; animation-timing-function: cubic-bezier(.5, 0, .9, .5); }
+    100% { transform: translate(-32%, 160%) rotate(-40deg); opacity: 0; }
+}
+
+@keyframes moitie-droite {
+    0%   { transform: none; }
+    18%  { transform: scale(.94); animation-timing-function: ease-out; }
+    40%  { transform: translate(8%, 2%) rotate(10deg); opacity: 1; animation-timing-function: cubic-bezier(.5, 0, .9, .5); }
+    100% { transform: translate(30%, 165%) rotate(36deg); opacity: 0; }
+}
+
+
+/* -- Petits pétales / cœurs qui s'échappent à l'ouverture -- */
+.eclats {
+    position: absolute;
+    left: 50%;
+    top: calc(var(--env-h) * .3);
+    z-index: 4;
+    width: 0;
+    height: 0;
+}
+
+.eclat {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    animation: eclater 1.7s cubic-bezier(.2, .7, .3, 1) var(--delai) forwards;
+}
+
+.eclat--petale {
+    width: var(--taille);
+    height: calc(var(--taille) * .78);
+    margin: calc(var(--taille) * -.39) 0 0 calc(var(--taille) * -.5);
+    border-radius: 85% 8% 85% 8%;
+    background: linear-gradient(135deg, #FADCD7, #E9A9A2);
+}
+
+.eclat--coeur,
+.eclat--etincelle {
+    translate: -50% -50%;
+    font-size: var(--taille);
+    line-height: 1;
+}
+
+.eclat--coeur     { color: var(--rose); }
+.eclat--etincelle { color: var(--or); }
+
+@keyframes eclater {
+    0%   { opacity: 0; transform: translate(0, 0) scale(.3) rotate(0deg); }
+    15%  { opacity: 1; }
+    70%  { opacity: .9; }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1) rotate(var(--tourne)); }
+}
+
+
+/* ============================================================
+   LA LETTRE
+   Elle se déplace avec les propriétés "translate" et "scale"
+   (séparées de "transform"), étape par étape :
+     1. dans l'enveloppe : petite, cachée derrière la poche
+     2. .lettre-sortie   : elle glisse vers le haut, hors de l'enveloppe
+     3. .lettre-devant   : elle passe devant tout (z-index)
+     4. .enveloppe-partie: elle vient au centre, à taille réelle
+     5. .lettre-depliee  : les volets du haut et du bas se déplient
+   ============================================================ */
+.lettre {
+    /* positions verticales de la lettre (par rapport au centre de l'écran) */
+    --y-dans: calc(var(--decalage) + var(--env-h) * .08);
+    --y-sortie: calc(var(--decalage) - var(--env-h) / 2 - var(--echelle) * var(--volet-h) / 2 - 18px);
+
+    position: absolute;
+    z-index: 3;
+    left: calc(50% - var(--lettre-l) / 2);
+    top: calc(50% - var(--lettre-h) / 2);
+    width: var(--lettre-l);
+    height: var(--lettre-h);
+    pointer-events: auto;
+
+    translate: 0 var(--y-dans);
+    scale: var(--echelle);
+
+    filter:
+        drop-shadow(0 16px 26px rgba(120, 75, 65, .14))
+        drop-shadow(0 2px 3px rgba(120, 75, 65, .1));
+
+    transition: translate var(--duree-sortie) cubic-bezier(.45, 0, .25, 1);
+}
+
+.lettre-sortie .lettre {
+    translate: 0 var(--y-sortie);
+    rotate: -1.5deg;
+    transition:
+        translate var(--duree-sortie) cubic-bezier(.45, 0, .25, 1),
+        rotate var(--duree-sortie) ease-in-out;
+}
+
+.lettre-devant .lettre {
+    z-index: 8;
+}
+
+.enveloppe-partie .lettre {
+    translate: 0 0;
+    scale: 1;
+    rotate: 0deg;
+    transition:
+        translate var(--duree-envol) cubic-bezier(.45, 0, .2, 1),
+        scale var(--duree-envol) cubic-bezier(.45, 0, .2, 1),
+        rotate var(--duree-envol) ease-in-out;
+}
+
+
+/* -- Les trois volets --
+   Le volet du milieu ne bouge pas. Celui du haut est replié vers
+   l'avant (rotateX -180°) autour de son bord du bas ; celui du bas
+   est replié autour de son bord du haut (rotateX 180°). Pour
+   déplier, on les ramène à 0°. */
+.volet {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: var(--volet-h);
+    background: var(--grain), var(--papier);
+}
+
+.volet--milieu {
+    /* 1px de chevauchement en haut et en bas pour éviter une fine ligne entre les volets */
+    top: calc(var(--volet-h) - 1px);
+    height: calc(var(--volet-h) + 2px);
+}
+
+.volet--bas {
+    top: calc(var(--volet-h) * 2);
+    transform-origin: 50% 0;
+    transform: perspective(1800px) rotateX(180deg);
+}
+
+.volet--haut {
+    top: 0;
+    background: none;
+    transform-origin: 50% 100%;
+    transform: perspective(1800px) rotateX(-180deg);
+    transform-style: preserve-3d;    /* nécessaire pour ses deux faces */
+}
+
+.lettre-depliee .volet--haut {
+    transform: perspective(1800px) rotateX(0deg);
+    transition: transform var(--duree-depli) cubic-bezier(.4, 0, .2, 1);
+}
+
+.lettre-depliee .volet--bas {
+    transform: perspective(1800px) rotateX(0deg);
+    transition: transform var(--duree-depli) cubic-bezier(.4, 0, .2, 1) var(--delai-volets);
+}
+
+/* Faces du volet du haut : l'intérieur (papier) et l'extérieur ("à lire tout doucement") */
+.volet__face {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--grain), var(--papier);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.volet__face--dehors {
+    display: grid;
+    place-items: center;
+    transform: rotateX(180deg);
+}
+
+.dehors__mot {
+    font-family: var(--police-calligraphie);
+    font-size: calc(var(--lettre-l) * .078);
+    color: var(--encre-enveloppe);
+    rotate: -3deg;
+}
+
+/* Ombre sur un volet encore replié, qui s'efface en se dépliant */
+.volet__ombre {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(120, 80, 70, .16), rgba(120, 80, 70, .05));
+    pointer-events: none;
+    transition: opacity var(--duree-depli) ease;
+}
+
+.lettre-depliee .volet--haut .volet__ombre {
+    opacity: 0;
+}
+
+.lettre-depliee .volet--bas .volet__ombre {
+    opacity: 0;
+    transition-delay: var(--delai-volets);
+}
+
+
+/* -- Le brin de fleur séchée, en haut à gauche du papier -- */
+.decor-brin {
+    position: absolute;
+    top: calc(var(--lettre-l) * .02);
+    left: calc(var(--lettre-l) * .035);
+    width: calc(var(--lettre-l) * .07);
+    height: calc(var(--lettre-l) * .112);
+    rotate: -28deg;
+    opacity: .9;
+}
+
+
+/* -- La feuille dépliée --
+   Une fois les volets ouverts, on affiche par-dessus une feuille
+   d'un seul tenant (même papier) avec les deux marques de pli.
+   Les volets ne servent qu'à l'animation. */
+.lettre__feuille {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background:
+        linear-gradient(to bottom,
+            transparent calc(33.333% - 16px),
+            rgba(140, 100, 90, .06) calc(33.333% - 1px),
+            rgba(255, 255, 255, .95) 33.333%,
+            rgba(140, 100, 90, .035) calc(33.333% + 1px),
+            transparent calc(33.333% + 12px)),
+        linear-gradient(to bottom,
+            transparent calc(66.666% - 16px),
+            rgba(140, 100, 90, .06) calc(66.666% - 1px),
+            rgba(255, 255, 255, .95) 66.666%,
+            rgba(140, 100, 90, .035) calc(66.666% + 1px),
+            transparent calc(66.666% + 12px)),
+        var(--grain),
+        var(--papier);
+}
+
+.en-lecture .lettre__feuille {
+    opacity: 1;
+    transition: opacity .5s ease;
+}
+
+
+/* ============================================================
+   LE TEXTE DE LA LETTRE
+   ============================================================ */
+
+/* La zone qui défile (tout doucement, et toute seule) */
+.lettre__contenu {
+    position: absolute;
+    inset:
+        calc(var(--lettre-l) * .14)
+        calc(var(--lettre-l) * .075)
+        calc(var(--lettre-l) * .08);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    visibility: hidden;
+    outline: none;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(193, 127, 119, .3) transparent;
+
+    /* Le texte s'efface doucement en haut et en bas de la zone */
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18px, #000 calc(100% - 42px), transparent);
+            mask-image: linear-gradient(to bottom, transparent, #000 18px, #000 calc(100% - 42px), transparent);
+}
+
+.en-lecture .lettre__contenu {
+    visibility: visible;
+}
+
+.lettre__texte {
+    padding: 10px 4px 36px 0;
+    font-family: var(--police-lettre);
+    font-weight: 500;
+    font-size: clamp(1.3rem, 1.1rem + .9vw, 1.62rem);
+    line-height: 1.42;
+    color: var(--encre-lettre);
+}
+
+.lettre__texte p {
+    margin: 0 0 .7em;
+    text-indent: 1.4em;
+}
+
+.lettre__texte .lettre__date,
+.lettre__texte .lettre__salutation,
+.lettre__texte .lettre__signature {
+    text-indent: 0;
+}
+
+.lettre__date {
+    text-align: right;
+    font-size: .85em;
+    --encre-finale: #8C6F67;
+}
+
+.lettre__salutation {
+    margin-bottom: .45em;
+    font-size: 1.18em;
+}
+
+.lettre__signature {
+    margin-top: 1.1em;
+    text-align: right;
+    line-height: 1.3;
+}
+
+.lettre__texte em {
+    font-style: normal;
+}
+
+
+/* -- Chaque mot --
+   Le JS entoure chaque mot d'un <span class="mot">, avec une très
+   légère inclinaison au hasard (--penche, --decale) : ça casse
+   l'alignement "parfait" de l'ordinateur et fait plus manuscrit. */
+.mot {
+    --encre-finale: var(--encre-lettre);
+
+    display: inline-block;
+    /* text-indent s'hérite : sans ce 0, CHAQUE mot (inline-block) aurait
+       son propre retrait de paragraphe, et des espaces énormes entre eux */
+    text-indent: 0;
+    /* un peu d'air sur les côtés pour que le masque ne coupe pas les boucles des lettres */
+    padding: 0 .1em;
+    margin: 0 -.1em;
+    opacity: 0;
+    rotate: var(--penche, 0deg);
+    translate: 0 var(--decale, 0px);
+}
+
+.lettre__date .mot {
+    --encre-finale: #8C6F67;
+}
+
+.lettre__texte em .mot {
+    --encre-finale: var(--encre-soulignee);
+    text-decoration: underline;
+    text-decoration-color: rgba(193, 127, 119, .55);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: .14em;
+}
+
+/* Le mot "s'écrit" : un masque dégradé glisse de gauche à droite
+   (comme la plume qui avance), puis l'encre sèche (couleur + net). */
+.mot.est-ecrit {
+    opacity: 1;
+    -webkit-mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
+            mask-image: linear-gradient(90deg, #000 40%, transparent 60%);
+    -webkit-mask-size: 260% 100%;
+            mask-size: 260% 100%;
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+    -webkit-mask-position: 0 0;
+            mask-position: 0 0;
+    animation:
+        ecrire var(--duree-mot) cubic-bezier(.35, .1, .35, 1) both,
+        secher calc(var(--duree-mot) + 1.4s) ease-out both;
+}
+
+@keyframes ecrire {
+    from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+    to   { -webkit-mask-position: 0 0;    mask-position: 0 0; }
+}
+
+@keyframes secher {
+    from { color: var(--encre-fraiche); filter: blur(.7px); }
+    to   { color: var(--encre-finale);  filter: none; }
+}
+
+/* Bouton "afficher toute la lettre" : simple fondu, sans effet plume */
+.mot.est-ecrit.instant {
+    -webkit-mask-image: none;
+            mask-image: none;
+    color: var(--encre-finale);
+    animation: apparaitre .9s ease both;
+}
+
+@keyframes apparaitre {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Une fois l'encre sèche, le JS ajoute .sec : on enlève masque et
+   animation pour que le navigateur n'ait plus rien à recalculer
+   (plus fluide quand la lettre est longue). */
+.mot.est-ecrit.sec {
+    -webkit-mask-image: none;
+            mask-image: none;
+    animation: none;
+    opacity: 1;
+    color: var(--encre-finale);
+}
+
+
+/* -- Le petit cœur dessiné à la main après la signature -- */
+.coeur-dessine {
+    display: inline-block;
+    width: 1.05em;
+    height: .95em;
+    margin-left: .2em;
+    vertical-align: -.08em;
+    overflow: visible;
+}
+
+.coeur-dessine path {
+    fill: rgba(217, 166, 160, 0);
+    stroke: var(--rose-fonce);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* pathLength="1" dans le HTML : le tracé mesure "1", on le cache entièrement… */
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+}
+
+/* …puis on le "dessine" à la fin de la lettre */
+.lettre-terminee .coeur-dessine path {
+    fill: rgba(217, 166, 160, .3);
+    stroke-dashoffset: 0;
+    transition:
+        stroke-dashoffset 1.6s cubic-bezier(.5, 0, .3, 1) .4s,
+        fill 1s ease 1.8s;
+}
+
+
+/* ============================================================
+   BOUTONS DISCRETS (bas de l'écran)
+   Les deux boutons occupent la même place (grid-area 1/1) :
+   un seul est visible à la fois.
+   ============================================================ */
+.commandes {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    z-index: 10;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+
+.bouton-discret {
+    grid-area: 1 / 1;
+    padding: 9px 18px;
+    border: 1px solid rgba(217, 166, 160, .45);
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, .55);
+    -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+    font-family: var(--police-texte);
+    font-weight: 300;
+    font-size: .7rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--encre-claire);
+    cursor: pointer;
+    pointer-events: auto;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity .5s ease,
+        visibility 0s linear .5s,
+        color .3s ease,
+        background-color .3s ease;
+}
+
+.bouton-discret:hover,
+.bouton-discret:focus-visible {
+    color: var(--rose-fonce);
+    background-color: #FFFFFF;
+}
+
+.bouton-discret:focus-visible {
+    outline: 2px solid var(--rose);
+    outline-offset: 3px;
+}
+
+/* "afficher toute la lettre" : apparaît quelques secondes après le début de l'écriture */
+.en-lecture .bouton-passer {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .8s ease 3s, visibility 0s linear 3s;
+}
+
+.lettre-terminee .bouton-passer {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .5s ease, visibility 0s linear .5s;
+}
+
+/* "rouvrir l'enveloppe" : apparaît à la fin */
+.lettre-terminee .bouton-rejouer {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .8s ease 2.4s, visibility 0s linear 2.4s;
+}
+
+
+/* ============================================================
+   MOUVEMENTS RÉDUITS
+   Si la personne a demandé à son téléphone/ordinateur de limiter
+   les animations, on enlève les effets décoratifs (le JS, lui,
+   raccourcit l'ouverture et affiche le texte d'un coup).
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    .ambiance,
+    .eclats {
+        display: none;
+    }
+
+    .flottant.flotte,
+    .ombre-sol,
+    .sceau::before,
+    .invitation__aide {
+        animation: none;
+    }
+}
