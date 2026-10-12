@@ -24,12 +24,12 @@ const DUREES = {
 
 /* Rythme de l'écriture */
 const ECRITURE = {
-    msParLettre: 55,          // écart entre deux lettres d'un même mot
+    msParLettre: 42,          // écart entre deux lettres d'un même mot
     dureeLettre: 260,         // durée du fondu d'apparition de chaque lettre
-    espace: 90,               // petite respiration entre deux mots
+    espace: 70,               // petite respiration entre deux mots
     pauseVirgule: 300,        // après , ; :
-    pausePoint: 700,          // après . ! ? …
-    pauseParagraphe: 950,     // avant un nouveau paragraphe
+    pausePoint: 600,          // après . ! ? …
+    pauseParagraphe: 800,     // avant un nouveau paragraphe
     repitApresScroll: 5000,   // si elle fait défiler elle-même, on ne la suit plus pendant ce temps
 };
 
