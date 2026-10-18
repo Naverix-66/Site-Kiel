@@ -778,6 +778,57 @@ button {
     font-size: 1.18em;
 }
 
+/* -- Le bon cadeau --
+   Un cadre en pointillés rose, centré, avec le montant en grand. */
+.bon {
+    margin: 1.1em 0 1.2em;
+    padding: .9em 1em 1em;
+    border: 2px dashed rgba(193, 127, 119, .55);
+    border-radius: 14px;
+    background: rgba(250, 228, 224, .35);
+    text-align: center;
+    rotate: -1deg;
+}
+
+.lettre__texte .bon p {
+    margin: 0;
+    text-indent: 0;
+}
+
+.bon__titre {
+    font-family: var(--police-texte);
+    font-weight: 400;
+    font-size: .55em;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+}
+
+.bon__titre .c {
+    --encre-finale: var(--rose-fonce);
+}
+
+.bon__montant {
+    font-size: 2.8em;
+    line-height: 1.05;
+}
+
+.bon__montant .c {
+    --encre-finale: var(--encre-soulignee);
+}
+
+.bon__lieu {
+    font-size: 1.1em;
+}
+
+.lettre__texte .bon .bon__details {
+    margin-top: .35em;
+    font-size: .85em;
+}
+
+.bon__details .c {
+    --encre-finale: #8C6F67;
+}
+
 .lettre__signature {
     margin-top: 1.1em;
     text-align: right;
