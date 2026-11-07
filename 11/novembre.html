@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- viewport-fit=cover + user-scalable=no : indispensable sur iPhone.
+         Sans ça, un double-tap zoome la page au lieu de jouer, et le
+         contenu ne passe pas sous l'encoche. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+    <!-- « Ajouter à l'écran d'accueil » : le jeu s'ouvre alors en plein
+         écran, sans barre d'adresse, et la VRAIE barre d'état d'iOS
+         s'affiche par-dessus la nôtre (voir body.autonome dans le CSS). -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Onze jours">
+    <meta name="theme-color" content="#0B0E13">
+
+    <!-- Cormorant Garamond et Jost : l'identité du calendrier.
+         Caveat : l'écriture à la main du mot de Mira. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Caveat:wght@400;500;600&display=swap">
+
+    <link rel="stylesheet" href="novembre.css">
+    <title>Onze jours — Novembre</title>
+</head>
+<body>
+
+    <!-- ============================================================
+         L'APPAREIL
+         ============================================================
+         Sur téléphone, cette div fait tout l'écran. Sur ordinateur,
+         le CSS lui donne la taille d'un iPhone et dessine un cadre
+         autour (pratique pour développer).
+         ============================================================ -->
+    <div id="appareil">
+
+        <div id="ecran">
+
+            <!-- le fond d'écran : le fjord à l'heure bleue, en dégradés -->
+            <div id="fond-ecran"></div>
+
+            <!-- l'heure, le réseau, la batterie -->
+            <div id="barre-statut"></div>
+
+            <!-- ici vient soit l'écran d'accueil, soit une application -->
+            <div id="scene"></div>
+
+            <!-- la barre blanche du bas : un appui ramène à l'accueil -->
+            <div id="indicateur-accueil"><span></span></div>
+
+            <!-- les bannières de notification -->
+            <div id="bannieres"></div>
+
+            <!-- les petits bandeaux « Noté dans le carnet » -->
+            <div id="toasts"></div>
+
+            <!-- ce qui passe par-dessus tout : verrouillage, recherche -->
+            <div id="recouvrement"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================================================
+         L'ORDRE DE CES FICHIERS COMPTE.
+         Il n'y a pas d'import/export : chaque fichier peut utiliser
+         tout ce qui est défini dans les fichiers AU-DESSUS de lui.
+         Si tu ajoutes un fichier, mets-le au bon endroit.
+         ============================================================ -->
+
+    <!-- le socle -->
+    <script src="js/config.js"></script>              <!-- toutes les constantes de réglage -->
+    <script src="js/outils.js"></script>              <!-- el(), les dates, les briques d'interface -->
+    <script src="js/icones.js"></script>              <!-- toutes les icônes, dessinées en SVG -->
+    <script src="js/sauvegarde.js"></script>          <!-- ETAT + localStorage -->
+    <script src="js/sons.js"></script>                <!-- les sons, synthétisés (aucun fichier audio) -->
+    <script src="js/peintures.js"></script>           <!-- les photos, peintes en SVG -->
+
+    <!-- le contenu du téléphone -->
+    <script src="js/donnees_contacts.js"></script>    <!-- le répertoire -->
+    <script src="js/donnees_messages.js"></script>    <!-- tous les fils de discussion -->
+    <script src="js/donnees_photos.js"></script>      <!-- la pellicule, les albums, les captures -->
+    <script src="js/donnees_notes.js"></script>       <!-- ses notes, dont une verrouillée -->
+    <script src="js/donnees_mails.js"></script>       <!-- la boîte mail, et LA preuve -->
+    <script src="js/donnees_appels.js"></script>      <!-- les appels et le répondeur -->
+    <script src="js/donnees_traces.js"></script>      <!-- pas, wifi, batterie, le mouchard -->
+    <script src="js/donnees_agenda.js"></script>      <!-- l'agenda (le « Repos » du 8) -->
+    <script src="js/donnees_web.js"></script>         <!-- l'historique et les pages lisibles -->
+    <script src="js/donnees_social.js"></script>      <!-- Fjordgram -->
+    <script src="js/donnees_lieux.js"></script>       <!-- la carte du fjord -->
+
+    <!-- le jeu -->
+    <script src="js/enquete.js"></script>             <!-- indices, objectifs, déductions, aides -->
+
+    <!-- le système -->
+    <script src="js/os.js"></script>                  <!-- accueil, pile de vues, notifications -->
+
+    <!-- les applications (l'ordre ici = l'ordre sur l'écran d'accueil) -->
+    <script src="js/app_messages.js"></script>
+    <script src="js/app_photos.js"></script>
+    <script src="js/app_telephone.js"></script>
+    <script src="js/app_mail.js"></script>
+    <script src="js/app_notes.js"></script>
+    <script src="js/app_safari.js"></script>
+    <script src="js/app_plans.js"></script>
+    <script src="js/app_sante.js"></script>
+    <script src="js/app_fjordgram.js"></script>
+    <script src="js/app_calendrier.js"></script>
+    <script src="js/app_musique.js"></script>
+    <script src="js/app_reglages.js"></script>
+    <script src="js/app_calculette.js"></script>      <!-- les deux calculatrices (dossier Utilitaires) -->
+    <script src="js/app_carnet.js"></script>          <!-- le carnet d'enquête -->
+
+    <!-- ce qui relie tout -->
+    <script src="js/recherche.js"></script>           <!-- la recherche globale -->
+    <script src="js/scenario.js"></script>            <!-- les actes, Mira en direct, la fin -->
+    <script src="js/intro.js"></script>               <!-- l'enveloppe, le mot, la photo, le code -->
+    <script src="js/novembre.js"></script>            <!-- le lancement -->
+
+</body>
+</html>
