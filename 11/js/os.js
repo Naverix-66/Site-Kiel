@@ -113,6 +113,8 @@ const OS = {
             });
         }
 
+        this.installerGestes();
+
         this.dessinerBarreStatut();
         setInterval(function () { OS.dessinerBarreStatut(); }, 10000);
 
@@ -124,6 +126,201 @@ const OS = {
                 OS.dessinerBarreStatut();
             }
         }, BATTERIE_MINUTES_PAR_POURCENT * 60000);
+    },
+
+
+    /* ========================================================
+       LES GESTES
+       ========================================================
+       Deux gestes, les deux vrais gestes d'un iPhone :
+
+         - glisser depuis le BORD GAUCHE : on revient en arrière.
+           L'écran suit le doigt, celui de dessous se découvre.
+           Au premier écran d'une app, le même geste referme
+           l'app et découvre l'écran d'accueil.
+
+         - glisser vers le HAUT depuis le bas : retour à
+           l'accueil, de n'importe où.
+
+       On utilise les évènements « pointer » : ça marche au doigt
+       sur le téléphone ET à la souris sur l'ordinateur, sans
+       écrire le code deux fois.
+       ======================================================== */
+    installerGestes: function () {
+
+        const LARGEUR_BORD = 30;      // la zone sensible, à gauche
+        const SEUIL_RETOUR = 70;      // au-delà, on valide le retour
+        const SEUIL_ACCUEIL = 60;     // glissé vers le haut
+
+        let depart = null;            // { x, y, temps }
+        let mode = null;              // null | "retour" | "accueil" | "abandon"
+        let glissant = null;          // l'élément qu'on déplace
+        let dessous = null;           // celui qu'on découvre
+
+        const self = this;
+
+        /* ⚠️ Les vues du dessous gardent une animation CSS
+           terminée (« recule », en fill forwards). Une animation
+           bat un style en ligne dans la cascade : sans
+           « important », le déplacement au doigt n'aurait aucun
+           effet sur elles. D'où ces deux fonctions. */
+        const poser = function (element, propriete, valeur) {
+            if (element) element.style.setProperty(propriete, valeur, "important");
+        };
+
+        const retirer = function (element, propriete) {
+            if (element) element.style.removeProperty(propriete);
+        };
+
+        const elementsDuGeste = function () {
+            // Au-dessus du premier écran : on fait glisser la vue.
+            if (self.pile.length > 1) {
+                return {
+                    haut: self.pile[self.pile.length - 1].element,
+                    bas: self.pile[self.pile.length - 2].element,
+                };
+            }
+            // Au premier écran : on fait glisser l'application
+            // entière, et c'est l'accueil qu'on découvre.
+            if (self.elementApp) {
+                return { haut: self.elementApp, bas: null };
+            }
+            return null;
+        };
+
+        const terminer = function (valide) {
+
+            poser(glissant, "transition", "transform 0.26s cubic-bezier(0.32, 0.72, 0, 1)");
+            poser(glissant, "transform", valide ? "translateX(100%)" : "translateX(0)");
+
+            poser(dessous, "transition", "transform 0.26s cubic-bezier(0.32, 0.72, 0, 1), filter 0.26s ease");
+            poser(dessous, "transform", valide ? "translateX(0)" : "translateX(-26%)");
+            poser(dessous, "filter", valide ? "brightness(1)" : "brightness(0.72)");
+
+            const ancienGlissant = glissant;
+            const ancienDessous = dessous;
+            const fermaitLApp = self.pile.length <= 1;
+
+            if (valide) {
+                plusTard(function () {
+                    if (ancienDessous) {
+                        ancienDessous.classList.remove("vue--dessous");
+                        retirer(ancienDessous, "transition");
+                        retirer(ancienDessous, "transform");
+                        retirer(ancienDessous, "filter");
+                    }
+                    if (fermaitLApp) {
+                        self.fermerApp({ glisse: true, silencieux: true });
+                    } else {
+                        // on retire la vue du dessus sans rejouer d'animation
+                        const haut = self.pile.pop();
+                        if (haut && haut.element.parentNode) haut.element.remove();
+                        self.rafraichir();
+                    }
+                }, 250);
+                SONS.retour();
+            } else {
+                plusTard(function () {
+                    retirer(ancienGlissant, "transition");
+                    retirer(ancienGlissant, "transform");
+                    retirer(ancienDessous, "transition");
+                    retirer(ancienDessous, "transform");
+                    retirer(ancienDessous, "filter");
+                }, 270);
+            }
+
+            depart = null;
+            mode = null;
+            glissant = null;
+            dessous = null;
+        };
+
+        this.scene.addEventListener("pointerdown", function (evenement) {
+            if (self.verrouille) return;
+            if (!self.appOuverte) return;
+
+            depart = { x: evenement.clientX, y: evenement.clientY, temps: Date.now() };
+            mode = null;
+        });
+
+        this.scene.addEventListener("pointermove", function (evenement) {
+            if (!depart) return;
+
+            const dx = evenement.clientX - depart.x;
+            const dy = evenement.clientY - depart.y;
+
+            /* --- on décide du geste au premier mouvement net --- */
+            if (!mode) {
+                if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+
+                const hauteur = self.scene.clientHeight;
+
+                if (depart.x <= LARGEUR_BORD && dx > 0 && Math.abs(dx) > Math.abs(dy)) {
+                    const elements = elementsDuGeste();
+                    if (!elements) { mode = "abandon"; return; }
+
+                    mode = "retour";
+                    glissant = elements.haut;
+                    dessous = elements.bas;
+
+                    poser(glissant, "transition", "none");
+                    poser(dessous, "transition", "none");
+
+                } else if (depart.y > hauteur - 60 && dy < 0 && Math.abs(dy) > Math.abs(dx)) {
+                    mode = "accueil";
+
+                } else {
+                    mode = "abandon";     // c'est un défilement ordinaire
+                }
+            }
+
+            if (mode === "retour") {
+                evenement.preventDefault();
+                const avance = Math.max(0, dx);
+                poser(glissant, "transform", "translateX(" + avance + "px)");
+
+                if (dessous) {
+                    const largeur = self.scene.clientWidth || 390;
+                    const part = Math.min(avance / largeur, 1);
+                    poser(dessous, "transform", "translateX(" + (-26 + 26 * part) + "%)");
+                    poser(dessous, "filter", "brightness(" + (0.72 + 0.28 * part) + ")");
+                }
+            }
+        });
+
+        const relacher = function (evenement) {
+            if (!depart) return;
+
+            const dx = evenement.clientX - depart.x;
+            const dy = evenement.clientY - depart.y;
+            const duree = Date.now() - depart.temps;
+
+            if (mode === "retour") {
+                // un geste rapide valide même s'il est court
+                const rapide = duree < 300 && dx > 40;
+                terminer(dx > SEUIL_RETOUR || rapide);
+                return;
+            }
+
+            if (mode === "accueil" && -dy > SEUIL_ACCUEIL) {
+                depart = null;
+                mode = null;
+                self.fermerApp();
+                return;
+            }
+
+            depart = null;
+            mode = null;
+        };
+
+        // sur la fenêtre, pas sur la scène : un doigt relâché
+        // au-dessus de la barre d'état doit quand même compter
+        window.addEventListener("pointerup", relacher);
+        window.addEventListener("pointercancel", function () {
+            if (mode === "retour") terminer(false);
+            depart = null;
+            mode = null;
+        });
     },
 
 
@@ -156,12 +353,12 @@ const OS = {
        ======================================================== */
     dessinerAccueil: function () {
 
-        this.appOuverte = null;
-        this.pile = [];
-        this.elementApp = null;
-        this.dossierOuvert = null;
-
-        vide(this.scene);
+        /* ⚠️ L'écran d'accueil reste TOUJOURS dans le DOM, en
+           dessous de l'application ouverte. C'est ce qui permet au
+           geste de retour de faire glisser l'app vers la droite et
+           de découvrir l'accueil derrière, comme sur un iPhone.
+           (Avant, on effaçait la scène : il n'y avait rien
+           derrière, et le glissement n'avait aucun sens.) */
 
         const accueil = el("div", { classe: "accueil", attrs: { id: "accueil" } });
 
@@ -220,7 +417,11 @@ const OS = {
         });
         accueil.appendChild(dock);
 
-        this.scene.appendChild(accueil);
+        if (this.elementAccueil && this.elementAccueil.parentNode) {
+            this.elementAccueil.remove();
+        }
+        this.elementAccueil = accueil;
+        this.scene.insertBefore(accueil, this.scene.firstChild);
     },
 
 
@@ -341,10 +542,11 @@ const OS = {
         SONS.ouverture();
         this.fermerDossier();
 
+        // une app déjà ouverte : on la remplace
+        if (this.elementApp && this.elementApp.parentNode) this.elementApp.remove();
+
         this.appOuverte = id;
         this.pile = [];
-
-        vide(this.scene);
 
         this.elementApp = el("div", {
             classe: "app app--ouvrante" + (definition.clair ? " app--clair" : "") +
@@ -364,15 +566,19 @@ const OS = {
     },
 
 
-    fermerApp: function () {
+    /* options.glisse : true quand c'est le geste du doigt qui ferme
+       l'app (on laisse alors l'animation de glissement finir au
+       lieu de jouer le rétrécissement). */
+    fermerApp: function (options) {
         if (!this.appOuverte) return;
 
-        SONS.retour();
+        const o = options || {};
+        if (!o.silencieux) SONS.retour();
 
         const ancienne = this.elementApp;
         if (ancienne) {
-            ancienne.classList.add("app--fermante");
-            plusTard(function () { if (ancienne.parentNode) ancienne.remove(); }, 220);
+            if (!o.glisse) ancienne.classList.add("app--fermante");
+            plusTard(function () { if (ancienne.parentNode) ancienne.remove(); }, o.glisse ? 260 : 220);
         }
 
         this.appOuverte = null;
@@ -602,13 +808,15 @@ const OS = {
     },
 
 
-    /* Redessine les badges si on est sur l'accueil. */
+    /* Redessine l'écran d'accueil (donc les pastilles rouges).
+       Il est toujours là, derrière l'app : on peut le rafraîchir
+       même quand une application est ouverte. */
     rafraichirBadges: function () {
-        if (!this.appOuverte && this.scene && this.scene.querySelector(".grille-apps")) {
-            const dossierEtaitOuvert = this.dossierOuvert;
-            this.dessinerAccueil();
-            if (dossierEtaitOuvert) this.ouvrirDossier(dossierEtaitOuvert);
-        }
+        if (!this.scene || !this.elementAccueil) return;
+
+        const dossierEtaitOuvert = this.dossierOuvert;
+        this.dessinerAccueil();
+        if (dossierEtaitOuvert && !this.appOuverte) this.ouvrirDossier(dossierEtaitOuvert);
     },
 
 

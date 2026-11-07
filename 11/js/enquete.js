@@ -178,6 +178,16 @@ const INDICES = {
         quoi: "Elle a demandé de l'argent liquide à son frère, sans dire pourquoi.",
         ou: "Messages → Jonas",
     },
+    ex_profil: {
+        acte: 2, app: "fjordgram",
+        quoi: "Son profil à lui : 38 abonnés, 412 abonnements. Il suit tout son entourage à elle, un par un.",
+        ou: "Fjordgram → @t.reh",
+    },
+    ex_cherche_aussi: {
+        acte: 2, app: "fjordgram", quand: "14/11",
+        quoi: "Le 14 novembre, il publie « si quelqu'un l'a vue ». Il la cherche aussi.",
+        ou: "Fjordgram → @t.reh",
+    },
     video_sauvee: {
         acte: 2, app: "kiek", quand: "06/11",
         quoi: "Elle a enregistré une vidéo : « 3 signes que ton téléphone est suivi ».",
@@ -402,6 +412,9 @@ const DEDUCTIONS = [
             ["appareil_jumele", "tobias_ecrit_apres"],
             ["journal_domicile", "tobias_ecrit_apres"],
             ["journal_domicile", "mouchard"],
+            ["journal_domicile", "ex_cherche_aussi"],
+            ["ex_cherche_aussi", "mouchard"],
+            ["ex_cherche_aussi", "journal_47"],
         ],
         conclusion: "Non. Il la croyait chez elle, et il lui écrit encore le 14. On n'écrit pas à quelqu'un qu'on a enlevé.",
         rate: "Ça ne répond pas à la question. Qu'est-ce qu'il a fait APRÈS le 8 ?",
@@ -528,7 +541,7 @@ const ENQUETE = {
         sauvegarder();
 
         SONS.indice();
-        OS.toast("Noté : " + apercu(INDICES[id].quoi, 44));
+        OS.toast("Noté dans le carnet", { duree: 1700 });
 
         // Le scénario peut réagir à un indice précis.
         if (typeof SCENARIO !== "undefined") SCENARIO.indiceTrouve(id);
@@ -552,9 +565,8 @@ const ENQUETE = {
         if (nouveaux > 0) {
             sauvegarder();
             SONS.indice();
-            OS.toast(nouveaux === 1
-                ? "Noté : " + apercu(INDICES[liste[0]].quoi, 40)
-                : nouveaux + " nouvelles notes dans le carnet");
+            OS.toast(nouveaux === 1 ? "Noté dans le carnet" : nouveaux + " traces notées",
+                { duree: 1700 });
         }
 
         void self;

@@ -125,6 +125,30 @@ Et dans Messages : pas d'heure sous chaque bulle. Une seule ligne centrée
 quand le temps saute, une pointe sur la dernière bulle d'une rafale, et
 « Lu » une seule fois tout en bas.
 
+### Les gestes
+
+`OS.installerGestes()` (dans `os.js`) branche les deux vrais gestes
+d'un iPhone, en évènements « pointer » — donc au doigt sur le téléphone
+**et** à la souris sur l'ordinateur :
+
+- **glisser depuis le bord gauche** : l'écran suit le doigt et on revient
+  en arrière. Au premier écran d'une app, le même geste referme l'app et
+  découvre l'écran d'accueil ;
+- **glisser vers le haut depuis le bas** : retour à l'accueil.
+
+Pour que ça marche, l'écran d'accueil **reste toujours dans le DOM**,
+sous l'application ouverte (`.app` est en `z-index: 2`). C'est pour ça
+que `dessinerAccueil()` n'efface plus la scène.
+
+⚠️ Deux pièges rencontrés là-dessus :
+
+- une animation CSS terminée (`vue--dessous`, en `forwards`) **bat un style
+  en ligne** dans la cascade. Le déplacement au doigt doit donc être posé
+  avec `setProperty(..., "important")` ;
+- `#accueil` a besoin d'un `z-index: 1` pour créer son propre contexte
+  d'empilement : sans lui, les pastilles rouges des icônes (`z-index: 3`)
+  se dessinaient **par-dessus** l'application ouverte.
+
 ### Écrire court
 
 C'est une règle, pas un conseil. Le reproche qu'on nous a fait sur la

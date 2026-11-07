@@ -57,8 +57,9 @@ enregistrerApp({
 
                 const segments = el("div", { classe: "segments" });
 
-                [["afaire", "À faire"], ["indices", "Traces"],
-                 ["chrono", "Nuit du 8"], ["conclusions", "Conclusions"]]
+                const nombreDeTraces = ETAT.indices.length;
+
+                [["afaire", "Enquête"], ["indices", "Traces · " + nombreDeTraces], ["chrono", "Nuit du 8"]]
                     .forEach(function (paire) {
                         segments.appendChild(el("div", {
                             classe: "segment" + (onglet === paire[0] ? " actif" : ""),
@@ -72,7 +73,6 @@ enregistrerApp({
                 if (onglet === "afaire") ongletAFaire(corps, allerA);
                 if (onglet === "indices") ongletIndices(corps);
                 if (onglet === "chrono") ongletChronologie(corps);
-                if (onglet === "conclusions") ongletConclusions(corps);
             },
         });
     },
@@ -95,13 +95,27 @@ function ongletAFaire(corps, allerA) {
     const restants = objectifs.filter(function (o) { return !ENQUETE.objectifFait(o.id); });
     const faits = objectifs.filter(function (o) { return ENQUETE.objectifFait(o.id); });
 
-    /* --- la carte de l'objectif en cours --- */
+    const total = OBJECTIFS.length;
+    const numeroCourant = faits.length + 1;
+
+    /* --- où on en est, en une ligne et une barre --- */
+    corps.appendChild(el("div", { classe: "avancement" }, [
+        el("div", { classe: "avancement-texte" }, [
+            el("span", { texte: restants.length > 0 ? "Étape " + Math.min(numeroCourant, total) + " sur " + total : "Enquête terminée" }),
+            el("span", { texte: ETAT.indices.length + " traces" }),
+        ]),
+        el("div", { classe: "avancement-barre" }, [
+            el("i", { style: { width: Math.round((faits.length / total) * 100) + "%" } }),
+        ]),
+    ]));
+
+    /* --- la carte de l'étape en cours --- */
     if (restants.length > 0) {
         const courant = restants[0];
 
         const carte = el("div", { classe: "carte-objectif" });
 
-        carte.appendChild(el("div", { classe: "carte-objectif-sur-titre", texte: "MAINTENANT" }));
+        carte.appendChild(el("div", { classe: "carte-objectif-sur-titre", texte: "À FAIRE MAINTENANT" }));
         carte.appendChild(el("h3", { texte: courant.titre }));
         carte.appendChild(el("p", { texte: courant.texte }));
 
@@ -116,20 +130,32 @@ function ongletAFaire(corps, allerA) {
         }
 
         corps.appendChild(carte);
-
-        if (restants.length > 1) {
-            corps.appendChild(el("div", {
-                classe: "groupe-pied",
-                style: { padding: "0 20px 6px", textAlign: "center" },
-                texte: "puis : " + restants[1].titre.toLowerCase(),
-            }));
-        }
     } else {
         corps.appendChild(el("div", { classe: "carte-objectif" }, [
             el("div", { classe: "carte-objectif-sur-titre", texte: "TERMINÉ" }),
             el("h3", { texte: "Tu l'as retrouvée." }),
             el("p", { texte: "Onze jours, et c'est une inconnue qui a lu jusqu'au bout." }),
         ]));
+    }
+
+    /* --- les questions auxquelles on peut répondre MAINTENANT --- */
+    const questions = ENQUETE.deductionsOuvertes();
+
+    if (questions.length > 0) {
+        corps.appendChild(titreDeSection("À conclure", questions.length + (questions.length > 1 ? " questions" : " question")));
+
+        questions.forEach(function (deduction) {
+            corps.appendChild(el("div", {
+                classe: "carte-question cliquable",
+                auClic: function () { ecranDeduction(deduction); },
+            }, [
+                el("div", { classe: "carte-question-texte" }, [
+                    el("div", { classe: "carte-question-titre", texte: deduction.question }),
+                    el("div", { classe: "carte-question-sous", texte: deduction.consigne }),
+                ]),
+                el("span", { classe: "glyphe chevron-carte", html: ICONES.chevron }),
+            ]));
+        });
     }
 
     /* --- le coup de main --- */
@@ -154,29 +180,45 @@ function ongletAFaire(corps, allerA) {
         }, { classe: "bouton--discret" }),
     ]));
 
-    /* --- ce qui est déjà fait, en petit --- */
-    if (faits.length > 0) {
-        corps.appendChild(el("div", {
-            classe: "groupe-titre",
-            style: { padding: "6px 20px 4px" },
-            texte: "DÉJÀ FAIT",
-        }));
+    /* --- toutes les étapes, dans l'ordre, cochées ou non --- */
+    corps.appendChild(titreDeSection("Les étapes", null));
 
-        faits.forEach(function (objectif) {
-            corps.appendChild(el("div", { classe: "objectif objectif--fait" }, [
-                el("div", { classe: "coche-objectif glyphe", html: ICONES.cocheCercle }),
-                el("div", {}, [
-                    el("div", { classe: "objectif-titre", texte: objectif.titre }),
-                ]),
+    objectifs.forEach(function (objectif, index) {
+        const fait = ENQUETE.objectifFait(objectif.id);
+        const enCours = !fait && restants[0] && restants[0].id === objectif.id;
+
+        corps.appendChild(el("div", {
+            classe: "etape" + (fait ? " etape--faite" : "") + (enCours ? " etape--en-cours" : ""),
+        }, [
+            el("div", { classe: "etape-puce", texte: fait ? "✓" : String(index + 1) }),
+            el("div", { classe: "etape-titre", texte: objectif.titre }),
+        ]));
+    });
+
+    /* --- ce qui est établi --- */
+    const etablies = ENQUETE.deductionsFaites();
+
+    if (etablies.length > 0) {
+        corps.appendChild(titreDeSection("Ce que j'ai établi", null));
+
+        etablies.forEach(function (deduction) {
+            corps.appendChild(el("div", { classe: "conclusion" }, [
+                el("div", { classe: "conclusion-question", texte: deduction.question }),
+                el("div", { classe: "conclusion-reponse", texte: deduction.conclusion }),
             ]));
         });
     }
 
-    corps.appendChild(el("div", {
-        classe: "groupe-pied",
-        style: { padding: "14px 18px 24px", textAlign: "center" },
-        texte: ETAT.indices.length + " traces notées",
-    }));
+    corps.appendChild(el("div", { style: { height: "24px" } }));
+}
+
+
+/* Un titre de section du carnet, avec un compteur à droite. */
+function titreDeSection(texte, droite) {
+    return el("div", { classe: "titre-section" }, [
+        el("span", { texte: texte.toUpperCase() }),
+        droite ? el("span", { classe: "titre-section-droite", texte: droite }) : null,
+    ]);
 }
 
 
@@ -228,26 +270,48 @@ function ongletChronologie(corps) {
         return ENQUETE.a(piece.indice);
     });
 
-    const manquantes = PIECES_CHRONO.length - disponibles.length;
+    const manquantes = PIECES_CHRONO.filter(function (piece) {
+        return !ENQUETE.a(piece.indice);
+    });
 
-    corps.appendChild(el("div", { classe: "question-carte" }, [
-        el("h3", { texte: "La nuit du 8 novembre" }),
-        el("p", {
-            texte: ETAT.chronoValidee
-                ? "Remise dans l'ordre. Elle est rentrée à 1 h 14 : elle n'a pas disparu dehors."
-                : "Six traces, six applications différentes. Remets-les dans l'ordre où elles se sont produites.",
-        }),
-        manquantes > 0 && !ETAT.chronoValidee
-            ? el("div", {
-                classe: "consigne",
-                texte: "Il manque encore " + manquantes + (manquantes > 1 ? " traces." : " trace.") + " Continue de fouiller.",
-            })
-            : null,
+    corps.appendChild(el("div", { classe: "avancement" }, [
+        el("div", { classe: "avancement-texte" }, [
+            el("span", { texte: ETAT.chronoValidee ? "Chronologie établie" : "Traces retrouvées" }),
+            el("span", { texte: disponibles.length + " sur " + PIECES_CHRONO.length }),
+        ]),
+        el("div", { classe: "avancement-barre" }, [
+            el("i", { style: { width: Math.round((disponibles.length / PIECES_CHRONO.length) * 100) + "%" } }),
+        ]),
     ]));
+
+    corps.appendChild(el("div", {
+        classe: "bandeau-papier",
+        texte: ETAT.chronoValidee
+            ? "Elle est rentrée à 1 h 14. Elle n'a pas disparu dehors."
+            : "Remets les traces dans l'ordre où elles se sont produites.",
+    }));
+
+    /* --- ce qui manque, et surtout OÙ le chercher --- */
+    if (manquantes.length > 0 && !ETAT.chronoValidee) {
+        corps.appendChild(titreDeSection("Il manque " + manquantes.length +
+            (manquantes.length > 1 ? " traces" : " trace"), null));
+
+        manquantes.forEach(function (piece) {
+            const indice = INDICES[piece.indice] || {};
+            corps.appendChild(el("div", { classe: "etape etape--manquante" }, [
+                el("div", { classe: "etape-puce", texte: "?" }),
+                el("div", { classe: "etape-titre", texte: "à chercher dans " + (indice.ou || "le téléphone") }),
+            ]));
+        });
+    }
 
     if (disponibles.length === 0) {
         corps.appendChild(videMessage("Aucune trace de cette nuit-là pour l'instant."));
         return;
+    }
+
+    if (manquantes.length > 0 && !ETAT.chronoValidee) {
+        corps.appendChild(titreDeSection("Ce que j'ai déjà", null));
     }
 
     /* L'ordre courant : celui de la joueuse, ou un ordre mélangé
@@ -313,8 +377,9 @@ function ongletChronologie(corps) {
 
     if (!ETAT.chronoValidee) {
         corps.appendChild(el("div", { classe: "zone-boutons" }, [
-            bouton("Valider la chronologie", function () { validerLaChrono(ordre); },
-                { desactive: manquantes > 0 }),
+            bouton(manquantes.length > 0 ? "Il manque des traces" : "Valider l'ordre",
+                function () { validerLaChrono(ordre); },
+                { desactive: manquantes.length > 0 }),
         ]));
     }
 }
