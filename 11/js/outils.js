@@ -274,6 +274,10 @@ function ligne(options) {
 
     if (o.nonLue) classes.push("ligne--non-lue");
     if (o.chevron !== false) classes.push("ligne--chevron");
+    // iOS ne trace jamais le trait de séparation sous l'avatar :
+    // il démarre à la hauteur du texte. C'est un détail minuscule
+    // et c'est l'un de ceux qui font « vrai téléphone ».
+    if (o.avatar) classes.push("ligne--avatar");
     if (o.classe) classes.push(o.classe);
 
     const gauche = [];
@@ -387,4 +391,120 @@ function bouton(texte, auClic, options) {
    est vide ("Aucune note", "Rien ici"). */
 function videMessage(texte) {
     return el("div", { classe: "vide-message", texte: texte });
+}
+
+
+/* ------------------------------------------------------------
+   LA BARRE D'ONGLETS DU BAS
+   ------------------------------------------------------------
+   LE truc qui manquait pour que ça ressemble à iOS. Sur un
+   iPhone, Téléphone, Photos, Santé et compagnie n'ont pas des
+   onglets en haut : elles ont une barre translucide EN BAS,
+   avec une icône et un mot sous chaque icône.
+
+   onglets : [{ id, nom, icone }]
+   -----------------------------------------------------------*/
+function barreOnglets(onglets, actif, surChangement) {
+
+    const barre = el("div", { classe: "barre-onglets" });
+
+    (onglets || []).forEach(function (onglet) {
+        barre.appendChild(el("div", {
+            classe: "onglet" + (onglet.id === actif ? " onglet--actif" : ""),
+            auClic: function () {
+                if (onglet.id === actif) return;
+                SONS.tape();
+                surChangement(onglet.id);
+            },
+        }, [
+            el("span", { classe: "onglet-icone glyphe", html: onglet.icone }),
+            el("span", { classe: "onglet-nom", texte: onglet.nom }),
+        ]));
+    });
+
+    return barre;
+}
+
+
+/* ------------------------------------------------------------
+   ecranOnglets(options)
+   ------------------------------------------------------------
+   Un écran complet "à la iOS" : grand titre, zone qui défile,
+   barre d'onglets en bas. L'onglet actif est gardé en mémoire
+   et l'écran se redessine tout seul quand on en change.
+
+   ecranOnglets({
+       grandTitre: "Photos",
+       onglets: [{ id: "albums", nom: "Albums", icone: ICONES.… }],
+       defaut: "albums",
+       dessiner: function (corps, onglet) { … },
+   });
+   -----------------------------------------------------------*/
+function ecranOnglets(options) {
+
+    const o = options || {};
+    let actif = o.defaut || (o.onglets[0] && o.onglets[0].id);
+
+    OS.pousser({
+        titre: o.titre || "",
+        plein: true,
+        cle: o.cle,
+        contenu: function (vue) {
+
+            const corps = el("div", { classe: "corps corps--onglets" });
+
+            if (o.grandTitre) {
+                const titreCourant = o.titrePar ? o.titrePar(actif) : o.grandTitre;
+                corps.appendChild(el("h1", { classe: "grand-titre", texte: titreCourant }));
+            }
+
+            o.dessiner(corps, actif);
+            vue.appendChild(corps);
+
+            vue.appendChild(barreOnglets(o.onglets, actif, function (id) {
+                actif = id;
+                OS.rafraichir();
+            }));
+        },
+    });
+}
+
+
+/* ------------------------------------------------------------
+   LA BARRE D'OUTILS DU BAS (Safari, Mail, la visionneuse)
+   ------------------------------------------------------------
+   outils : [{ icone, auClic, desactive }]
+   -----------------------------------------------------------*/
+function barreOutils(outils) {
+
+    const barre = el("div", { classe: "barre-outils" });
+
+    (outils || []).forEach(function (outil) {
+        barre.appendChild(el("div", {
+            classe: "outil" + (outil.desactive ? " outil--eteint" : ""),
+            auClic: outil.desactive ? null : outil.auClic,
+        }, [
+            el("span", { classe: "glyphe", html: outil.icone }),
+        ]));
+    });
+
+    return barre;
+}
+
+
+/* ------------------------------------------------------------
+   LE CHAMP DE RECHERCHE GRIS DES LISTES iOS
+   ------------------------------------------------------------
+   Il ne cherche rien ici : il ouvre la recherche globale.
+   C'est exactement ce que fait un iPhone quand on tire une
+   liste vers le bas.
+   -----------------------------------------------------------*/
+function champDeRecherche(placeholder) {
+    return el("div", {
+        classe: "champ-recherche",
+        auClic: function () { OS.ouvrirRecherche(); },
+    }, [
+        el("span", { classe: "glyphe", html: ICONES.loupe }),
+        el("span", { texte: placeholder || "Rechercher" }),
+    ]);
 }

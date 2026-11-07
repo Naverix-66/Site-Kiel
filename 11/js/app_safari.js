@@ -1,13 +1,14 @@
 /* ============================================================
    APPLICATION — SAFARI
    ============================================================
-   Trois onglets : Historique, Recherches, Favoris.
+   Une page de démarrage (favoris, historique, recherches) et
+   des pages lisibles. La barre d'adresse est EN BAS, avec la
+   barre d'outils : c'est comme ça depuis iOS 15, et c'est ce
+   qui fait reconnaître Safari au premier coup d'œil.
 
    L'historique d'un navigateur est le document le plus intime
-   d'un téléphone. Celui de Lena tient en onze lignes datées
-   d'une seule nuit — celle du 6 novembre, entre 2 h et 4 h du
-   matin — et il raconte tout : elle a compris, elle a vérifié,
-   elle a cherché un avocat, puis un horaire de bus.
+   d'un téléphone. Celui de Lena tient en une nuit — celle du
+   6 novembre, entre 2 h et 4 h du matin.
    ============================================================ */
 
 enregistrerApp({
@@ -16,134 +17,144 @@ enregistrerApp({
     icone: "safari",
 
     ouvrir: function () {
-        let onglet = "historique";
-
-        OS.pousser({
-            grandTitre: "Safari",
-            contenu: function (corps) {
-
-                const segments = el("div", { classe: "segments" });
-
-                [["historique", "Historique"], ["recherches", "Recherches"], ["favoris", "Favoris"]]
-                    .forEach(function (paire) {
-                        segments.appendChild(el("div", {
-                            classe: "segment" + (onglet === paire[0] ? " actif" : ""),
-                            texte: paire[1],
-                            auClic: function () {
-                                onglet = paire[0];
-                                SONS.tape();
-                                OS.rafraichir();
-                            },
-                        }));
-                    });
-
-                corps.appendChild(segments);
-
-                if (onglet === "historique") historiqueWeb(corps);
-                if (onglet === "recherches") recherchesWeb(corps);
-                if (onglet === "favoris") favorisWeb(corps);
-            },
-        });
+        pageDeDemarrage();
     },
 });
 
 
-function historiqueWeb(corps) {
+function pageDeDemarrage() {
 
-    const liste = el("div", { classe: "liste" });
-    let jourCourant = "";
+    OS.pousser({
+        sansBarre: true,
+        plein: true,
+        contenu: function (vue) {
 
-    HISTORIQUE_WEB.slice().sort(function (a, b) {
-        return clefDeTri(b.t) - clefDeTri(a.t);
-    }).forEach(function (entree) {
+            const corps = el("div", { classe: "corps" });
 
-        const jour = entree.t.split(" ")[0];
-        if (jour !== jourCourant) {
-            jourCourant = jour;
-            liste.appendChild(el("div", { classe: "groupe-titre", style: { padding: "16px 16px 6px" }, texte: dateLongue(entree.t) }));
-        }
+            corps.appendChild(el("h1", { classe: "grand-titre", texte: "Démarrage" }));
 
-        liste.appendChild(ligne({
-            titre: entree.titre,
-            sousTitre: entree.url,
-            droite: justeLHeure(entree.t),
-            lignes: 1,
-            auClic: function () {
-                if (entree.indice) ENQUETE.trouver(entree.indice);
+            /* --- les favoris, en grille d'icônes --- */
+            corps.appendChild(el("div", { classe: "groupe-titre", style: { padding: "0 18px 8px" }, texte: "FAVORIS" }));
 
-                if (entree.page) {
-                    ouvrirPageWeb(entree.page);
-                } else {
-                    OS.alerte({
-                        titre: "Safari ne peut pas ouvrir la page",
-                        message: "Le téléphone n'est pas connecté à Internet. Seules les pages mises en cache sont lisibles.",
-                        boutons: [{ texte: "OK", fort: true }],
-                    });
+            const grille = el("div", { classe: "grille-favoris" });
+
+            FAVORIS_WEB.forEach(function (favori) {
+                grille.appendChild(el("div", {
+                    classe: "favori cliquable",
+                    auClic: function () {
+                        if (favori.page) ouvrirPageWeb(favori.page);
+                        else horsLigne();
+                    },
+                }, [
+                    el("div", { classe: "favori-pastille", texte: favori.titre.slice(0, 1).toUpperCase() }),
+                    el("div", { classe: "favori-nom", texte: favori.titre }),
+                ]));
+            });
+
+            corps.appendChild(grille);
+
+            /* --- l'historique --- */
+            corps.appendChild(el("div", { classe: "groupe-titre", style: { padding: "18px 18px 8px" }, texte: "HISTORIQUE" }));
+
+            const liste = el("div", { classe: "liste" });
+            let jourCourant = "";
+
+            HISTORIQUE_WEB.slice().sort(function (a, b) {
+                return clefDeTri(b.t) - clefDeTri(a.t);
+            }).forEach(function (entree) {
+
+                const jour = entree.t.split(" ")[0];
+                if (jour !== jourCourant) {
+                    jourCourant = jour;
+                    liste.appendChild(el("div", {
+                        classe: "sous-titre-liste",
+                        texte: dateLongue(entree.t),
+                    }));
                 }
-            },
-        }));
-    });
 
-    corps.appendChild(liste);
+                liste.appendChild(ligne({
+                    titre: entree.titre,
+                    sousTitre: entree.url,
+                    droite: justeLHeure(entree.t),
+                    lignes: 1,
+                    auClic: function () {
+                        if (entree.indice) ENQUETE.trouver(entree.indice);
+                        if (entree.page) ouvrirPageWeb(entree.page);
+                        else horsLigne();
+                    },
+                }));
+            });
+
+            corps.appendChild(liste);
+
+            /* --- les recherches --- */
+            corps.appendChild(el("div", { classe: "groupe-titre", style: { padding: "22px 18px 8px" }, texte: "RECHERCHES RÉCENTES" }));
+
+            const recherches = el("div", { classe: "liste" });
+
+            RECHERCHES_WEB.slice().sort(function (a, b) {
+                return clefDeTri(b.t) - clefDeTri(a.t);
+            }).forEach(function (recherche) {
+
+                const element = ligne({
+                    titre: recherche.texte,
+                    droite: dateDeListe(recherche.t),
+                    classe: "recherche-ligne",
+                    chevron: false,
+                    auClic: function () { ENQUETE.trouver("recherches_web"); },
+                });
+
+                element.insertBefore(el("span", {
+                    classe: "glyphe loupe",
+                    style: { width: "15px", height: "15px", color: "var(--texte-faible)" },
+                    html: ICONES.loupe,
+                }), element.firstChild);
+
+                recherches.appendChild(element);
+            });
+
+            corps.appendChild(recherches);
+            vue.appendChild(corps);
+
+            /* --- la barre d'adresse et la barre d'outils, en bas --- */
+            vue.appendChild(barreAdresse("Rechercher ou saisir une adresse"));
+            vue.appendChild(outilsSafari(null));
+        },
+    });
 }
 
 
-function recherchesWeb(corps) {
-
-    const liste = el("div", { classe: "liste" });
-    let jourCourant = "";
-
-    RECHERCHES_WEB.slice().sort(function (a, b) {
-        return clefDeTri(b.t) - clefDeTri(a.t);
-    }).forEach(function (recherche) {
-
-        const jour = recherche.t.split(" ")[0];
-        if (jour !== jourCourant) {
-            jourCourant = jour;
-            liste.appendChild(el("div", {
-                classe: "groupe-titre",
-                style: { padding: "16px 16px 6px" },
-                texte: dateLongue(recherche.t),
-            }));
-        }
-
-        const element = ligne({
-            titre: recherche.texte,
-            droite: justeLHeure(recherche.t),
-            classe: "recherche-ligne",
-            chevron: false,
-            auClic: function () { ENQUETE.trouver("recherches_web"); },
-        });
-
-        element.insertBefore(el("span", {
-            classe: "glyphe loupe",
-            style: { width: "15px", height: "15px", color: "var(--texte-faible)" },
-            html: ICONES.loupe,
-        }), element.firstChild);
-
-        liste.appendChild(element);
-    });
-
-    corps.appendChild(liste);
-
-    corps.appendChild(el("div", {
-        classe: "groupe-pied",
-        style: { padding: "16px 20px" },
-        texte: "Huit des onze recherches ont été faites la même nuit, entre 2 h 14 et 4 h 20.",
-    }));
+function barreAdresse(texte, verrouille) {
+    return el("div", { classe: "barre-adresse" }, [
+        el("div", { classe: "champ-adresse" }, [
+            verrouille ? el("span", { classe: "glyphe", html: ICONES.verrou }) : null,
+            el("span", { texte: texte }),
+        ]),
+    ]);
 }
 
 
-function favorisWeb(corps) {
+function outilsSafari(page) {
+    return barreOutils([
+        {
+            icone: ICONES.chevronGauche,
+            desactive: !page,
+            auClic: function () { OS.retour(); },
+        },
+        { icone: ICONES.chevron, desactive: true },
+        { icone: ICONES.partage, auClic: function () { horsLigne(); } },
+        { icone: ICONES.livre, auClic: function () { OS.toast("Les favoris sont sur la page de démarrage.", { info: true, icone: ICONES.info }); } },
+        { icone: ICONES.onglets, auClic: function () { OS.toast("1 onglet ouvert", { info: true, icone: ICONES.info }); } },
+    ]);
+}
 
-    corps.appendChild(groupe(null, FAVORIS_WEB.map(function (favori) {
-        return ligneReglage(favori.titre, null, {
-            auClic: function () {
-                if (favori.page) ouvrirPageWeb(favori.page);
-                else OS.toast("Page indisponible hors connexion", { info: true, icone: ICONES.info });
-            },
-        });
-    })));
+
+function horsLigne() {
+    OS.alerte({
+        titre: "Pas de connexion",
+        message: "Le téléphone est en wifi mais la page n'est pas en cache. Seules les pages déjà visitées sont lisibles.",
+        boutons: [{ texte: "OK", fort: true }],
+    });
 }
 
 
@@ -158,15 +169,9 @@ function ouvrirPageWeb(id) {
     marquerLu("page:" + id);
 
     OS.pousser({
-        titre: page.titre,
-        retourTexte: "Safari",
+        sansBarre: true,
         plein: true,
         contenu: function (vue) {
-
-            vue.appendChild(el("div", { classe: "safari-barre-url" }, [
-                el("span", { classe: "glyphe", style: { width: "13px", height: "13px" }, html: ICONES.verrou }),
-                el("span", { texte: page.url }),
-            ]));
 
             const corps = el("div", { classe: "corps" });
 
@@ -202,6 +207,9 @@ function ouvrirPageWeb(id) {
 
             corps.appendChild(contenu);
             vue.appendChild(corps);
+
+            vue.appendChild(barreAdresse(page.url, true));
+            vue.appendChild(outilsSafari(page));
         },
     });
 

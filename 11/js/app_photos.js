@@ -1,17 +1,15 @@
 /* ============================================================
    APPLICATION — PHOTOS
    ============================================================
-   Trois écrans : les albums, un album, et la visionneuse.
+   Trois onglets en bas (Photothèque, Albums, Rechercher) comme
+   sur un vrai iPhone, et une visionneuse avec sa bande de
+   vignettes et sa barre d'outils.
 
    La visionneuse est l'endroit le plus important du jeu après
    Messages : c'est là qu'on lit l'HEURE d'une photo. Deux
    indices majeurs (le code de l'album privé, et la date des
    photos supprimées) ne sont pas dans l'image, ils sont dans
-   la petite ligne grise en dessous.
-
-   D'où le bouton « i » : on peut toujours afficher les
-   métadonnées complètes, et un appui sur l'image zoome (les
-   peintures sont vectorielles, ça reste net).
+   la petite ligne grise du haut.
    ============================================================ */
 
 enregistrerApp({
@@ -21,16 +19,73 @@ enregistrerApp({
     dock: true,
 
     ouvrir: function () {
-        OS.pousser({
-            grandTitre: "Albums",
-            contenu: function (corps) { listeDesAlbums(corps); },
+        ecranOnglets({
+            grandTitre: "Photos",
+            titrePar: function (onglet) {
+                if (onglet === "albums") return "Albums";
+                if (onglet === "recherche") return "Rechercher";
+                return "Photothèque";
+            },
+            onglets: [
+                { id: "bibliotheque", nom: "Photothèque", icone: ICONES.grille },
+                { id: "albums", nom: "Albums", icone: ICONES.album },
+                { id: "recherche", nom: "Rechercher", icone: ICONES.loupe },
+            ],
+            defaut: "bibliotheque",
+            dessiner: function (corps, onglet) {
+                if (onglet === "bibliotheque") grilleParJour(corps, photosDeLAlbum("pellicule"), "pellicule");
+                if (onglet === "albums") listeDesAlbums(corps);
+                if (onglet === "recherche") rechercheDePhotos(corps);
+            },
         });
     },
 });
 
 
 /* ------------------------------------------------------------
-   ÉCRAN 1 — les albums
+   LA PHOTOTHÈQUE — toutes les photos, groupées par jour
+   ------------------------------------------------------------ */
+function grilleParJour(corps, photos, idAlbum) {
+
+    let jourCourant = "";
+    let grille = null;
+
+    photos.forEach(function (photo) {
+        const jour = photo.t.split(" ")[0];
+
+        if (jour !== jourCourant) {
+            jourCourant = jour;
+
+            const entete = el("div", { classe: "jour-photos", texte: dateLongue(photo.t) });
+            if (photo.lieu) entete.appendChild(el("span", { texte: photo.lieu }));
+            corps.appendChild(entete);
+
+            grille = el("div", { classe: "grille-photos" });
+            corps.appendChild(grille);
+        }
+
+        const vignette = el("div", {
+            classe: "vignette cliquable",
+            auClic: function () { ouvrirVisionneuse(photo, photos); },
+        }, [imagePhoto(photo, { recadre: true })]);
+
+        if (photo.favori) {
+            vignette.appendChild(el("div", { classe: "vignette-coeur glyphe", html: ICONES.coeur }));
+        }
+        if (photo.supprimeeLe) {
+            vignette.appendChild(el("div", { classe: "vignette-jours", texte: "22 j" }));
+        }
+
+        grille.appendChild(vignette);
+    });
+
+    if (photos.length === 0) corps.appendChild(videMessage("Aucune photo."));
+    void idAlbum;
+}
+
+
+/* ------------------------------------------------------------
+   LES ALBUMS
    ------------------------------------------------------------ */
 function listeDesAlbums(corps) {
 
@@ -42,32 +97,26 @@ function listeDesAlbums(corps) {
         const verrouille = album.verrou && !estOuvert(album.verrou);
 
         const couverture = el("div", { classe: "couverture" });
-
         const photoDeCouverture = photoParId(album.couverture);
-        if (photoDeCouverture && !verrouille) {
-            couverture.appendChild(imagePhoto(photoDeCouverture, { recadre: true }));
-        } else if (verrouille) {
+
+        if (verrouille) {
             couverture.appendChild(el("div", { classe: "cadenas" }, [
                 el("span", { classe: "glyphe", html: ICONES.verrou }),
             ]));
+        } else if (photoDeCouverture) {
+            couverture.appendChild(imagePhoto(photoDeCouverture, { recadre: true }));
         }
 
         grille.appendChild(el("div", {
             classe: "album-carte cliquable",
             auClic: function () {
-                if (verrouille) {
-                    demanderCodeAlbum(album);
-                } else {
-                    ouvrirAlbum(album);
-                }
+                if (verrouille) demanderCodeAlbum(album);
+                else ouvrirAlbum(album);
             },
         }, [
             couverture,
             el("div", { classe: "nom", texte: album.nom }),
-            el("div", {
-                classe: "nombre",
-                texte: verrouille ? album.consigne : photos.length + (photos.length > 1 ? " éléments" : " élément"),
-            }),
+            el("div", { classe: "nombre", texte: verrouille ? "Verrouillé" : String(photos.length) }),
         ]));
     });
 
@@ -75,13 +124,39 @@ function listeDesAlbums(corps) {
 }
 
 
+function rechercheDePhotos(corps) {
+
+    corps.appendChild(champDeRecherche("Lieux, dates, légendes"));
+
+    const lieux = [];
+    PHOTOS.forEach(function (photo) {
+        if (!photo.lieu) return;
+        if (photo.albums.indexOf("prive") !== -1 && !estOuvert("albumPrive")) return;
+        if (lieux.indexOf(photo.lieu) === -1) lieux.push(photo.lieu);
+    });
+
+    corps.appendChild(groupe("lieux", lieux.map(function (lieu) {
+        const dedans = PHOTOS.filter(function (p) { return p.lieu === lieu; });
+        return ligneReglage(lieu, String(dedans.length), {
+            auClic: function () {
+                OS.pousser({
+                    titre: lieu,
+                    retourTexte: "Photos",
+                    contenu: function (zone) { grilleParJour(zone, dedans, "pellicule"); },
+                });
+            },
+        });
+    })));
+}
+
+
 function demanderCodeAlbum(album) {
     OS.demanderCode({
-        titre: album.nom + " — code à 4 chiffres",
+        titre: album.nom,
         indice: album.indice,
         bonCode: album.code,
         sansHorloge: true,
-        annule: function () { /* on reste sur la liste */ },
+        annule: function () { },
         reussi: function () {
             ouvrirVerrou(album.verrou);
             SONS.revelation();
@@ -95,7 +170,7 @@ function demanderCodeAlbum(album) {
 
 
 /* ------------------------------------------------------------
-   ÉCRAN 2 — un album
+   UN ALBUM
    ------------------------------------------------------------ */
 function ouvrirAlbum(album) {
 
@@ -103,61 +178,21 @@ function ouvrirAlbum(album) {
 
     OS.pousser({
         titre: album.nom,
+        sousTitre: photos.length + (photos.length > 1 ? " éléments" : " élément"),
         retourTexte: "Albums",
         contenu: function (corps) {
 
             if (album.id === "supprimes") {
                 corps.appendChild(el("div", {
-                    classe: "groupe-pied",
-                    style: { padding: "10px 18px 4px" },
-                    texte: "Ces éléments ont été supprimés le 9 novembre à 1 h 20. " +
-                        "Ils seront définitivement effacés au bout de 30 jours.",
+                    classe: "bandeau-info",
+                    texte: "Supprimées le 9 novembre à 1 h 20.",
                 }));
             }
 
-            /* On regroupe par jour, comme la vraie application. */
-            let jourCourant = "";
-            let grille = null;
-
-            photos.forEach(function (photo) {
-                const jour = photo.t.split(" ")[0];
-
-                if (jour !== jourCourant) {
-                    jourCourant = jour;
-
-                    const entete = el("div", { classe: "jour-photos", texte: dateLongue(photo.t) });
-                    if (photo.lieu) {
-                        entete.appendChild(el("span", { texte: photo.lieu }));
-                    }
-                    corps.appendChild(entete);
-
-                    grille = el("div", { classe: "grille-photos" });
-                    corps.appendChild(grille);
-                }
-
-                const vignette = el("div", {
-                    classe: "vignette cliquable",
-                    auClic: function () { ouvrirVisionneuse(photo, photos); },
-                }, [imagePhoto(photo, { recadre: true })]);
-
-                if (photo.favori) {
-                    vignette.appendChild(el("div", { classe: "vignette-coeur glyphe", html: ICONES.coeur }));
-                }
-
-                if (photo.supprimeeLe) {
-                    vignette.appendChild(el("div", { classe: "vignette-jours", texte: "22 j" }));
-                }
-
-                grille.appendChild(vignette);
-            });
-
-            if (photos.length === 0) {
-                corps.appendChild(videMessage("Aucune photo."));
-            }
+            grilleParJour(corps, photos, album.id);
         },
     });
 
-    // Ouvrir l'album des suppressions est en soi une découverte.
     if (album.id === "supprimes") {
         plusTard(function () { ENQUETE.trouver("suppressions"); }, 400);
     }
@@ -165,11 +200,17 @@ function ouvrirAlbum(album) {
 
 
 /* ------------------------------------------------------------
-   ÉCRAN 3 — la visionneuse
+   LA VISIONNEUSE
+   ------------------------------------------------------------
+   Barre du haut : la date et l'heure (c'est là que se jouent
+   deux énigmes). Bande de vignettes en bas pour passer d'une
+   photo à l'autre d'un doigt, et barre d'outils façon iOS.
    ------------------------------------------------------------ */
 function ouvrirVisionneuse(photo, voisines) {
 
     let indexCourant = voisines.indexOf(photo);
+    if (indexCourant < 0) indexCourant = 0;
+
     let infosVisibles = false;
 
     OS.pousser({
@@ -185,26 +226,18 @@ function ouvrirVisionneuse(photo, voisines) {
             visionneuse.appendChild(el("div", { classe: "visionneuse-barre" }, [
                 el("div", {
                     classe: "cliquable",
-                    style: { color: "var(--bleu)", minWidth: "60px" },
-                    texte: "Fermer",
+                    style: { color: "var(--bleu)", minWidth: "54px", fontSize: "16px" },
+                    texte: "OK",
                     auClic: function () { OS.retour(); },
                 }),
                 el("div", { classe: "titre" }, [
                     el("div", { texte: dateLongue(courante.t) }),
                     el("span", { texte: justeLHeure(courante.t) + (courante.lieu ? " · " + courante.lieu : "") }),
                 ]),
-                el("div", {
-                    classe: "cliquable glyphe",
-                    style: { width: "22px", height: "22px", color: "var(--bleu)" },
-                    html: ICONES.info,
-                    auClic: function () {
-                        infosVisibles = !infosVisibles;
-                        OS.rafraichir();
-                    },
-                }),
+                el("div", { style: { minWidth: "54px" } }),
             ]));
 
-            /* --- l'image, zoomable --- */
+            /* --- l'image, qu'on peut agrandir d'un appui --- */
             const zoneImage = el("div", { classe: "visionneuse-image" });
             const image = imagePhoto(courante, { grande: true });
             image.classList.add("zoomable");
@@ -217,53 +250,58 @@ function ouvrirVisionneuse(photo, voisines) {
 
             visionneuse.appendChild(zoneImage);
 
-            /* --- les métadonnées complètes --- */
+            /* --- la légende, s'il y en a une --- */
+            if (courante.legende) {
+                visionneuse.appendChild(el("div", {
+                    classe: "visionneuse-legende",
+                    texte: "« " + courante.legende + " »",
+                }));
+            }
+
+            /* --- les informations complètes --- */
             if (infosVisibles) {
                 const exif = el("div", { classe: "photo-exif" });
-
-                exif.appendChild(el("div", { html: "<b>Date</b> — " + dateLongue(courante.t) + ", " + justeLHeure(courante.t) }));
-                if (courante.lieu) exif.appendChild(el("div", { html: "<b>Lieu</b> — " + courante.lieu }));
-                exif.appendChild(el("div", { html: "<b>Appareil</b> — " + (courante.appareil || "—") }));
+                exif.appendChild(el("div", { html: "<b>Prise le</b> " + dateLongue(courante.t) + " à " + justeLHeure(courante.t) }));
+                if (courante.lieu) exif.appendChild(el("div", { html: "<b>Lieu</b> " + courante.lieu }));
+                exif.appendChild(el("div", { html: "<b>Appareil</b> " + (courante.appareil || "—") }));
                 if (courante.supprimeeLe) {
-                    exif.appendChild(el("div", {
-                        html: "<b>Supprimée</b> — " + dateLongue(courante.supprimeeLe) + ", " + justeLHeure(courante.supprimeeLe),
-                    }));
+                    exif.appendChild(el("div", { html: "<b>Supprimée le</b> " + dateLongue(courante.supprimeeLe) + " à " + justeLHeure(courante.supprimeeLe) }));
                 }
-                exif.appendChild(el("div", { html: "<b>Fichier</b> — IMG_" + courante.id.toUpperCase() + ".HEIC" }));
-
                 visionneuse.appendChild(exif);
             }
 
-            /* --- la légende et la navigation --- */
-            const legende = el("div", { classe: "visionneuse-legende" });
+            /* --- la bande de vignettes --- */
+            const bande = el("div", { classe: "bande-vignettes" });
 
-            if (courante.legende) {
-                legende.appendChild(el("div", { texte: "« " + courante.legende + " »" }));
-            }
+            voisines.forEach(function (voisine, index) {
+                bande.appendChild(el("div", {
+                    classe: "mini-vignette" + (index === indexCourant ? " mini-vignette--active" : ""),
+                    auClic: function () {
+                        indexCourant = index;
+                        SONS.tape();
+                        OS.rafraichir();
+                    },
+                }, [imagePhoto(voisine, { recadre: true })]));
+            });
 
-            legende.appendChild(el("div", { classe: "visionneuse-outils" }, [
-                el("div", {
-                    classe: "cliquable",
-                    style: { opacity: indexCourant > 0 ? "1" : "0.3" },
-                    texte: "‹ Précédente",
-                    auClic: function () {
-                        if (indexCourant > 0) { indexCourant--; OS.rafraichir(); SONS.tape(); }
+            visionneuse.appendChild(bande);
+
+            /* --- la barre d'outils --- */
+            visionneuse.appendChild(barreOutils([
+                { icone: ICONES.partage, auClic: function () { OS.toast("Rien ne sort de ce téléphone.", { info: true, icone: ICONES.info }); } },
+                { icone: courante.favori ? ICONES.coeur : ICONES.coeurVide, auClic: function () { SONS.tape(); } },
+                {
+                    icone: ICONES.info, auClic: function () {
+                        infosVisibles = !infosVisibles;
+                        SONS.tape();
+                        OS.rafraichir();
                     },
-                }),
-                el("div", {
-                    classe: "cliquable",
-                    style: { opacity: indexCourant < voisines.length - 1 ? "1" : "0.3" },
-                    texte: "Suivante ›",
-                    auClic: function () {
-                        if (indexCourant < voisines.length - 1) { indexCourant++; OS.rafraichir(); SONS.tape(); }
-                    },
-                }),
+                },
+                { icone: ICONES.corbeille, desactive: true },
             ]));
 
-            visionneuse.appendChild(legende);
             vue.appendChild(visionneuse);
 
-            /* --- l'indice attaché à la photo --- */
             if (courante.indice) {
                 plusTard(function () { ENQUETE.trouver(courante.indice); }, 500);
             }

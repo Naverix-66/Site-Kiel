@@ -53,11 +53,9 @@ enregistrerApp({
 
                 /* --- le constat, en bas --- */
                 corps.appendChild(el("div", {
-                    classe: "mira-aide",
-                    style: { background: "var(--ardoise)", border: "1px dashed var(--separateur)", color: "var(--texte)" },
-                    html: "<b>Au fait</b>Le compte <b>@t.reh</b> a commenté " + commentairesDeLui() +
-                        " publications sur " + PUBLICATIONS.length + ". Jamais la photo. Toujours l'heure, " +
-                        "le lieu, ou ce qu'elle portait.",
+                    classe: "bandeau-info",
+                    texte: "@t.reh a commenté " + commentairesDeLui() + " publications sur " +
+                        PUBLICATIONS.length + ". Jamais la photo : toujours l'heure ou le lieu.",
                 }));
             },
         });

@@ -39,6 +39,8 @@ enregistrerApp({
    ------------------------------------------------------------ */
 function listeDesFils(corps) {
 
+    corps.appendChild(champDeRecherche());
+
     const liste = el("div", { classe: "liste" });
 
     filsVisibles().forEach(function (fil) {
@@ -124,24 +126,42 @@ function dessinerFil(vue, fil) {
         }),
     ]));
 
-    /* --- les messages, avec les séparateurs de date --- */
-    let dernierJour = "";
+    /* --- les messages ---
+       Règles d'affichage, copiées sur iOS :
+         - une seule ligne de date, centrée, quand le temps saute
+           (jour différent, ou plus d'une demi-heure de silence) ;
+         - pas d'heure sous chaque bulle : c'était illisible ;
+         - la pointe de bulle seulement sur la dernière d'une rafale ;
+         - « Lu » seulement sous le tout dernier message envoyé. */
+
+    let dernierHorodatage = -1;
 
     messages.forEach(function (message, index) {
 
-        const jour = message.t.split(" ")[0];
+        const quand = clefDeTri(message.t);
+        const precedent = messages[index - 1];
+        const suivant = messages[index + 1];
 
-        if (jour !== dernierJour) {
-            zone.appendChild(el("div", {
-                classe: "separateur-date",
-                texte: dateDeSeparateur(message.t),
+        const jourDifferent = !precedent || precedent.t.split(" ")[0] !== message.t.split(" ")[0];
+        const grandSilence = dernierHorodatage >= 0 && (quand - dernierHorodatage) > 30;
+
+        if (jourDifferent || grandSilence) {
+            const d = decouperDate(message.t);
+            const etiquette = el("div", { classe: "separateur-date" });
+
+            etiquette.appendChild(el("b", {
+                texte: estAujourdhui(message.t) ? "Aujourd'hui" : dateLongue(message.t),
             }));
-            dernierJour = jour;
+            etiquette.appendChild(el("span", { texte: d.heure !== null ? "  " + justeLHeure(message.t) : "" }));
+
+            zone.appendChild(etiquette);
         }
+
+        dernierHorodatage = quand;
 
         if (message.efface) {
             zone.appendChild(el("div", {
-                classe: "bulle bulle--eux",
+                classe: "bulle bulle--eux bulle--pointe",
                 texte: "Ce message a été supprimé",
                 style: { opacity: "0.45", fontStyle: "italic" },
             }));
@@ -150,34 +170,22 @@ function dessinerFil(vue, fil) {
 
         const aMoi = message.de === "moi";
 
-        // Dans un groupe, on écrit qui parle au-dessus de la bulle.
-        if (message.auteur && !aMoi) {
-            const precedent = messages[index - 1];
-            if (!precedent || precedent.auteur !== message.auteur) {
-                zone.appendChild(el("div", {
-                    classe: "bulle-heure",
-                    texte: message.auteur,
-                }));
-            }
+        // Dans un groupe, on écrit qui parle au-dessus de la rafale.
+        if (message.auteur && !aMoi && (!precedent || precedent.auteur !== message.auteur)) {
+            zone.appendChild(el("div", { classe: "bulle-heure", texte: message.auteur }));
         }
 
-        const bulle = el("div", {
-            classe: "bulle bulle--" + (aMoi ? "moi" : "eux"),
+        // Dernière bulle de la rafale ? (changement de camp, ou fin)
+        const finDeRafale = !suivant || suivant.de !== message.de || suivant.auteur !== message.auteur;
+
+        zone.appendChild(el("div", {
+            classe: "bulle bulle--" + (aMoi ? "moi" : "eux") + (finDeRafale ? " bulle--pointe" : ""),
             texte: message.txt,
-        });
+        }));
 
-        zone.appendChild(bulle);
-
-        // L'heure sous le dernier message d'une rafale.
-        const suivant = messages[index + 1];
-        const memeCote = suivant && (suivant.de === message.de);
-        const memeMinute = suivant && suivant.t === message.t;
-
-        if (!memeCote || !memeMinute) {
-            zone.appendChild(el("div", {
-                classe: "bulle-heure" + (aMoi ? " bulle-heure--moi" : ""),
-                texte: justeLHeure(message.t) + (message.info ? " · " + message.info : ""),
-            }));
+        // l'accusé de lecture, une seule fois, sur le dernier envoyé
+        if (message.info && aMoi && !suivant) {
+            zone.appendChild(el("div", { classe: "accuse-lecture", texte: message.info }));
         }
     });
 

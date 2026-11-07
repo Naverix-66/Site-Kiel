@@ -298,9 +298,8 @@ function ecranJournal() {
             });
 
             corps.appendChild(el("div", {
-                classe: "mira-aide",
-                html: "<b>Ce qu'il a vu, lui</b>Une fille rentrée chez elle à 1 h 14, et qui n'est plus ressortie. " +
-                    "Pendant trois jours, son téléphone lui a répété « Domicile » toutes les heures.",
+                classe: "bandeau-info",
+                texte: "Pendant trois jours, l'application lui a répété « Domicile » toutes les heures.",
             }));
 
             if (ETAT.acte >= 4 && !ETAT.preuvesEnvoyees) {

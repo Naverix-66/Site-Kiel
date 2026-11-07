@@ -768,10 +768,24 @@ body.autonome #barre-statut { opacity: 0; }
     gap: 12px;
     padding: 9px 16px 9px 16px;
     min-height: 62px;
-    border-bottom: 0.5px solid var(--separateur);
 }
 
-.app--clair .ligne { border-bottom-color: rgba(75, 59, 54, 0.12); }
+/* Le trait de séparation : décalé vers la droite, et encore plus
+   quand il y a un avatar. C'est la signature visuelle des listes
+   iOS — un trait qui part du texte, jamais du bord de l'écran. */
+.ligne::before {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 0;
+    bottom: 0;
+    height: 0.5px;
+    background: var(--separateur);
+}
+
+.ligne--avatar::before { left: 72px; }
+.ligne:last-child::before { background: var(--separateur); }
+.app--clair .ligne::before { background: rgba(75, 59, 54, 0.12); }
 
 .ligne:active { background: rgba(255, 255, 255, 0.07); }
 .app--clair .ligne:active { background: rgba(75, 59, 54, 0.05); }
@@ -848,6 +862,88 @@ body.autonome #barre-statut { opacity: 0; }
     padding: 60px 30px;
     line-height: 1.5;
 }
+
+
+/* ------------------------------------------------------------
+   LA BARRE D'ONGLETS DU BAS
+   ------------------------------------------------------------
+   Translucide, 49 pt de haut, icône de 25 px et libellé de 10 px :
+   les mesures d'iOS. L'onglet actif est bleu, les autres gris.
+   ------------------------------------------------------------ */
+.barre-onglets {
+    flex: 0 0 auto;
+    display: flex;
+    background: rgba(22, 26, 34, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 0.5px solid var(--separateur);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.onglet {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 7px 2px 6px;
+    color: var(--texte-faible);
+    cursor: pointer;
+}
+
+.onglet-icone { width: 25px; height: 25px; }
+.onglet-nom { font-size: 10px; letter-spacing: 0.1px; }
+.onglet--actif { color: var(--bleu); }
+.onglet:active { opacity: 0.6; }
+
+/* La zone qui défile doit s'arrêter au-dessus de la barre. */
+.corps--onglets { padding-bottom: 14px; }
+
+
+/* ------------------------------------------------------------
+   LA BARRE D'OUTILS DU BAS (Safari, Mail, la visionneuse)
+   ------------------------------------------------------------ */
+.barre-outils {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: rgba(22, 26, 34, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 0.5px solid var(--separateur);
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+}
+
+.outil {
+    color: var(--bleu);
+    padding: 4px 10px;
+    cursor: pointer;
+}
+
+.outil .glyphe { width: 22px; height: 22px; display: block; }
+.outil:active { opacity: 0.5; }
+.outil--eteint { color: var(--texte-faible); opacity: 0.4; }
+
+
+/* ------------------------------------------------------------
+   LE CHAMP DE RECHERCHE DES LISTES
+   ------------------------------------------------------------ */
+.champ-recherche {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 4px 16px 12px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: var(--ardoise);
+    color: var(--texte-faible);
+    font-size: 16px;
+}
+
+.champ-recherche .glyphe { width: 15px; height: 15px; }
+.app--clair .champ-recherche { background: rgba(75, 59, 54, 0.07); color: var(--encre-claire); }
 
 
 /* ============================================================
@@ -1026,20 +1122,36 @@ body.autonome #barre-statut { opacity: 0; }
     gap: 3px;
 }
 
+/* iOS n'écrit pas l'heure sous chaque bulle : il pose une seule
+   ligne grise et centrée quand le temps a sauté, avec le jour en
+   gras et l'heure en maigre. Beaucoup plus lisible, et beaucoup
+   moins de texte à l'écran. */
 .separateur-date {
     text-align: center;
     font-size: 11.5px;
     font-weight: 600;
     color: var(--texte-gris);
-    padding: 14px 0 8px;
+    padding: 16px 0 8px;
+}
+
+.separateur-date span {
+    font-weight: 400;
+}
+
+/* « Lu à 23:19 », uniquement sous le dernier message envoyé */
+.accuse-lecture {
+    align-self: flex-end;
+    font-size: 11px;
+    color: var(--texte-faible);
+    padding: 2px 8px 4px;
 }
 
 .bulle {
-    max-width: 78%;
-    padding: 8px 13px;
-    border-radius: 19px;
-    font-size: 16px;
-    line-height: 1.33;
+    max-width: 76%;
+    padding: 8px 14px;
+    border-radius: 18px;
+    font-size: 16.5px;
+    line-height: 1.3;
     position: relative;
     word-wrap: break-word;
     -webkit-user-select: text;
@@ -1050,21 +1162,52 @@ body.autonome #barre-statut { opacity: 0; }
     align-self: flex-start;
     background: var(--ardoise-haute);
     color: var(--texte);
-    border-bottom-left-radius: 6px;
+    margin-left: 6px;
 }
 
 .bulle--moi {
     align-self: flex-end;
     background: var(--bleu);
     color: #fff;
-    border-bottom-right-radius: 6px;
+    margin-right: 6px;
 }
 
-.bulle--lena {
-    align-self: flex-end;
-    background: #2C5F8A;
-    color: #fff;
-    border-bottom-right-radius: 6px;
+/* La petite pointe de la bulle, en pur CSS : un bout de bulle
+   arrondi, puis un bout de fond par-dessus pour le découper.
+   C'est le détail qui fait qu'on reconnaît iMessage au premier
+   coup d'œil. On ne la met que sur la DERNIÈRE bulle d'une
+   rafale, comme iOS. */
+.bulle--pointe::before,
+.bulle--pointe::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 13px;
+    height: 17px;
+}
+
+.bulle--eux.bulle--pointe::before {
+    left: -6px;
+    background: var(--ardoise-haute);
+    border-bottom-right-radius: 16px 14px;
+}
+
+.bulle--eux.bulle--pointe::after {
+    left: -13px;
+    background: var(--nuit);
+    border-bottom-right-radius: 11px;
+}
+
+.bulle--moi.bulle--pointe::before {
+    right: -6px;
+    background: var(--bleu);
+    border-bottom-left-radius: 16px 14px;
+}
+
+.bulle--moi.bulle--pointe::after {
+    right: -13px;
+    background: var(--nuit);
+    border-bottom-left-radius: 11px;
 }
 
 .bulle-groupe { display: flex; flex-direction: column; gap: 3px; }
@@ -1311,6 +1454,44 @@ body.autonome #barre-statut { opacity: 0; }
 
 .visionneuse-outils .glyphe { width: 22px; height: 22px; }
 
+/* la bande de vignettes du bas : on change de photo d'un doigt,
+   comme dans la vraie visionneuse */
+.bande-vignettes {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 3px;
+    padding: 8px 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mini-vignette {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 3px;
+    overflow: hidden;
+    opacity: 0.45;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.mini-vignette .photo-peinte,
+.mini-vignette .capture { width: 100%; height: 100%; object-fit: cover; }
+
+.mini-vignette--active {
+    opacity: 1;
+    transform: scale(1.12);
+    box-shadow: 0 0 0 1.5px #fff;
+}
+
+/* le petit bandeau gris d'explication en haut d'un écran */
+.bandeau-info {
+    font-size: 13px;
+    color: var(--texte-gris);
+    text-align: center;
+    padding: 10px 20px 4px;
+}
+
 .photo-exif {
     padding: 12px 18px;
     font-size: 13px;
@@ -1387,6 +1568,16 @@ body.autonome #barre-statut { opacity: 0; }
 
 .appel-type .glyphe { width: 12px; height: 12px; }
 .ligne--manque .ligne-titre { color: var(--rouge); }
+
+.bouton-info {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 auto;
+    color: var(--bleu);
+    cursor: pointer;
+}
+
+.bouton-info:active { opacity: 0.5; }
 
 .repondeur-ligne { flex-direction: column; align-items: stretch; gap: 8px; }
 
@@ -1532,19 +1723,79 @@ body.autonome #barre-statut { opacity: 0; }
 
 /* ---------- SAFARI ---------- */
 
-.safari-barre-url {
+/* La barre d'adresse est EN BAS, comme depuis iOS 15. */
+.barre-adresse {
     flex: 0 0 auto;
-    margin: 8px 12px;
-    padding: 9px 14px;
-    border-radius: 12px;
-    background: var(--ardoise);
-    font-size: 14px;
-    color: var(--texte-gris);
+    padding: 8px 12px 2px;
+    background: rgba(22, 26, 34, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 0.5px solid var(--separateur);
+}
+
+.champ-adresse {
     display: flex;
     align-items: center;
-    gap: 7px;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 14px;
+    border-radius: 12px;
+    background: var(--ardoise-claire);
+    font-size: 15px;
+    color: var(--texte-gris);
     overflow: hidden;
     white-space: nowrap;
+}
+
+.champ-adresse .glyphe { width: 11px; height: 11px; flex: 0 0 auto; }
+
+.barre-adresse + .barre-outils {
+    border-top: 0;
+    padding-top: 4px;
+}
+
+/* les favoris de la page de démarrage */
+.grille-favoris {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px 8px;
+    padding: 4px 16px 6px;
+}
+
+.favori { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+.favori-pastille {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: var(--ardoise-claire);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--texte-gris);
+}
+
+.favori:active .favori-pastille { opacity: 0.6; }
+
+.favori-nom {
+    font-size: 11px;
+    text-align: center;
+    color: var(--texte-gris);
+    max-width: 76px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* un petit titre gris au milieu d'une liste */
+.sous-titre-liste {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--texte-gris);
+    padding: 14px 16px 6px;
+    background: var(--nuit);
 }
 
 .page-web {
@@ -1657,6 +1908,68 @@ body.autonome #barre-statut { opacity: 0; }
     font-size: 10.5px;
     color: var(--texte-faible);
 }
+
+/* les cartes de l'application Santé */
+.carte-sante {
+    background: var(--ardoise);
+    border-radius: 14px;
+    margin: 0 16px 14px;
+    padding: 14px 14px 12px;
+}
+
+.carte-sante-titre {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--orange);
+}
+
+.carte-sante-date { font-size: 12.5px; font-weight: 400; color: var(--texte-gris); }
+
+.carte-sante-valeur {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+    padding: 4px 0 2px;
+}
+
+.carte-sante-note {
+    font-size: 13px;
+    color: var(--texte-gris);
+    line-height: 1.4;
+    padding-top: 10px;
+}
+
+.carte-sante-lignes { display: flex; gap: 24px; padding-top: 6px; }
+.carte-sante-lignes b { display: block; font-size: 15px; }
+.carte-sante-lignes span { font-size: 12px; color: var(--texte-gris); }
+
+/* le choix du jour, en pastilles */
+.pastilles-jours {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px 14px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.pastille-jour {
+    flex: 0 0 auto;
+    width: 46px;
+    padding: 7px 0;
+    border-radius: 12px;
+    background: var(--ardoise);
+    text-align: center;
+    color: var(--texte-gris);
+}
+
+.pastille-jour-nom { font-size: 11px; }
+.pastille-jour-nombre { font-size: 17px; font-weight: 600; color: var(--texte); }
+.pastille-jour--active { background: var(--orange); }
+.pastille-jour--active .pastille-jour-nom,
+.pastille-jour--active .pastille-jour-nombre { color: #14171E; }
 
 .chiffre-cle {
     padding: 14px 16px 6px;
@@ -1783,6 +2096,169 @@ body.autonome #barre-statut { opacity: 0; }
 .fg-commentaire--lui b { color: var(--orange); }
 
 
+/* ---------- KIEK (les vidéos verticales) ---------- */
+
+.app--kiek { background: #000; }
+
+.kiek-video {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    background: #000;
+}
+
+.kiek-image {
+    position: absolute;
+    inset: 0;
+    animation: respiration-video 14s ease-in-out infinite alternate;
+}
+
+.kiek-image .photo-peinte { width: 100%; height: 100%; }
+
+@keyframes respiration-video {
+    from { transform: scale(1.04); }
+    to { transform: scale(1.16) translateY(-1.5%); }
+}
+
+.kiek-haut {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.6);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    z-index: 3;
+}
+
+.kiek-onglet { padding: 4px 2px; }
+
+.kiek-onglet--actif {
+    color: #fff;
+    font-weight: 700;
+    border-bottom: 2px solid #fff;
+}
+
+.kiek-sous-titres {
+    position: absolute;
+    left: 0;
+    right: 70px;
+    top: 42%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    padding: 0 16px;
+    z-index: 2;
+}
+
+.kiek-sous-titre {
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    text-align: center;
+    padding: 5px 11px;
+    border-radius: 6px;
+    opacity: 0;
+    animation: sous-titre 4.8s ease-in-out infinite;
+}
+
+@keyframes sous-titre {
+    0%, 8% { opacity: 0; transform: translateY(6px); }
+    14%, 38% { opacity: 1; transform: translateY(0); }
+    46%, 100% { opacity: 0; }
+}
+
+.kiek-actions {
+    position: absolute;
+    right: 9px;
+    bottom: 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    z-index: 3;
+    color: #fff;
+}
+
+.kiek-action { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.kiek-action .glyphe { width: 30px; height: 30px; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6)); }
+.kiek-chiffre { font-size: 11.5px; font-weight: 600; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7); }
+
+.kiek-disque {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #2A2A2E, #0D0D10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: tourne 6s linear infinite;
+}
+
+.kiek-disque .glyphe { width: 17px; height: 17px; color: #fff; }
+
+@keyframes tourne {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.kiek-bas {
+    position: absolute;
+    left: 0;
+    right: 76px;
+    bottom: 14px;
+    padding: 0 14px;
+    z-index: 3;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.kiek-compte { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.kiek-legende { font-size: 14.5px; line-height: 1.35; }
+
+.kiek-enregistree {
+    display: inline-block;
+    margin-top: 7px;
+    font-size: 11.5px;
+    font-weight: 600;
+    background: rgba(255, 214, 10, 0.9);
+    color: #14171E;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-shadow: none;
+}
+
+.kiek-son {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    margin-top: 8px;
+    opacity: 0.9;
+}
+
+.kiek-son .glyphe { width: 12px; height: 12px; }
+
+.kiek-position {
+    position: absolute;
+    top: 42px;
+    right: 12px;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.5);
+    z-index: 3;
+}
+
+.app--kiek .barre-onglets {
+    background: #000;
+    border-top-color: #1A1A1E;
+}
+
+
 /* ---------- LE CARNET D'ENQUÊTE ---------- */
 
 .app--carnet {
@@ -1808,10 +2284,44 @@ body.autonome #barre-statut { opacity: 0; }
 .app--carnet .ligne-droite { color: var(--encre-claire); }
 .app--carnet .vide-message { color: var(--encre-claire); }
 
+/* La carte « maintenant » : une seule chose à faire à l'écran,
+   et le bouton qui y emmène. */
+.carte-objectif {
+    background: #fff;
+    border-radius: var(--rayon-carte);
+    margin: 14px;
+    padding: 16px 16px 14px;
+    box-shadow: 0 2px 10px rgba(75, 59, 54, 0.1);
+    border-top: 3px solid var(--or);
+}
+
+.carte-objectif-sur-titre {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    color: var(--or);
+    margin-bottom: 6px;
+}
+
+.carte-objectif h3 {
+    font-family: var(--police-papier);
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.15;
+    margin-bottom: 6px;
+}
+
+.carte-objectif p {
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--encre-claire);
+    margin-bottom: 14px;
+}
+
 .objectif {
     display: flex;
     gap: 12px;
-    padding: 13px 16px;
+    padding: 10px 16px;
     border-bottom: 0.5px solid rgba(75, 59, 54, 0.12);
 }
 

@@ -70,28 +70,21 @@ const PAGES_WEB = {
         titre: "Mon téléphone est-il surveillé ?",
         url: "sicher-im-netz.de/stalkerware",
         corps: [
-            { type: "p", classe: "chapeau", texte: "Les logiciels de surveillance grand public sont vendus légalement comme des outils de « sécurité familiale ». Installés sans consentement, ils sont illégaux — et quasiment invisibles." },
-            { type: "h2", texte: "Les neuf signes" },
+            { type: "p", classe: "chapeau", texte: "Ces logiciels sont vendus légalement comme des outils de « sécurité familiale ». Installés sans consentement, ils sont illégaux — et presque invisibles." },
+            { type: "h2", texte: "Les signes" },
             {
                 type: "liste", items: [
-                    "La batterie se vide plus vite qu'avant, sans raison.",
-                    "Le téléphone est tiède alors que vous ne l'utilisez pas.",
-                    "Une application anodine (calculatrice, bloc-notes, lampe torche) demande la localisation « Toujours ».",
+                    "La batterie se vide sans raison.",
+                    "Une application banale demande la localisation « Toujours ».",
                     "Vous avez deux fois la même application.",
-                    "L'icône de localisation apparaît alors que vous ne faites rien.",
-                    "Des reçus d'abonnement que vous n'avez jamais souscrit.",
-                    "Une règle de messagerie que vous n'avez pas créée.",
+                    "Des reçus d'abonnement que vous n'avez pas pris.",
                     "La personne sait des choses qu'elle ne peut pas savoir.",
-                    "Elle dit que vous êtes paranoïaque.",
                 ],
             },
             {
                 type: "encadre",
-                texte: "Avant de supprimer quoi que ce soit : faites des captures d'écran. " +
-                    "Une application effacée, c'est une preuve effacée. Et la personne qui vous surveille sait, dans la minute, que vous l'avez supprimée.",
+                texte: "Ne supprimez rien tout de suite : une application effacée, c'est une preuve effacée — et l'autre personne en est prévenue dans la minute.",
             },
-            { type: "h2", texte: "Ce qu'il ne faut pas faire" },
-            { type: "p", texte: "Ne confrontez pas. Ne prévenez pas. Documentez, puis faites-vous accompagner." },
         ],
     },
 
@@ -100,47 +93,35 @@ const PAGES_WEB = {
         url: "familysafe-app.com",
         corps: [
             { type: "p", classe: "chapeau", texte: "Gardez un œil sur ce qui compte." },
-            { type: "h2", texte: "Parce qu'aimer, c'est savoir" },
-            { type: "p", texte: "Recevez une alerte dès qu'un proche arrive quelque part, ou en repart. Définissez vos zones. Consultez l'historique des trente derniers jours, minute par minute." },
             {
                 type: "liste", items: [
                     "Position en direct, précision 5 m",
                     "Alertes d'arrivée et de départ",
                     "Historique 30 jours",
-                    "Icône personnalisable (discrétion)",
-                    "Fonctionne en arrière-plan, sans notification sur l'appareil suivi",
+                    "Icône personnalisable",
+                    "Aucune notification sur l'appareil suivi",
                 ],
             },
-            { type: "p", texte: "4,99 €/mois. Sans engagement." },
-            {
-                type: "encadre",
-                texte: "L'utilisation de FamilySafe requiert le consentement explicite de la personne localisée. " +
-                    "Toute installation à l'insu d'un tiers est une infraction dans la plupart des pays.",
-            },
+            { type: "p", texte: "4,99 €/mois, sans engagement." },
+            { type: "encadre", texte: "L'installation à l'insu d'un tiers est une infraction." },
         ],
     },
 
     p_droits: {
-        titre: "Nachstellung (§ 238) — vos droits",
+        titre: "Harcèlement — vos droits",
         url: "frauenberatung-kiel.de/stalking",
         corps: [
-            { type: "p", classe: "chapeau", texte: "Centre d'accompagnement de Kiel — permanence téléphonique tous les jours, 9 h – 20 h." },
-            { type: "h2", texte: "Ce que dit la loi" },
-            { type: "p", texte: "Suivre quelqu'un, le contacter de manière répétée contre sa volonté, ou surveiller ses déplacements par un moyen technique est punissable, même sans aucune violence physique." },
-            { type: "h2", texte: "Ce qui constitue une preuve" },
+            { type: "p", classe: "chapeau", texte: "Centre d'accompagnement de Kiel. Tous les jours, 9 h – 20 h." },
+            { type: "p", texte: "Surveiller les déplacements de quelqu'un par un moyen technique est punissable, même sans aucune violence." },
+            { type: "h2", texte: "Ce qui fait preuve" },
             {
                 type: "liste", items: [
                     "Les captures d'écran datées",
+                    "Le logiciel installé — et surtout la facture",
                     "Les relevés d'appels",
-                    "Un logiciel de localisation installé sur votre appareil, et surtout : la facture correspondante",
-                    "Les témoignages de votre entourage",
                 ],
             },
-            {
-                type: "encadre",
-                texte: "Une procédure est longue. Elle n'empêche pas, à elle seule, l'autre personne de savoir où vous dormez. " +
-                    "Votre sécurité immédiate passe avant le dossier.",
-            },
+            { type: "encadre", texte: "Une procédure est longue. Votre sécurité passe avant le dossier." },
         ],
     },
 
@@ -148,16 +129,15 @@ const PAGES_WEB = {
         titre: "Ligne 501 — Kiel ⇄ Strande",
         url: "kvg-kiel.de/linie-501",
         corps: [
-            { type: "h2", texte: "Horaires — du lundi au vendredi" },
             {
                 type: "liste", items: [
-                    "Kiel Hbf → Strande : 5 h 42, 6 h 42, puis toutes les heures jusqu'à 20 h 42",
-                    "Service de nuit (vendredi, samedi) : 23 h 40, 1 h 10",
-                    "Durée du trajet : 38 min — arrêt « Strande, Bülker Weg »",
-                    "Du dernier arrêt au phare de Bülk : 2,4 km à pied, chemin côtier",
+                    "Kiel Hbf → Strande, toutes les heures jusqu'à 20 h 42",
+                    "Nuit (ven. et sam.) : 23 h 40 et 1 h 10",
+                    "38 min — arrêt « Strande, Bülker Weg »",
+                    "De l'arrêt au phare de Bülk : 2,4 km à pied",
                 ],
             },
-            { type: "p", texte: "Les vélos sont acceptés hors heures de pointe (1,80 €)." },
+            { type: "p", texte: "Vélos acceptés, 1,80 €." },
         ],
     },
 
@@ -165,32 +145,24 @@ const PAGES_WEB = {
         titre: "Leuchtturm Bülk",
         url: "nordsee-ostsee-wiki.de/buelk",
         corps: [
-            { type: "p", classe: "chapeau", texte: "Bülk, commune de Strande, Schleswig-Holstein." },
-            { type: "p", texte: "Le phare de Bülk marque l'entrée du fjord de Kiel. Le premier feu date de 1807 : c'est le plus ancien de la Förde. La tour actuelle, haute de 25 m, est blanche à bandeau rouge." },
-            { type: "h2", texte: "Le hameau" },
-            { type: "p", texte: "Derrière le phare subsistent trois anciennes cabanes de pêcheurs, aujourd'hui privées. Elles ne sont pas raccordées au réseau d'eau courante et ne sont pas habitables à l'année." },
-            { type: "p", texte: "Le sentier côtier relie Bülk à Falckenstein (6 km) et à Schilksee (3 km). En hiver, le hameau est régulièrement coupé par les submersions de tempête et le chemin n'est pas déneigé." },
-            {
-                type: "encadre",
-                texte: "Le feu émet un éclat blanc toutes les 3 secondes, visible à 15 milles nautiques. " +
-                    "Par temps de brume, la corne de brume fonctionne en continu.",
-            },
+            { type: "p", classe: "chapeau", texte: "Bülk, commune de Strande." },
+            { type: "p", texte: "Le phare marque l'entrée du fjord de Kiel. C'est le plus ancien de la Förde." },
+            { type: "p", texte: "Derrière le phare subsistent trois anciennes cabanes de pêcheurs, privées, sans eau courante." },
+            { type: "encadre", texte: "En hiver, le hameau est souvent coupé par les tempêtes. Il n'y a personne." },
         ],
     },
 
     p_meteo: {
-        titre: "Météo Kiel — 10 jours",
+        titre: "Météo Kiel",
         url: "wetter.de/kiel",
         corps: [
-            { type: "h2", texte: "Semaine du 8 novembre" },
             {
                 type: "liste", items: [
-                    "Vendredi 8 : brouillard dense, 4 °C, visibilité 200 m, vent nul",
-                    "Samedi 9 : brouillard le matin, 3 °C",
-                    "Dimanche 10 : pluie, 6 °C, vent de sud-ouest 40 km/h",
+                    "Ven. 8 : brouillard dense, 4 °C, visibilité 200 m",
+                    "Sam. 9 : brouillard le matin, 3 °C",
+                    "Dim. 10 : pluie, 6 °C",
                 ],
             },
-            { type: "p", texte: "Avertissement : brouillard sur la Förde jusqu'à dimanche matin. Les liaisons maritimes peuvent être interrompues." },
         ],
     },
 
@@ -200,15 +172,7 @@ const PAGES_WEB = {
         url: "naverix-66.github.io/siteKiel",
         corps: [
             { type: "p", classe: "chapeau", texte: "Voici le calendrier de cette longue année :" },
-            { type: "p", texte: "Clique sur un mois pour jouer ! Et patiente le mois prochain pour découvrir un nouveau jeu." },
-            {
-                type: "liste", items: [
-                    "Septembre — débloqué",
-                    "Octobre — débloqué",
-                    "Novembre — débloqué",
-                    "Décembre — pas encore",
-                ],
-            },
+            { type: "p", texte: "Clique sur un mois pour jouer." },
             { type: "encadre", texte: "Onze mois, onze jeux. Celui-ci est le troisième." },
         ],
     },

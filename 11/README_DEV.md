@@ -103,6 +103,43 @@ enregistrerApp({
 `OS.rafraichir()` redessine l'écran du dessus — c'est comme ça qu'on gère
 les onglets : on garde l'onglet courant dans une variable, et on redessine.
 
+### Les briques « vraiment iOS »
+
+Quatre fonctions dans `outils.js` font 90 % de la ressemblance :
+
+```js
+ecranOnglets({ grandTitre, onglets, defaut, dessiner })  // barre d'onglets EN BAS
+barreOutils([{ icone, auClic }])                         // Safari, visionneuse
+champDeRecherche("Rechercher")                           // le champ gris des listes
+ligne({ avatar, titre, sousTitre, droite })              // trait de séparation décalé
+```
+
+Trois détails comptent plus que tout le reste, et ils sont déjà en place :
+
+1. **la barre d'onglets est en bas**, jamais en haut (Téléphone, Photos, Santé) ;
+2. **le trait de séparation d'une liste part du texte**, pas du bord de l'écran
+   (`.ligne--avatar` le décale à 72 px) ;
+3. **la barre d'adresse de Safari est en bas**, comme depuis iOS 15.
+
+Et dans Messages : pas d'heure sous chaque bulle. Une seule ligne centrée
+quand le temps saute, une pointe sur la dernière bulle d'une rafale, et
+« Lu » une seule fois tout en bas.
+
+### Écrire court
+
+C'est une règle, pas un conseil. Le reproche qu'on nous a fait sur la
+première version était juste : trop de texte, trop d'informations d'un coup.
+
+- une réplique de Mira = une ligne, deux maximum ;
+- un objectif = un titre court + une phrase ;
+- une page web = cinq blocs, pas douze ;
+- quand on a envie d'expliquer, on coupe : si l'information est importante,
+  elle doit être *dans* l'interface, pas dans un paragraphe à côté.
+
+Le carnet n'affiche qu'**un seul objectif à la fois**, avec le bouton qui
+ouvre le bon écran. Et l'écran « relier deux traces » ne propose jamais plus
+de neuf cartes, même quand le carnet en contient quarante-six.
+
 ### Ajouter un indice
 
 1. l'écrire dans `INDICES` (`js/enquete.js`) ;

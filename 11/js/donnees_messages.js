@@ -30,19 +30,14 @@ const FILS = [
         id: "mira",
         contact: "mira",
         messages: [
-            { de: "eux", t: "02/11 18:12", txt: "tu rentres quand ? j'ai fait beaucoup trop de soupe" },
+            { de: "eux", t: "02/11 18:12", txt: "tu rentres quand ? j'ai fait trop de soupe" },
             { de: "moi", t: "02/11 18:40", txt: "22h. garde m'en un bol" },
 
-            { de: "eux", t: "04/11 09:02", txt: "il est passé au boulot hier" },
-            { de: "eux", t: "04/11 09:02", txt: "il a demandé si tu travaillais mardi" },
+            { de: "eux", t: "04/11 09:02", txt: "il est passé au boulot hier. il a demandé si tu travaillais mardi" },
             { de: "moi", t: "04/11 09:11", txt: "tu lui as dit quoi" },
             { de: "eux", t: "04/11 09:14", txt: "rien. que je savais pas." },
-            { de: "moi", t: "04/11 09:15", txt: "merci" },
-            { de: "eux", t: "04/11 09:22", txt: "lena il faut que tu portes plainte" },
+            { de: "eux", t: "04/11 09:22", txt: "lena il faut porter plainte" },
             { de: "moi", t: "04/11 09:48", txt: "je gère." },
-
-            { de: "eux", t: "06/11 23:40", txt: "je prends la nuit de jeudi finalement. on se voit vendredi ?" },
-            { de: "moi", t: "07/11 08:20", txt: "oui 🙂" },
 
             {
                 de: "moi", t: "08/11 19:42", txt: "je bosse tard, ne m'attends pas",
@@ -50,30 +45,17 @@ const FILS = [
             },
             { de: "eux", t: "08/11 19:44", txt: "ok. je te laisse la lampe allumée" },
 
-            { de: "eux", t: "09/11 11:30", txt: "lena ?" },
-            { de: "eux", t: "09/11 16:02", txt: "tu réponds pas. t'es où" },
-            { de: "eux", t: "09/11 22:50", txt: "ton vélo est plus là. ton appareil non plus. je comprends pas" },
-            { de: "eux", t: "10/11 08:14", txt: "j'appelle la police si j'ai rien aujourd'hui" },
-            { de: "eux", t: "10/11 19:30", txt: "c'est fait. ils ont pris la déposition. ils m'ont demandé si tu étais « déjà partie comme ça ». j'ai dit non." },
+            { de: "eux", t: "09/11 16:02", txt: "lena ? tu réponds pas" },
+            { de: "eux", t: "09/11 22:50", txt: "ton vélo est plus là. ton appareil non plus." },
+            { de: "eux", t: "10/11 19:30", txt: "je suis allée à la police. ils ont pris la déposition." },
             { de: "eux", t: "13/11 02:11", txt: "je dors plus" },
-            {
-                de: "eux", t: "17/11 20:04",
-                txt: "ils ont classé. « majeure, pas de signe de violence ». voilà. onze jours et un dossier fermé.",
-            },
+            { de: "eux", t: "17/11 20:04", txt: "ils ont classé. onze jours, et un dossier fermé." },
 
             /* --- et puis, le 19, elle fait une lessive --- */
-            {
-                de: "eux", t: "19/11 14:20",
-                txt: "je l'ai trouvé. dans le tambour de la machine à laver. onze jours qu'il était là.",
-            },
-            { de: "eux", t: "19/11 14:21", txt: "éteint. je l'ai rechargé et j'ai pleuré dans la salle de bain comme une idiote" },
-            { de: "eux", t: "19/11 14:40", txt: "la police m'a dit de le leur apporter. je l'ai pas fait." },
-            {
-                de: "eux", t: "19/11 23:08",
-                txt: "j'ai regardé qui elle avait écrit cette nuit-là. le dernier numéro, c'est pas le mien. c'est presque le mien. un chiffre.",
-            },
-            { de: "eux", t: "20/11 09:05", txt: "je vous l'ai envoyé ce matin. je sais que c'est complètement dingue. je mets le mot avec." },
-            { de: "eux", t: "20/11 09:06", txt: "j'écris sur son numéro, les messages arrivent en wifi. répondez-moi là." },
+            { de: "eux", t: "19/11 14:20", txt: "je l'ai trouvé. dans la machine à laver." },
+            { de: "eux", t: "19/11 23:08", txt: "le dernier numéro qu'elle a écrit cette nuit-là, c'est pas le mien. c'est presque le mien." },
+            { de: "eux", t: "20/11 09:05", txt: "je vous l'ai envoyé ce matin. avec un mot." },
+            { de: "eux", t: "20/11 09:06", txt: "j'écris sur son numéro, ça arrive en wifi. répondez-moi là." },
             { de: "eux", t: "21/11 08:14", txt: "vous l'avez reçu ?" },
         ],
     },
@@ -121,16 +103,12 @@ const FILS = [
         id: "tobias",
         contact: "tobias",
         messages: [
-            { de: "eux", t: "20/10 21:14", txt: "tu as changé ta photo" },
-            { de: "eux", t: "20/10 21:14", txt: "elle est jolie" },
-            { de: "eux", t: "20/10 22:40", txt: "tu réponds plus du tout ?" },
-
-            { de: "eux", t: "28/10 19:02", txt: "je sais que tu as lu" },
+            { de: "eux", t: "20/10 21:14", txt: "tu as changé ta photo. elle est jolie" },
             { de: "eux", t: "28/10 23:36", txt: "tu rentres tard en ce moment" },
 
-            { de: "eux", t: "01/11 07:48", txt: "bon anniversaire à ta grand-mère. dis lui bonjour de ma part" },
+            { de: "eux", t: "01/11 07:48", txt: "bon anniversaire à ta grand-mère. dis lui bonjour" },
             { de: "moi", t: "01/11 12:20", txt: "comment tu sais ça" },
-            { de: "eux", t: "01/11 12:22", txt: "tu me l'as dit l'année dernière. j'ai de la mémoire, c'est tout." },
+            { de: "eux", t: "01/11 12:22", txt: "j'ai de la mémoire, c'est tout." },
 
             { de: "eux", t: "05/11 23:51", txt: "tu étais où ce soir" },
             { de: "moi", t: "05/11 23:52", txt: "arrête" },
@@ -147,7 +125,6 @@ const FILS = [
             { de: "eux", t: "08/11 23:20", txt: "ok." },
 
             /* --- après : il écrit encore. Donc il ne sait pas. --- */
-            { de: "eux", t: "10/11 08:30", txt: "c'est bon, tu as gagné. tu peux répondre maintenant" },
             { de: "eux", t: "12/11 20:10", txt: "je suis passé. mira m'a pas ouvert" },
             {
                 de: "eux", t: "14/11 02:44", txt: "dis juste que tu es vivante",

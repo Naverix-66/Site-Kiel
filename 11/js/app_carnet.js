@@ -43,31 +43,33 @@ enregistrerApp({
     },
 
     ouvrir: function () {
-        let onglet = "objectifs";
+        let onglet = "afaire";
+
+        const allerA = function (id) {
+            onglet = id;
+            SONS.tape();
+            OS.rafraichir();
+        };
 
         OS.pousser({
-            titre: "Carnet d'enquête",
+            titre: "Carnet",
             contenu: function (corps) {
 
                 const segments = el("div", { classe: "segments" });
 
-                [["objectifs", "Objectifs"], ["indices", "Indices"],
+                [["afaire", "À faire"], ["indices", "Traces"],
                  ["chrono", "Nuit du 8"], ["conclusions", "Conclusions"]]
                     .forEach(function (paire) {
                         segments.appendChild(el("div", {
                             classe: "segment" + (onglet === paire[0] ? " actif" : ""),
                             texte: paire[1],
-                            auClic: function () {
-                                onglet = paire[0];
-                                SONS.tape();
-                                OS.rafraichir();
-                            },
+                            auClic: function () { allerA(paire[0]); },
                         }));
                     });
 
                 corps.appendChild(segments);
 
-                if (onglet === "objectifs") ongletObjectifs(corps);
+                if (onglet === "afaire") ongletAFaire(corps, allerA);
                 if (onglet === "indices") ongletIndices(corps);
                 if (onglet === "chrono") ongletChronologie(corps);
                 if (onglet === "conclusions") ongletConclusions(corps);
@@ -78,29 +80,56 @@ enregistrerApp({
 
 
 /* ------------------------------------------------------------
-   ONGLET 1 — OBJECTIFS
+   ONGLET 1 — À FAIRE
+   ------------------------------------------------------------
+   UNE seule chose à l'écran : la prochaine. Avec le bouton qui
+   y emmène. Le reste (ce qui est déjà fait) se tasse en bas,
+   en petit.
+
+   C'est la réponse au reproche le plus juste qu'on puisse faire
+   à un jeu d'enquête : « je ne sais pas ce que je dois faire ».
    ------------------------------------------------------------ */
-function ongletObjectifs(corps) {
+function ongletAFaire(corps, allerA) {
 
     const objectifs = ENQUETE.objectifs();
+    const restants = objectifs.filter(function (o) { return !ENQUETE.objectifFait(o.id); });
+    const faits = objectifs.filter(function (o) { return ENQUETE.objectifFait(o.id); });
 
-    objectifs.forEach(function (objectif) {
-        const fait = ENQUETE.objectifFait(objectif.id);
+    /* --- la carte de l'objectif en cours --- */
+    if (restants.length > 0) {
+        const courant = restants[0];
 
-        corps.appendChild(el("div", { classe: "objectif" + (fait ? " objectif--fait" : "") }, [
-            el("div", {
-                classe: "coche-objectif glyphe",
-                html: fait ? ICONES.cocheCercle : ICONES.cercleVide,
-            }),
-            el("div", {}, [
-                el("div", { classe: "objectif-titre", texte: objectif.titre }),
-                el("div", { classe: "objectif-texte", texte: objectif.texte }),
-            ]),
+        const carte = el("div", { classe: "carte-objectif" });
+
+        carte.appendChild(el("div", { classe: "carte-objectif-sur-titre", texte: "MAINTENANT" }));
+        carte.appendChild(el("h3", { texte: courant.titre }));
+        carte.appendChild(el("p", { texte: courant.texte }));
+
+        if (courant.cible) {
+            carte.appendChild(bouton(courant.cible.bouton || "Y aller", function () {
+                const cible = courant.cible;
+
+                if (cible.onglet) { allerA(cible.onglet); return; }
+                if (cible.fil) { allerAuFil(cible.fil); return; }
+                if (cible.app) OS.ouvrirApp(cible.app);
+            }));
+        }
+
+        corps.appendChild(carte);
+
+        if (restants.length > 1) {
+            corps.appendChild(el("div", {
+                classe: "groupe-pied",
+                style: { padding: "0 20px 6px", textAlign: "center" },
+                texte: "puis : " + restants[1].titre.toLowerCase(),
+            }));
+        }
+    } else {
+        corps.appendChild(el("div", { classe: "carte-objectif" }, [
+            el("div", { classe: "carte-objectif-sur-titre", texte: "TERMINÉ" }),
+            el("h3", { texte: "Tu l'as retrouvée." }),
+            el("p", { texte: "Onze jours, et c'est une inconnue qui a lu jusqu'au bout." }),
         ]));
-    });
-
-    if (objectifs.length === 0) {
-        corps.appendChild(videMessage("Ouvre le téléphone. On verra bien."));
     }
 
     /* --- le coup de main --- */
@@ -125,10 +154,28 @@ function ongletObjectifs(corps) {
         }, { classe: "bouton--discret" }),
     ]));
 
+    /* --- ce qui est déjà fait, en petit --- */
+    if (faits.length > 0) {
+        corps.appendChild(el("div", {
+            classe: "groupe-titre",
+            style: { padding: "6px 20px 4px" },
+            texte: "DÉJÀ FAIT",
+        }));
+
+        faits.forEach(function (objectif) {
+            corps.appendChild(el("div", { classe: "objectif objectif--fait" }, [
+                el("div", { classe: "coche-objectif glyphe", html: ICONES.cocheCercle }),
+                el("div", {}, [
+                    el("div", { classe: "objectif-titre", texte: objectif.titre }),
+                ]),
+            ]));
+        });
+    }
+
     corps.appendChild(el("div", {
         classe: "groupe-pied",
-        style: { padding: "0 18px 24px", textAlign: "center" },
-        texte: ETAT.indices.length + " traces notées · " + ENQUETE.progression() + " % du dossier",
+        style: { padding: "14px 18px 24px", textAlign: "center" },
+        texte: ETAT.indices.length + " traces notées",
     }));
 }
 
@@ -378,6 +425,29 @@ function ecranDeduction(deduction) {
 
     let choisis = [];
 
+    /* On ne met PAS les 44 traces du carnet sous les yeux : on
+       propose une petite dizaine de candidates (celles qui
+       pourraient répondre, plus quelques autres du même acte).
+       Une liste à rallonge, ce n'est pas difficile, c'est juste
+       pénible. */
+    const candidats = [];
+
+    deduction.paires.forEach(function (paire) {
+        paire.forEach(function (id) {
+            if (ENQUETE.a(id) && candidats.indexOf(id) === -1) candidats.push(id);
+        });
+    });
+
+    ENQUETE.liste().forEach(function (indice) {
+        if (candidats.length >= 9) return;
+        if (candidats.indexOf(indice.id) !== -1) return;
+        if (indice.acte !== deduction.acte) return;
+        candidats.push(indice.id);
+    });
+
+    // un ordre stable, mais pas l'ordre des bonnes réponses
+    candidats.sort(function (a, b) { return a < b ? -1 : 1; });
+
     OS.pousser({
         titre: "Conclusion",
         retourTexte: "Carnet",
@@ -385,15 +455,18 @@ function ecranDeduction(deduction) {
 
             corps.appendChild(el("div", { classe: "question-carte" }, [
                 el("h3", { texte: deduction.question }),
-                el("p", { texte: deduction.consigne }),
                 el("div", {
                     classe: "consigne",
-                    texte: choisis.length === 0 ? "Choisis une première trace."
-                        : (choisis.length === 1 ? "Et maintenant la deuxième." : "Deux traces choisies."),
+                    texte: choisis.length === 0 ? "Choisis 2 traces."
+                        : (choisis.length === 1 ? "Encore une." : "Deux traces choisies."),
                 }),
             ]));
 
-            ENQUETE.liste().forEach(function (indice) {
+            candidats.map(function (id) {
+                const trouve = ENQUETE.liste().filter(function (i) { return i.id === id; })[0];
+                return trouve;
+            }).forEach(function (indice) {
+                if (!indice) return;
 
                 const estChoisi = choisis.indexOf(indice.id) !== -1;
 

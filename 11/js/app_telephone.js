@@ -24,29 +24,20 @@ enregistrerApp({
     },
 
     ouvrir: function () {
-        let onglet = "recents";
-
-        OS.pousser({
+        ecranOnglets({
             grandTitre: "Téléphone",
-            contenu: function (corps) {
-
-                const segments = el("div", { classe: "segments" });
-
-                [["recents", "Récents"], ["contacts", "Contacts"], ["repondeur", "Messagerie"]]
-                    .forEach(function (paire) {
-                        segments.appendChild(el("div", {
-                            classe: "segment" + (onglet === paire[0] ? " actif" : ""),
-                            texte: paire[1],
-                            auClic: function () {
-                                onglet = paire[0];
-                                SONS.tape();
-                                OS.rafraichir();
-                            },
-                        }));
-                    });
-
-                corps.appendChild(segments);
-
+            titrePar: function (onglet) {
+                if (onglet === "contacts") return "Contacts";
+                if (onglet === "repondeur") return "Messagerie";
+                return "Récents";
+            },
+            onglets: [
+                { id: "recents", nom: "Récents", icone: ICONES.horloge },
+                { id: "contacts", nom: "Contacts", icone: ICONES.personne },
+                { id: "repondeur", nom: "Messagerie", icone: ICONES.repondeur },
+            ],
+            defaut: "recents",
+            dessiner: function (corps, onglet) {
                 if (onglet === "recents") listeDesAppels(corps);
                 if (onglet === "contacts") listeDesContacts(corps);
                 if (onglet === "repondeur") listeDuRepondeur(corps);
@@ -81,16 +72,25 @@ function listeDesAppels(corps) {
             ]),
         ]);
 
-        const element = el("div", {
-            classe: "ligne ligne--chevron" + (manque ? " ligne--manque" : ""),
+        // le petit « i » bleu dans un cercle, à droite : c'est LE
+        // repère visuel des appels récents sur iPhone
+        const infoBouton = el("div", {
+            classe: "bouton-info glyphe",
+            html: ICONES.info,
             auClic: function () {
                 marquerLu("appel:" + appel.t);
                 if (appel.indice) ENQUETE.trouver(appel.indice);
                 ficheContact(appel.contact);
             },
-        }, [centre]);
+        });
 
-        liste.appendChild(element);
+        liste.appendChild(el("div", {
+            classe: "ligne" + (manque ? " ligne--manque" : ""),
+            auClic: function () {
+                marquerLu("appel:" + appel.t);
+                if (appel.indice) ENQUETE.trouver(appel.indice);
+            },
+        }, [centre, infoBouton]));
     });
 
     corps.appendChild(liste);

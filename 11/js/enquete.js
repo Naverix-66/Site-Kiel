@@ -178,6 +178,16 @@ const INDICES = {
         quoi: "Elle a demandé de l'argent liquide à son frère, sans dire pourquoi.",
         ou: "Messages → Jonas",
     },
+    video_sauvee: {
+        acte: 2, app: "kiek", quand: "06/11",
+        quoi: "Elle a enregistré une vidéo : « 3 signes que ton téléphone est suivi ».",
+        ou: "Kiek → Enregistrées",
+    },
+    video_partir: {
+        acte: 2, app: "kiek", quand: "06/11",
+        quoi: "Et une autre : « partir sans laisser d'adresse — le téléphone reste ».",
+        ou: "Kiek → Enregistrées",
+    },
     liste_courses: {
         acte: 2, app: "notes", quand: "06/11",
         quoi: "Liste de courses du 6 novembre : croquettes, caisse de transport, carte SIM prépayée.",
@@ -274,56 +284,70 @@ const INDICES = {
    cherches maintenant ». Un objectif se remplit soit par une
    déduction, soit par un évènement du scénario.
    ------------------------------------------------------------ */
+/* Chaque objectif tient en UNE phrase et sait où il faut aller :
+   le carnet affiche un bouton qui ouvre directement le bon
+   endroit. Personne ne doit jamais se demander « et maintenant
+   je fais quoi ? ». */
 const OBJECTIFS = [
     {
         id: "o_mon_fil", acte: 1,
-        titre: "Relire ce qu'elle m'a écrit",
-        texte: "Le 8 novembre à 23 h 02, elle a écrit à un numéro qui n'était pas celui de Mira. C'était le mien.",
+        titre: "Lire ce qu'elle m'a écrit",
+        texte: "Dans Messages, le fil « Numéro inconnu ». C'est moi.",
+        cible: { app: "messages", fil: "klara", bouton: "Ouvrir le fil" },
     },
     {
         id: "o_soiree", acte: 1,
-        titre: "Savoir ce qu'elle faisait vraiment ce soir-là",
-        texte: "Elle a dit à Mira qu'elle travaillait. Vérifier.",
+        titre: "Travaillait-elle vraiment ce soir-là ?",
+        texte: "Elle l'a dit à Mira. Son agenda le dira aussi.",
+        cible: { app: "calendrier", bouton: "Ouvrir l'agenda" },
     },
     {
         id: "o_chrono", acte: 1,
-        titre: "Reconstituer la nuit du 8",
-        texte: "Six traces, six applications différentes. Les remettre dans l'ordre.",
+        titre: "Remettre la nuit du 8 dans l'ordre",
+        texte: "Six traces à classer, onglet « Nuit du 8 ».",
+        cible: { onglet: "chrono", bouton: "Aller à la chronologie" },
     },
     {
         id: "o_prive", acte: 2,
-        titre: "Ouvrir l'album qu'elle a fermé",
-        texte: "Un album « Privé » protégé par quatre chiffres. Elle a laissé l'indice dans ses notes.",
+        titre: "Ouvrir l'album « Privé »",
+        texte: "Quatre chiffres. L'explication est dans ses notes.",
+        cible: { app: "photos", bouton: "Ouvrir Photos" },
     },
     {
         id: "o_mouchard", acte: 2,
-        titre: "Comprendre qui la regardait",
-        texte: "Quelque chose, dans ce téléphone, savait toujours où elle était.",
+        titre: "Trouver ce qui la suivait",
+        texte: "Quelque chose, ici, savait toujours où elle était.",
+        cible: { app: "reglages", bouton: "Ouvrir Réglages" },
     },
     {
         id: "o_fuite", acte: 2,
         titre: "Comprendre pourquoi elle est partie",
-        texte: "Ce n'est pas une nuit qu'il faut regarder, c'est les trois semaines d'avant.",
+        texte: "Regarder les trois semaines d'avant, pas la nuit.",
+        cible: { onglet: "conclusions", bouton: "Aller aux conclusions" },
     },
     {
         id: "o_eckernforde", acte: 3,
         titre: "Vérifier la piste de Mira",
-        texte: "Mira est certaine qu'elle est chez sa grand-mère, à Eckernförde.",
+        texte: "Elle jure qu'elle est chez sa grand-mère.",
+        cible: { app: "mail", bouton: "Ouvrir Mail" },
     },
     {
         id: "o_lieu", acte: 3,
         titre: "Trouver où elle est",
-        texte: "Elle n'a pas effacé les bonnes photos. Ou alors elle les a effacées exprès.",
+        texte: "Poser l'épingle sur la carte.",
+        cible: { app: "plans", bouton: "Ouvrir Plans" },
     },
     {
         id: "o_questions", acte: 4,
-        titre: "Lui prouver que je ne suis pas lui",
-        texte: "Trois questions. Les réponses sont toutes dans ce téléphone.",
+        titre: "Répondre à ses trois questions",
+        texte: "Les réponses sont toutes dans ce téléphone.",
+        cible: { app: "messages", fil: "nebel", bouton: "Lui répondre" },
     },
     {
         id: "o_preuve", acte: 4,
         titre: "Envoyer la preuve à Me Vogt",
-        texte: "Le journal de positions et le reçu d'abonnement. C'est ça qui vaut quelque chose.",
+        texte: "Le reçu d'abonnement, dans la corbeille de sa boîte mail.",
+        cible: { app: "mail", bouton: "Ouvrir Mail" },
     },
 ];
 
@@ -360,7 +384,12 @@ const DEDUCTIONS = [
         id: "d_telephone_laisse", acte: 2,
         question: "Pourquoi laisser son téléphone derrière elle ?",
         consigne: "Relie ce qui suivait ses déplacements à ce qu'elle a fait en rentrant.",
-        paires: [["mouchard", "suppressions"], ["journal_47", "suppressions"], ["mouchard", "ecran_eteint"], ["journal_47", "ecran_eteint"]],
+        paires: [
+            ["mouchard", "suppressions"], ["journal_47", "suppressions"],
+            ["mouchard", "ecran_eteint"], ["journal_47", "ecran_eteint"],
+            ["mouchard", "video_partir"], ["video_partir", "video_sauvee"],
+            ["video_partir", "suppressions"],
+        ],
         conclusion: "Un téléphone qui bouge, c'est une adresse. Elle a nettoyé ce qu'il ne devait pas voir, et elle l'a laissé là.",
         rate: "Il manque le pourquoi. Qu'est-ce qui, dans ce téléphone, la rendait trouvable ?",
     },
@@ -424,55 +453,59 @@ const DEDUCTIONS = [
 const AIDES = [
     {
         quand: function () { return !ENQUETE.a("sms_a_moi"); },
-        texte: "Commence par le début : ouvre Messages, et cherche ton propre numéro. C'est le dernier fil de la nuit du 8.",
+        texte: "Ouvre Messages, fil « Numéro inconnu ». C'est vous deux.",
     },
     {
         quand: function () { return !ENQUETE.a("agenda_repos"); },
-        texte: "Elle a dit à Mira qu'elle travaillait ce soir-là. Regarde son agenda, pour voir si c'est vrai.",
+        texte: "Son agenda. Regarde le 8 novembre.",
     },
     {
-        quand: function () { return !ENQUETE.a("sante_pas") || !ENQUETE.a("wifi_retour"); },
-        texte: "Un téléphone compte les pas et note les wifi auxquels il se connecte. Santé, puis Réglages → Wi-Fi.",
+        quand: function () { return !ENQUETE.a("sante_pas"); },
+        texte: "Santé. Un téléphone compte les pas, même la nuit.",
+    },
+    {
+        quand: function () { return !ENQUETE.a("wifi_retour"); },
+        texte: "Réglages → Wi-Fi. L'heure de la dernière connexion.",
     },
     {
         quand: function () { return !ETAT.chronoValidee; },
-        texte: "Ouvre le carnet, onglet Chronologie : il faut remettre les six traces de la nuit dans l'ordre.",
+        texte: "Carnet → Nuit du 8. Les six traces, dans l'ordre.",
     },
     {
         quand: function () { return !ENQUETE.a("note_code"); },
-        texte: "Elle a laissé une note bizarre, sans titre. Elle explique comment ouvrir ce qui est fermé.",
+        texte: "Dans Notes, il y en a une sans titre. Lis-la.",
     },
     {
         quand: function () { return !estOuvert("albumPrive"); },
-        texte: "« L'heure de la photo que je préfère » : dans Photos, l'album Favoris ne contient qu'une image. Regarde l'heure de prise de vue — c'est le code.",
+        texte: "Photos → Favoris. Une seule photo. Son heure, c'est le code.",
     },
     {
         quand: function () { return !ENQUETE.a("capture_code_tobias"); },
-        texte: "Dans l'album Privé, il y a une capture où on voit Tobias déverrouiller son propre téléphone. Son code y est lisible.",
+        texte: "Dans l'album Privé, une capture montre son code à lui.",
     },
     {
         quand: function () { return !estOuvert("mouchard"); },
-        texte: "Il y a deux calculatrices sur cet écran d'accueil. Pourquoi deux ? Le dossier Utilitaires. Le code, c'est le sien : 1908.",
+        texte: "Deux calculatrices dans Utilitaires. La deuxième n'en est pas une.",
     },
     {
         quand: function () { return !ENQUETE.a("recu_familysafe"); },
-        texte: "Un abonnement, ça se paie, et ça laisse un reçu. Regarde dans la corbeille de sa boîte mail.",
+        texte: "Mail → Corbeille. Un abonnement, ça laisse un reçu.",
     },
     {
         quand: function () { return !ETAT.deductions.d_fuite; },
-        texte: "Regarde novembre dans son agenda, et les mails de sa banque. Quelqu'un qui part prépare deux choses : du liquide, et une avocate.",
+        texte: "Son agenda de novembre, et les mails de la banque.",
     },
     {
         quand: function () { return !ETAT.deductions.d_eckernforde; },
-        texte: "Mira se trompe sur Eckernförde, et c'est sa propre grand-mère qui l'écrit : relis le mail de Hanne, en mai.",
+        texte: "Mail → le message d'Oma, en mai. Mira se trompe.",
     },
     {
         quand: function () { return !ETAT.epinglePosee; },
-        texte: "Les trois photos supprimées sont du 3 juillet, comme celle que tu as dans la main. Bülk. Pose l'épingle là, dans Plans.",
+        texte: "Bülk. Comme au dos de ta photo. Pose l'épingle dans Plans.",
     },
     {
         quand: function () { return true; },
-        texte: "Relis le fil où elle t'écrit. Tout ce qu'elle a laissé, elle l'a laissé pour quelqu'un qui lirait jusqu'au bout.",
+        texte: "Relis votre fil à toutes les deux. Tout est parti de là.",
     },
 ];
 

@@ -24,6 +24,8 @@ enregistrerApp({
             grandTitre: "Boîtes",
             contenu: function (corps) {
 
+                corps.appendChild(champDeRecherche());
+
                 corps.appendChild(groupe(null, BOITES_MAIL.map(function (boite) {
                     const mails = mailsDeLaBoite(boite.id);
                     const nonLus = mails.filter(function (m) { return !dejaLu("mail:" + m.id); }).length;
@@ -34,12 +36,10 @@ enregistrerApp({
                     });
                 })));
 
-                corps.appendChild(groupe("compte", [
-                    ligneReglage("Adresse", "lena.brandt@posteo.de"),
-                    ligneReglage("Règles de tri", "2", {
-                        auClic: function () { ecranReglesMail(); },
-                    }),
-                ], "Les règles de tri déplacent automatiquement les messages à leur arrivée."));
+                corps.appendChild(el("div", {
+                    classe: "bandeau-info",
+                    texte: "lena.brandt@posteo.de",
+                }));
             },
         });
     },

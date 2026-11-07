@@ -6,6 +6,23 @@ Statut : première version, tout est discutable — les ⚠️ sont les points �
 
 ---
 
+## En trois phrases, pour comprendre vite
+
+**Le ton :** triste et doux. Une enquête de nuit dans le brouillard, pas un
+jeu d'horreur — aucun sursaut, aucune menace qui vise la joueuse. On lit les
+messages d'une femme qu'on ne connaît pas et on finit par l'aimer.
+
+**La fin :** Lena n'a jamais été enlevée. Elle a fui un ex qui suivait sa
+position depuis sept mois, et elle a laissé son téléphone exprès pour qu'il
+la croie chez elle. Elle est vivante, dans une cabane au bord de la mer.
+La joueuse la retrouve, lui prouve qu'elle n'est pas lui, et envoie à une
+avocate la seule preuve qui compte : un reçu d'abonnement de 4,99 €.
+
+**La dernière image :** une porte bleue ouverte, vue de l'intérieur, et un
+chat roux qui regarde la mer.
+
+---
+
 ## Le pitch
 
 Un matin, Klara trouve une enveloppe kraft dans sa boîte aux lettres.
@@ -242,6 +259,31 @@ et relances automatiques au bout de quelques minutes d'errance).
    le téléphone. C'est l'outil qui débloque, et ça donne envie de fouiller.
 6. **La disparue n'est pas un corps à retrouver.** Elle a tout organisé. On ne la
    sauve pas : on la rejoint.
+
+---
+
+## Les applications, et à quoi elles servent
+
+| Appli | Ce qu'on y trouve |
+|---|---|
+| **Messages** | le fil avec Lena (le cœur), Mira en direct, Tobias, le frère |
+| **Photos** | les heures de prise de vue, l'album verrouillé, les supprimées |
+| **Téléphone** | les durées d'appel, et quatre messages sur le répondeur |
+| **Mail** | la banque, la grand-mère, et le reçu du mouchard |
+| **Notes** | le code de l'album, sa liste de départ, la note verrouillée |
+| **Safari** | ses recherches de la nuit du 6 novembre |
+| **Plans** | l'épingle de l'acte III |
+| **Santé** | les 4 212 pas |
+| **Calendrier** | « Repos » le 8, « B. » le 3 juillet |
+| **Fjordgram** | un seul compte commente les onze publications |
+| **Kiek** | les vidéos qu'elle a *enregistrées* à 2 h du matin |
+| **Utilitaires** | deux calculatrices. Pourquoi deux ? |
+| **Réglages** | wifi, batterie, temps d'écran, et une appli qui connaît sa position |
+| **Carnet** | ce qu'il faut faire maintenant, et les traces à relier |
+
+⚠️ **Kiek**, c'est le TikTok du jeu (« kiek mal » = « regarde voir », en
+bas-allemand). Si tu préfères un autre nom, il y a deux endroits à changer :
+`app_kiek.js` et `ICONES_APPS`.
 
 ---
 

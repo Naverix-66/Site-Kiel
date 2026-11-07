@@ -1,14 +1,14 @@
 /* ============================================================
    APPLICATION — SANTÉ
    ============================================================
-   Un seul écran, un graphique, et la plus belle preuve du jeu :
-   4 212 pas entre 23 h 51 et 1 h 08.
+   Un écran « Résumé » fait de cartes, comme la vraie
+   application : un titre de couleur, un grand chiffre, un
+   graphique. Rien d'autre.
 
-   Personne n'efface ses pas. On efface des photos, des
-   messages, un historique — jamais un compteur de pas. C'est
-   pour ça que c'est là que se casse l'hypothèse « elle s'est
-   noyée dans le port » : elle a marché une heure et quart,
-   et elle est rentrée.
+   Et dedans, la plus belle preuve du jeu : 4 212 pas entre
+   23 h 51 et 1 h 08. Personne n'efface ses pas. C'est ce qui
+   casse l'hypothèse « elle s'est noyée dans le port » : elle a
+   marché une heure et quart, et elle est rentrée.
    ============================================================ */
 
 enregistrerApp({
@@ -19,42 +19,74 @@ enregistrerApp({
     ouvrir: function () {
         let jourAffiche = "09/11";
 
-        OS.pousser({
-            grandTitre: "Activité",
-            contenu: function (corps) {
+        ecranOnglets({
+            grandTitre: "Résumé",
+            onglets: [
+                { id: "resume", nom: "Résumé", icone: ICONES.coeur },
+                { id: "parcourir", nom: "Parcourir", icone: ICONES.loupe },
+            ],
+            defaut: "resume",
+
+            dessiner: function (corps, onglet) {
+
+                if (onglet === "parcourir") {
+                    corps.appendChild(champDeRecherche("Données de santé"));
+                    corps.appendChild(groupe("catégories", [
+                        ligneReglage("Activité", "6 jours", { couleurIcone: "var(--orange)", icone: ICONES.flecheHaut }),
+                        ligneReglage("Sommeil", "Aucune donnée", { couleurIcone: "var(--violet)", icone: ICONES.horloge }),
+                        ligneReglage("Fréquence cardiaque", "Aucun appareil", { couleurIcone: "var(--rouge)", icone: ICONES.coeur }),
+                    ]));
+                    return;
+                }
+
+                /* --- le choix du jour, en pastilles --- */
+                const jours = el("div", { classe: "pastilles-jours" });
+
+                SANTE_JOURS.forEach(function (j) {
+                    jours.appendChild(el("div", {
+                        classe: "pastille-jour" + (j.t === jourAffiche ? " pastille-jour--active" : ""),
+                        auClic: function () {
+                            jourAffiche = j.t;
+                            SONS.tape();
+                            OS.rafraichir();
+                            if (j.indice) ENQUETE.trouver(j.indice);
+                        },
+                    }, [
+                        el("div", { classe: "pastille-jour-nom", texte: dateCourte(j.t).split(" ")[1] }),
+                        el("div", { classe: "pastille-jour-nombre", texte: dateCourte(j.t).split(" ")[0] }),
+                    ]));
+                });
+
+                corps.appendChild(jours);
 
                 const jour = SANTE_JOURS.filter(function (j) { return j.t === jourAffiche; })[0] || SANTE_JOURS[0];
 
-                /* --- le chiffre du jour --- */
-                corps.appendChild(el("div", { classe: "chiffre-cle" }, [
-                    el("div", { classe: "libelle", texte: dateLongue(jour.t) }),
-                    el("div", { classe: "valeur", texte: String(jour.total).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " pas" }),
+                /* --- la carte « Pas » --- */
+                const carte = el("div", { classe: "carte-sante" });
+
+                carte.appendChild(el("div", { classe: "carte-sante-titre" }, [
+                    el("span", { texte: "Pas" }),
+                    el("span", { classe: "carte-sante-date", texte: dateLongue(jour.t) }),
                 ]));
 
-                if (jour.remarque) {
-                    corps.appendChild(el("div", {
-                        classe: "groupe-pied",
-                        style: { padding: "0 18px 6px" },
-                        texte: jour.remarque,
-                    }));
-                }
+                carte.appendChild(el("div", {
+                    classe: "carte-sante-valeur",
+                    texte: String(jour.total).replace(/\B(?=(\d{3})+(?!\d))/g, " "),
+                }));
 
-                /* --- le graphique, heure par heure --- */
                 const maximum = Math.max.apply(null, jour.heures.concat([1]));
                 const graphique = el("div", { classe: "graphique" });
 
                 jour.heures.forEach(function (pas, heure) {
-                    const hauteur = Math.round((pas / maximum) * 100);
                     graphique.appendChild(el("i", {
                         classe: pas === 0 ? "zero" : (heure <= 5 || heure >= 22 ? "nuit" : ""),
-                        style: { height: Math.max(hauteur, 1) + "%" },
-                        attrs: { title: heure + " h — " + pas + " pas" },
+                        style: { height: Math.max(Math.round((pas / maximum) * 100), 1) + "%" },
                     }));
                 });
 
-                corps.appendChild(graphique);
+                carte.appendChild(graphique);
 
-                corps.appendChild(el("div", { classe: "graphique-axes" }, [
+                carte.appendChild(el("div", { classe: "graphique-axes" }, [
                     el("span", { texte: "0 h" }),
                     el("span", { texte: "6 h" }),
                     el("span", { texte: "12 h" }),
@@ -62,40 +94,33 @@ enregistrerApp({
                     el("span", { texte: "23 h" }),
                 ]));
 
-                /* --- choisir le jour --- */
-                const segments = el("div", { classe: "segments" });
-                SANTE_JOURS.forEach(function (j) {
-                    segments.appendChild(el("div", {
-                        classe: "segment" + (j.t === jourAffiche ? " actif" : ""),
-                        texte: dateCourte(j.t),
-                        auClic: function () {
-                            jourAffiche = j.t;
-                            SONS.tape();
-                            OS.rafraichir();
-                            if (j.indice) ENQUETE.trouver(j.indice);
-                        },
-                    }));
-                });
-                corps.appendChild(segments);
+                if (jour.remarque) {
+                    carte.appendChild(el("div", { classe: "carte-sante-note", texte: jour.remarque }));
+                }
 
-                /* --- la marche de la nuit du 8 --- */
+                corps.appendChild(carte);
+
+                /* --- la carte « Marche », les deux jours qui comptent --- */
                 if (jourAffiche === "09/11" || jourAffiche === "08/11") {
-                    corps.appendChild(groupe("entraînement enregistré", [
-                        ligneReglage("Type", "Marche"),
-                        ligneReglage("Début", "8 nov. — 23 h 51"),
-                        ligneReglage("Fin", "9 nov. — 1 h 08"),
-                        ligneReglage("Durée", SANTE_DETAIL_NUIT.duree),
-                        ligneReglage("Distance", SANTE_DETAIL_NUIT.distance),
-                        ligneReglage("Pas", String(SANTE_DETAIL_NUIT.pas), { alerte: true }),
-                    ], SANTE_DETAIL_NUIT.rythme));
+
+                    const marche = el("div", { classe: "carte-sante" });
+
+                    marche.appendChild(el("div", { classe: "carte-sante-titre" }, [
+                        el("span", { texte: "Marche" }),
+                        el("span", { classe: "carte-sante-date", texte: "nuit du 8" }),
+                    ]));
+
+                    marche.appendChild(el("div", { classe: "carte-sante-valeur", texte: "4 212 pas" }));
+
+                    marche.appendChild(el("div", { classe: "carte-sante-lignes" }, [
+                        el("div", {}, [el("b", { texte: "23 h 51 → 1 h 08" }), el("span", { texte: "sans arrêt" })]),
+                        el("div", {}, [el("b", { texte: SANTE_DETAIL_NUIT.distance }), el("span", { texte: "parcourus" })]),
+                    ]));
+
+                    corps.appendChild(marche);
 
                     plusTard(function () { ENQUETE.trouver("sante_pas"); }, 500);
                 }
-
-                corps.appendChild(groupe("autres données", [
-                    ligneReglage("Sommeil", "Aucune donnée depuis le 9 novembre"),
-                    ligneReglage("Fréquence cardiaque", "Aucun appareil connecté"),
-                ]));
             },
         });
     },

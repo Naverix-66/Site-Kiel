@@ -438,31 +438,20 @@ const SCENES = [
         quand: function () { return ETAT.telephoneDeverrouille; },
         suite: [
             { txt: "vous l'avez ouvert ??", delai: 2200 },
-            { txt: "pardon. bonjour." },
-            { txt: "je m'appelle Mira. je suis la colocataire de Lena." },
-            { txt: "celle qui dormait." },
+            { txt: "pardon. bonjour. je m'appelle Mira, je vivais avec elle." },
         ],
         question: {
             reponses: [
-                { id: "r1a", txt: "Je ne sais pas si je peux vous aider." },
+                { id: "r1a", txt: "Je ne sais pas si je peux aider." },
                 { id: "r1b", txt: "Je me souviens de son message." },
             ],
             suite: function (id) {
                 const repliques = id === "r1a"
-                    ? [
-                        { txt: "moi non plus je sais pas." },
-                        { txt: "mais vous êtes la dernière personne à qui elle a écrit cette nuit-là, et la seule qui a répondu." },
-                        { txt: "la police a lu le dossier en onze jours. vous, vous avez son téléphone dans les mains." },
-                    ]
-                    : [
-                        { txt: "oui." },
-                        { txt: "23h02. moi je dormais, mon téléphone était en silencieux." },
-                        { txt: "elle a écrit à un chiffre près. 4417 au lieu de 4471." },
-                    ];
+                    ? [{ txt: "moi non plus." }, { txt: "mais vous êtes la seule qui lui a répondu cette nuit-là." }]
+                    : [{ txt: "4417 au lieu de 4471." }, { txt: "un chiffre, et c'est tombé chez vous." }];
 
                 SCENARIO.repondre("mira", repliques.concat([
-                    { txt: "ouvrez Messages. votre numéro apparaît comme « numéro inconnu »." },
-                    { txt: "lisez-le en entier. après on parle." },
+                    { txt: "ouvrez Messages. votre fil, c'est « numéro inconnu »." },
                 ]));
             },
         },
@@ -473,25 +462,22 @@ const SCENES = [
         fil: "mira",
         quand: function () { return dejaLu("fil:klara:lu") && ENQUETE.a("lena_reponse"); },
         suite: [
-            { txt: "vous voyez comment c'est affiché ?", delai: 2600 },
-            { txt: "ses messages à elle sont à droite, les vôtres à gauche. c'est son téléphone : il croit que c'est elle qui parle." },
+            { txt: "vos messages sont à gauche. c'est son téléphone à elle : il croit que c'est elle qui parle.", delai: 2600 },
             { txt: "« gardez la porte fermée quand même »." },
-            { txt: "elle a écrit ça à une inconnue, et rien à moi." },
+            { txt: "elle a écrit ça à une inconnue. et rien à moi." },
         ],
         question: {
             reponses: [
                 { id: "r2a", txt: "Elle avait peur de quelqu'un." },
-                { id: "r2b", txt: "Elle vérifiait que vous n'étiez pas seule." },
+                { id: "r2b", txt: "Elle vous croyait seule à l'appartement." },
             ],
             suite: function (id) {
                 const repliques = id === "r2a"
-                    ? [{ txt: "oui." }, { txt: "et pas d'un inconnu dans la rue. de quelqu'un qui savait où elle habitait." }]
-                    : [{ txt: "ah." }, { txt: "je n'y avais pas pensé comme ça." }, { txt: "elle croyait m'écrire, à moi. elle voulait savoir si j'étais seule à l'appartement." }];
+                    ? [{ txt: "oui. et pas d'un inconnu : de quelqu'un qui savait où elle habitait." }]
+                    : [{ txt: "ah." }, { txt: "j'avais pas vu ça comme ça. elle vérifiait." }];
 
                 SCENARIO.repondre("mira", repliques.concat([
-                    { txt: "ce soir-là elle m'a dit qu'elle travaillait." },
-                    { txt: "commencez par ça. est-ce que c'est vrai ?" },
-                    { txt: "son agenda est dans le téléphone." },
+                    { txt: "ce soir-là elle m'a dit qu'elle travaillait. vérifiez son agenda." },
                 ]), function () {
                     ENQUETE.remplirObjectif("o_mon_fil");
                 });
@@ -504,12 +490,9 @@ const SCENES = [
         fil: "mira",
         quand: function () { return ETAT.deductions.d_mensonge === true; },
         suite: [
-            { txt: "repos.", delai: 2000 },
-            { txt: "elle était en repos et elle m'a dit qu'elle bossait." },
-            { txt: "en six ans elle m'a jamais menti. même pas pour les bêtises." },
-            { txt: "bon. il faut la nuit entière alors." },
-            { txt: "il y a un onglet « nuit du 8 » dans votre carnet. six traces à remettre dans l'ordre." },
-            { txt: "les heures sont partout : sous les bulles, sur les photos, dans les réglages." },
+            { txt: "repos. elle était en repos et elle m'a dit qu'elle bossait.", delai: 2000 },
+            { txt: "en six ans elle m'a jamais menti." },
+            { txt: "il faut la nuit entière alors. carnet → « nuit du 8 »." },
         ],
     },
 
@@ -521,7 +504,6 @@ const SCENES = [
             { txt: "1h14.", delai: 2400 },
             { pause: 1400 },
             { txt: "j'étais dans la chambre d'à côté." },
-            { txt: "elle est rentrée, elle a effacé des choses, elle a dormi quatre heures et elle est partie." },
         ],
         question: {
             reponses: [
@@ -530,20 +512,11 @@ const SCENES = [
             ],
             suite: function (id) {
                 const repliques = id === "r4a"
-                    ? [
-                        { txt: "non." },
-                        { txt: "elle voulait pas que je PUISSE savoir. c'est pas pareil." },
-                        { txt: "on peut pas dire ce qu'on sait pas." },
-                    ]
-                    : [
-                        { txt: "si un peu." },
-                        { txt: "mais merci." },
-                        { txt: "elle m'a mise dehors de son plan exprès. pour que je puisse rien dire à personne." },
-                    ];
+                    ? [{ txt: "elle voulait pas que je PUISSE savoir. c'est pas pareil." }]
+                    : [{ txt: "si, un peu. mais merci." }];
 
                 SCENARIO.repondre("mira", repliques.concat([
                     { txt: "donc la question c'est plus « où ». c'est « pourquoi »." },
-                    { txt: "cherchez ce qu'elle cachait dans son propre téléphone." },
                 ]), function () {
                     SCENARIO.passerALActe(2);
                 });
@@ -560,7 +533,6 @@ const SCENES = [
         quand: function () { return estOuvert("albumPrive") && ENQUETE.a("capture_3h"); },
         suite: [
             { txt: "elle gardait des captures.", delai: 2600 },
-            { txt: "quatorze messages entre 3h et 3h40. des appels toute la nuit. des fleurs devant la porte." },
             { txt: "je savais qu'il était lourd. je savais pas qu'elle documentait." },
             { txt: "on documente quand on prépare quelque chose." },
         ],
@@ -571,12 +543,10 @@ const SCENES = [
         fil: "mira",
         quand: function () { return estOuvert("mouchard") && ENQUETE.a("mouchard"); },
         suite: [
-            { txt: "un logiciel.", delai: 2600 },
-            { txt: "sur son téléphone. depuis avril." },
+            { txt: "un logiciel. depuis avril.", delai: 2600 },
             { pause: 1600 },
-            { txt: "j'ai cru qu'elle l'avait oublié dans la machine. j'ai cru qu'elle était tombée dans le port." },
-            { txt: "elle l'a LAISSÉ. c'était pas un oubli, c'était la seule chose intelligente à faire." },
-            { txt: "regardez ce qu'elle préparait dans les trois semaines d'avant. l'agenda, la banque, les notes." },
+            { txt: "j'ai cru qu'elle avait oublié son téléphone. elle l'a LAISSÉ." },
+            { txt: "regardez les trois semaines d'avant : l'agenda, la banque, ses notes." },
         ],
     },
 
@@ -585,13 +555,10 @@ const SCENES = [
         fil: "mira",
         quand: function () { return ETAT.deductions.d_fuite === true; },
         suite: [
-            { txt: "d'accord.", delai: 2200 },
-            { txt: "d'accord." },
-            { txt: "elle est pas disparue, elle est partie. ça change tout et ça change rien : elle est quelque part et elle a rien dit." },
+            { txt: "d'accord. elle est pas disparue, elle est partie.", delai: 2200 },
             { txt: "pardon. je tape mal quand je pleure." },
             { pause: 1200 },
-            { txt: "alors elle est chez sa grand-mère. à Eckernförde. il n'y a que là." },
-            { txt: "j'en suis sûre à 100%." },
+            { txt: "alors elle est chez sa grand-mère, à Eckernförde. j'en suis sûre à 100%." },
         ],
         apres: function () {
             SCENARIO.passerALActe(3);
@@ -607,8 +574,7 @@ const SCENES = [
         fil: "mira",
         quand: function () { return ETAT.deductions.d_eckernforde === true; },
         suite: [
-            { txt: "vendue.", delai: 2400 },
-            { txt: "en mai. elle me l'avait dit et j'avais oublié." },
+            { txt: "vendue. en mai.", delai: 2400 },
             { txt: "je suis vraiment nulle à ça." },
         ],
         question: {
@@ -617,14 +583,11 @@ const SCENES = [
                 { id: "r8b", txt: "Relisez le mail jusqu'au bout." },
             ],
             suite: function (id) {
-                const repliques = id === "r8a"
-                    ? [{ txt: "…" }, { txt: "merci." }]
-                    : [{ txt: "attendez." }];
+                const repliques = id === "r8a" ? [{ txt: "…merci." }] : [{ txt: "attendez." }];
 
                 SCENARIO.repondre("mira", repliques.concat([
-                    { txt: "« la cabane je ne la vends pas »." },
-                    { txt: "la cabane. il y a une cabane." },
-                    { txt: "cherchez où elle est, cette cabane. et posez l'épingle dans Plans." },
+                    { txt: "« la cabane je ne la vends pas ». il y a une cabane." },
+                    { txt: "trouvez où, et posez l'épingle dans Plans." },
                 ]));
             },
         },
@@ -636,12 +599,10 @@ const SCENES = [
         quand: function () { return ETAT.epinglePosee === "bulk"; },
         suite: [
             { txt: "Bülk.", delai: 2200 },
-            { txt: "on y est allées une fois, en vélo, il y a deux ans." },
-            { txt: "elle avait dit « ici personne peut me téléphoner »." },
+            { txt: "on y est allées une fois. elle avait dit « ici personne peut me téléphoner »." },
             { txt: "j'avais trouvé ça romantique." },
             { pause: 1500 },
-            { txt: "il n'y a pas de réseau. c'est pour ça qu'elle a acheté une carte sim prépayée." },
-            { txt: "elle attend que quelqu'un comprenne, c'est ça ? depuis onze jours." },
+            { txt: "elle attend que quelqu'un comprenne. depuis onze jours." },
         ],
         apres: function () {
             SCENARIO.passerALActe(4);
@@ -693,11 +654,11 @@ const SCENES = [
         suite: [
             { txt: "C'est toi.", delai: 2600 },
             { pause: 1800 },
-            { txt: "Je suis désolée de t'avoir écrit cette nuit-là. Tu dormais, tu ne me connaissais pas, et je t'ai fait peur." },
-            { txt: "Tu as répondu quand même. C'est la seule chose gentille qui m'est arrivée ce mois-là." },
+            { txt: "Je t'ai fait peur cette nuit-là. Tu as répondu quand même." },
+            { txt: "C'est la seule chose gentille de ce mois-là." },
             { pause: 1400 },
-            { txt: "Je ne rentre pas tout de suite. Il faut que le dossier existe avant que je réapparaisse." },
-            { txt: "Il y a un reçu de 4,99 € dans la corbeille de ma boîte mail. C'est ça, la preuve. Envoie-le à Me Vogt, avec le journal." },
+            { txt: "Je ne rentre pas encore. Il faut que le dossier existe avant." },
+            { txt: "Le reçu de 4,99 € est dans la corbeille de ma boîte mail. Envoie-le à Me Vogt." },
             { txt: "Et dis à Mira de laisser la lampe allumée." },
         ],
         apres: function () {
@@ -710,14 +671,13 @@ const SCENES = [
         fil: "nebel",
         quand: function () { return ETAT.preuvesEnvoyees; },
         suite: [
-            { txt: "Reçu. Elle m'a appelée sur la nouvelle carte.", delai: 3200 },
-            { txt: "Le dossier est ouvert. Audience en février." },
+            { txt: "Reçu. Me Vogt a ouvert le dossier.", delai: 3200 },
             { pause: 2000 },
-            { txt: "Il fait froid ici. Le phare tourne toutes les trois secondes, ça éclaire la cuisine comme un phare de voiture, Keks le déteste." },
-            { txt: "Je développe les six pellicules dans l'évier. Je n'ai jamais aussi bien travaillé." },
+            { txt: "Il fait froid ici. Le phare tourne toutes les trois secondes, Keks le déteste." },
+            { txt: "Je développe mes pellicules dans l'évier. Je n'ai jamais aussi bien travaillé." },
             { pause: 1600 },
-            { txt: "Merci d'avoir lu jusqu'au bout. Tout le monde s'arrête avant la fin, d'habitude." },
-            { txt: "Je t'ai envoyé une photo. C'est la porte, vue de l'intérieur." },
+            { txt: "Merci d'avoir lu jusqu'au bout. Les gens s'arrêtent avant, d'habitude." },
+            { txt: "Je t'ai envoyé une photo." },
         ],
         apres: function () {
             ETAT.epilogueVu = true;

@@ -117,6 +117,91 @@ const PUBLICATIONS = [
 ];
 
 
+/* ============================================================
+   KIEK — les vidéos verticales
+   ============================================================
+   Le TikTok du jeu. (Le nom vient du bas-allemand « kiek mal »,
+   « regarde voir ». Pour le renommer, c'est ici et dans
+   ICONES_APPS.)
+
+   On y trouve surtout ce qu'elle a ENREGISTRÉ. Ce que quelqu'un
+   met de côté à 2 h du matin en dit plus long que ce qu'il
+   publie. Deux vidéos sauvegardées valent une confession.
+
+   Règle d'écriture ici : très court. Une légende = une ligne.
+   ============================================================ */
+
+const VIDEOS = [
+    {
+        id: "v01",
+        compte: "sicher.im.netz",
+        peinture: "lampadaire_brume",
+        legende: "3 signes que ton téléphone est suivi 👀",
+        son: "son original — sicher.im.netz",
+        jaime: "84,2 k",
+        commentaires: 1203,
+        enregistreeLe: "06/11 02:12",
+        indice: "video_sauvee",
+        sousTitres: [
+            "1. la batterie se vide sans raison",
+            "2. une appli banale demande ta position « toujours »",
+            "3. tu as deux fois la même appli",
+        ],
+    },
+    {
+        id: "v02",
+        compte: "neu.anfangen",
+        peinture: "quai_nuit",
+        legende: "partir sans laisser d'adresse — règle n°1 : le téléphone reste",
+        son: "son original — neu.anfangen",
+        jaime: "212 k",
+        commentaires: 4871,
+        enregistreeLe: "06/11 03:50",
+        indice: "video_partir",
+        sousTitres: [
+            "un téléphone qui bouge, c'est une adresse",
+            "un téléphone qui reste, c'est quelqu'un qui dort chez lui",
+        ],
+    },
+    {
+        id: "v03",
+        compte: "keks.der.kater",
+        peinture: "chat_fenetre",
+        legende: "Keks a encore volé le fauteuil 🧡",
+        son: "son original — keks.der.kater",
+        jaime: "1 877",
+        commentaires: 64,
+        enregistreeLe: "12/09 08:10",
+        sousTitres: ["il s'appelle Keks", "il ne bouge pas", "fin de la vidéo"],
+    },
+    {
+        id: "v04",
+        compte: "kiel.bynight",
+        peinture: "grues",
+        legende: "le chantier naval à 2 h du matin",
+        son: "Nordlicht — Ava Nordwind",
+        jaime: "12,4 k",
+        commentaires: 211,
+        sousTitres: ["personne", "vraiment personne"],
+    },
+    {
+        id: "v05",
+        compte: "bluey_kiel",
+        peinture: "peluches",
+        legende: "J'AI VU UN OISEAU GÉANT !!!",
+        son: "son original — bluey_kiel",
+        jaime: "8",
+        commentaires: 11,
+        sousTitres: ["PERSONNE NE ME CROIT", "J'AI RAISON DEPUIS LE DÉBUT"],
+    },
+];
+
+
+function videoParId(id) {
+    return VIDEOS.filter(function (v) { return v.id === id; })[0] || null;
+}
+
+
 /* Le compte qui commente tout. On le calcule au lieu de
    l'écrire en dur : si on ajoute une publication, le compte
    reste juste. */

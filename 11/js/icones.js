@@ -136,6 +136,42 @@ const ICONES = {
     batterie:
         '<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="10" y="34" width="72" height="32" rx="9" fill="none" stroke="currentColor" stroke-width="7"/><path d="M88 44 L88 56" stroke="currentColor" stroke-width="8" stroke-linecap="round"/></svg>',
 
+    personne:
+        '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="32" r="18" fill="currentColor"/>' +
+        '<path d="M14 88 C14 66 30 56 50 56 C70 56 86 66 86 88 Z" fill="currentColor"/></svg>',
+
+    grille:
+        '<svg viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor">' +
+        '<rect x="8" y="8" width="24" height="24" rx="4"/><rect x="38" y="8" width="24" height="24" rx="4"/><rect x="68" y="8" width="24" height="24" rx="4"/>' +
+        '<rect x="8" y="38" width="24" height="24" rx="4"/><rect x="38" y="38" width="24" height="24" rx="4"/><rect x="68" y="38" width="24" height="24" rx="4"/>' +
+        '<rect x="8" y="68" width="24" height="24" rx="4"/><rect x="38" y="68" width="24" height="24" rx="4"/><rect x="68" y="68" width="24" height="24" rx="4"/>' +
+        "</g></svg>",
+
+    album:
+        '<svg viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor">' +
+        '<rect x="8" y="10" width="38" height="38" rx="7"/><rect x="54" y="10" width="38" height="38" rx="7"/>' +
+        '<rect x="8" y="54" width="38" height="38" rx="7"/><rect x="54" y="54" width="38" height="38" rx="7"/>' +
+        "</g></svg>",
+
+    maison:
+        '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 10 L92 46 L80 46 L80 88 L20 88 L20 46 L8 46 Z" fill="currentColor"/></svg>',
+
+    onglets:
+        '<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="10" y="22" width="52" height="52" rx="9" fill="none" stroke="currentColor" stroke-width="8"/>' +
+        '<path d="M38 22 L82 22 C86 22 90 26 90 30 L90 74" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/></svg>',
+
+    livre:
+        '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M12 18 C28 12 42 14 50 22 L50 86 C42 78 28 76 12 82 Z" fill="currentColor"/>' +
+        '<path d="M88 18 C72 12 58 14 50 22 L50 86 C58 78 72 76 88 82 Z" fill="currentColor" opacity="0.6"/></svg>',
+
+    crayon:
+        '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M18 74 L70 22 L82 34 L30 86 L14 90 Z" fill="currentColor"/>' +
+        '<path d="M64 16 L76 4 L92 20 L80 32 Z" fill="currentColor" opacity="0.7"/></svg>',
+
+    musique:
+        '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M40 72 L40 22 L78 14 L78 64" fill="none" stroke="currentColor" stroke-width="9" stroke-linejoin="round"/>' +
+        '<ellipse cx="31" cy="72" rx="12" ry="10" fill="currentColor"/><ellipse cx="69" cy="64" rx="12" ry="10" fill="currentColor"/></svg>',
+
     bulle:
         '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 14 C27 14 10 28 10 46 C10 58 18 68 30 73 L28 90 L46 77 C47 77 49 78 50 78 C73 78 90 64 90 46 C90 28 73 14 50 14 Z" fill="none" stroke="currentColor" stroke-width="8" stroke-linejoin="round"/></svg>',
 
@@ -242,6 +278,19 @@ const ICONES_APPS = {
         fond: "linear-gradient(135deg, #7B4BD6 0%, #E0457B 55%, #F6A33D 100%)",
         glyphe: '<svg viewBox="0 0 100 100"><rect x="18" y="18" width="64" height="64" rx="20" fill="none" stroke="#fff" stroke-width="8"/>' +
             '<circle cx="50" cy="50" r="17" fill="none" stroke="#fff" stroke-width="8"/><circle cx="69" cy="31" r="5" fill="#fff"/></svg>',
+    },
+
+    kiek: {
+        fond: "#0B0B0D",
+        glyphe: '<svg viewBox="0 0 100 100">' +
+            // la note, décalée en cyan puis en rose : l'aberration
+            // chromatique, c'est toute la signature de ces apps-là
+            '<g transform="translate(-3,-2)"><path d="M44 70 L44 24 L72 18 L72 60" fill="none" stroke="#25F4EE" stroke-width="8" stroke-linejoin="round"/>' +
+            '<ellipse cx="36" cy="70" rx="11" ry="9" fill="#25F4EE"/></g>' +
+            '<g transform="translate(3,2)"><path d="M44 70 L44 24 L72 18 L72 60" fill="none" stroke="#FE2C55" stroke-width="8" stroke-linejoin="round"/>' +
+            '<ellipse cx="36" cy="70" rx="11" ry="9" fill="#FE2C55"/></g>' +
+            '<path d="M44 70 L44 24 L72 18 L72 60" fill="none" stroke="#fff" stroke-width="8" stroke-linejoin="round"/>' +
+            '<ellipse cx="36" cy="70" rx="11" ry="9" fill="#fff"/></svg>',
     },
 
     carnet: {

@@ -19,27 +19,21 @@
    ne le saura qu'à la dernière.
    ============================================================ */
 
+/* Onze lignes. Pas une de plus : c'est la première chose qu'on
+   lit du jeu, et on n'a pas encore la moindre raison d'avoir
+   envie de lire. */
 const LE_MOT = [
-    "Je ne sais pas comment on commence une lettre comme celle-là.",
+    "Lena a disparu dans la nuit du 8 novembre.",
+    "C'est ma colocataire.",
     "",
-    "Lena Brandt a disparu dans la nuit du 8 novembre.",
-    "C'est ma colocataire. C'est ma meilleure amie.",
-    "J'ai retrouvé son téléphone onze jours plus tard, dans le tambour",
-    "de la machine à laver.",
-    "",
-    "La police a classé le dossier. « Majeure, départ volontaire. »",
-    "Onze jours pour fermer une vie.",
+    "J'ai retrouvé son téléphone onze jours plus tard,",
+    "dans la machine à laver. La police a classé le dossier.",
     "",
     "Cette nuit-là, à 23 h 02, elle a écrit à un numéro.",
-    "Elle croyait m'écrire. Elle s'est trompée d'un chiffre.",
+    "Elle croyait m'écrire. Un chiffre de travers.",
     "Ce numéro, c'est le vôtre. Et vous avez répondu.",
-    "Moi, je dormais.",
     "",
-    "Je vous envoie tout : le téléphone, et la photo qu'elle gardait",
-    "dans son portefeuille. Son code, c'était toujours la date de",
-    "cette photo. Elle est écrite au dos.",
-    "",
-    "Je n'ai plus que vous.",
+    "Son code, c'est la date de la photo. Elle est au dos.",
 ];
 
 
