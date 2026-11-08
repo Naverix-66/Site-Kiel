@@ -106,11 +106,15 @@ La clé est sous la troisième pierre.
 
 ## Comment on écrit Tobias
 
-C'est **le méchant de l'histoire**, et il fonctionne en cycle. C'est ce cycle,
-plus que n'importe quelle phrase, qui est insupportable à lire :
+C'est **le méchant de l'histoire, et il ne se rachète jamais.** Pas de « j'ai
+changé », pas de « je travaille là-dessus », pas une seule excuse sincère dans
+tout le jeu. La seule chose qui ressemble à des regrets chez lui, c'est de la
+comptabilité : *« après tout ce que j'ai fait pour toi. »*
 
-> il rend service → il surveille → il reproche → **il menace** → il s'excuse →
-> il rend service…
+Son cycle :
+
+> il rend service → il surveille → il réclame son dû → **il menace** →
+> il recommence.
 
 Il répare le joint de sa porte en passant. Il change la serrure du kiosque et
 refuse d'être payé — Lisbeth écrit « il est adorable franchement ». Puis, le
@@ -122,12 +126,17 @@ refuse d'être payé — Lisbeth écrit « il est adorable franchement ». Puis,
 > 18h. je sais tout ça depuis des mois et j'ai jamais rien fait de mal.
 > et je peux ouvrir ta porte en quatre minutes. tu le sais aussi.
 
-Puis, deux heures après : *« pardon pour tout à l'heure. j'étais fatigué. tu
-sais que je suis pas comme ça. »*
+Puis, deux heures après, sans une once de regret : *« tu n'as pas répondu.
+c'est une réponse aussi. »*
 
-Et quand elle a disparu : « OÙ EST-CE QUE TU ES » à 3 h du matin, « pardon, j'ai
-pas dormi » deux minutes plus tard, « dis à Mira que je sais qu'elle sait », et
-enfin « reviens et je change, tu me connais ».
+Et quand elle a disparu : « OÙ EST-CE QUE TU ES » à 3 h du matin, « tu crois que
+tu vas où exactement », « dis à Mira que je sais qu'elle sait », et pour finir
+— la phrase qui dit tout de lui :
+
+> je te cherche pas pour te ramener.
+> je te cherche parce que personne me prend pour un imbécile.
+
+Il ne l'aime pas. Il ne l'a jamais aimée. Il la considère comme à lui.
 
 L'autre moitié de la peur, c'est **ce qu'il sait** :
 
@@ -136,8 +145,9 @@ L'autre moitié de la peur, c'est **ce qu'il sait** :
 - « il fait 4 degrés et tu n'as pas pris ton écharpe verte »
 - « ta porte est fermée à double tour. ce n'est pas ton habitude. »
 - sur son répondeur : *« le rideau de la cuisine est tiré du mauvais côté, comme
-  quand c'est Mira qui le ferme. Donc tu n'es pas là. Je ne monte pas, hein.
-  Je dis juste que je sais. »*
+  quand c'est Mira qui le ferme. Donc tu n'es pas là. Tu sais que je peux monter
+  quand je veux. Je le fais pas ce soir. Rappelle-moi avant que je m'énerve pour
+  de bon. »*
 
 Et il y a l'objet. Dans l'album verrouillé, une photo d'un **double de ses clés
 posé sur la table de la cuisine**, avec un mot : *« je t'en ai fait un double,
@@ -150,9 +160,13 @@ son travail. Sur Fjordgram il photographie des portes. Sous l'une d'elles :
 « une porte, c'est juste une question de temps. 4 minutes celle-là. »
 
 ⚠️ Les deux seules limites qu'on garde : **aucune violence physique n'est
-décrite**, et **il ne sait jamais où elle est**. Il menace dans le vide — c'est
-ce qui le rend à la fois terrifiant et, à la toute fin, pathétique. Le dossier
-qu'on envoie à Me Vogt est la seule chose qui lui répond.
+décrite**, et **il ne sait jamais où elle est**. Il menace dans le vide.
+
+Et surtout — c'est la règle qui compte le plus : **on ne lui donne aucune porte
+de sortie.** Pas de passé douloureux qui expliquerait, pas de moment de lucidité,
+pas de rachat à la fin. Lena ne veut rien récupérer de lui, elle ne lui doit
+aucune conversation : elle veut juste qu'il disparaisse de sa vie. La seule
+chose qu'on lui répond dans tout le jeu, c'est le dossier envoyé à Me Vogt.
 
 ---
 

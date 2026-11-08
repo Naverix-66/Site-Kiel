@@ -98,21 +98,27 @@ const FILS = [
        Serrurier. Il ouvre les portes des gens pour vivre, et il
        trouve ça normal.
 
-       C'est LE méchant de l'histoire, et il fonctionne en
-       cycle — c'est ce cycle qui est insupportable à lire :
+       C'est LE méchant de l'histoire, et il ne se rachète
+       jamais. Pas de « j'ai changé », pas de « je travaille
+       là-dessus », pas une excuse sincère dans tout le jeu :
+       ⚠️ la seule chose qui ressemble à des regrets chez lui,
+       c'est de la comptabilité — « après tout ce que j'ai fait
+       pour toi ».
 
-         il rend service  →  il surveille  →  il reproche  →
-         il menace  →  il s'excuse  →  il rend service…
+       Son cycle à lui :
+         il rend service  →  il surveille  →  il réclame son dû
+         →  il menace  →  il recommence.
 
-       Il sait des choses qu'il ne devrait pas savoir. Il le dit
-       calmement. Et quand elle résiste, il énumère ce qu'il
+       Il sait des choses qu'il ne devrait pas savoir, et il le
+       dit calmement. Quand elle résiste, il énumère ce qu'il
        peut atteindre : son frère, son labo, sa grand-mère, son
        chat, sa porte. Il n'a jamais besoin de lever la main.
 
        Deux garde-fous d'écriture : aucune violence physique
-       n'est décrite, et il ne sait JAMAIS où elle est. Il reste
-       un homme qui menace dans le vide — c'est ça qui le rend
-       à la fois terrifiant et pathétique.
+       n'est décrite, et il ne sait JAMAIS où elle est. Il
+       menace dans le vide — et Lena, elle, ne veut rien
+       récupérer de lui : elle veut juste qu'il disparaisse de
+       sa vie.
        ======================================================== */
     {
         id: "tobias",
@@ -156,8 +162,8 @@ const FILS = [
             { de: "eux", t: "07/11 21:09", txt: "ton frère bosse le mardi. ta grand mère est à Eckernförde. ton labo ferme à 18h. je sais tout ça depuis des mois et j'ai jamais rien fait de mal." },
             { de: "eux", t: "07/11 21:11", txt: "et je peux ouvrir ta porte en quatre minutes. tu le sais aussi." },
             { de: "moi", t: "07/11 21:40", txt: "qu'est-ce que tu veux" },
-            { de: "eux", t: "07/11 21:41", txt: "que tu arrêtes de me mentir. c'est tout ce que j'ai jamais demandé." },
-            { de: "eux", t: "07/11 23:58", txt: "pardon pour tout à l'heure. j'étais fatigué. tu sais que je suis pas comme ça." },
+            { de: "eux", t: "07/11 21:41", txt: "que tu arrêtes de croire que tu as le choix." },
+            { de: "eux", t: "07/11 23:58", txt: "tu n'as pas répondu. c'est une réponse aussi." },
 
             {
                 de: "eux", t: "08/11 22:49", txt: "pourquoi tu raccroches",
@@ -170,7 +176,7 @@ const FILS = [
             /* --- après : il écrit encore. Donc il ne sait pas. --- */
             { de: "eux", t: "10/11 07:15", txt: "ta porte est fermée à double tour. ce n'est pas ton habitude." },
             { de: "eux", t: "11/11 03:12", txt: "OÙ EST-CE QUE TU ES" },
-            { de: "eux", t: "11/11 03:14", txt: "pardon. j'ai pas dormi." },
+            { de: "eux", t: "11/11 03:14", txt: "tu crois que tu vas où exactement" },
             { de: "eux", t: "12/11 20:10", txt: "je suis passé. mira ne m'a pas ouvert." },
             { de: "eux", t: "12/11 20:13", txt: "dis lui que je sais qu'elle sait." },
             { de: "eux", t: "13/11 19:30", txt: "tu as pris le chat." },
@@ -180,10 +186,11 @@ const FILS = [
                 de: "eux", t: "14/11 02:44", txt: "dis juste que tu es vivante",
                 indice: "tobias_ecrit_apres",
             },
-            { de: "eux", t: "14/11 02:51", txt: "je sais que je suis trop. je travaille là dessus. vraiment." },
-            { de: "eux", t: "14/11 02:52", txt: "reviens et je change. tu me connais." },
+            { de: "eux", t: "14/11 02:51", txt: "je te cherche pas pour te ramener." },
+            { de: "eux", t: "14/11 02:52", txt: "je te cherche parce que personne me prend pour un imbécile." },
+            { de: "eux", t: "15/11 21:08", txt: "tu as oublié un truc. je sais tout de toi et toi tu sais rien de moi." },
             { de: "eux", t: "16/11 13:02", txt: "la police m'a appelé. je leur ai dit que je savais pas où tu étais." },
-            { de: "eux", t: "16/11 13:03", txt: "c'est la première fois en sept mois que c'est vrai." },
+            { de: "eux", t: "16/11 13:03", txt: "pour une fois c'était vrai." },
         ],
     },
 

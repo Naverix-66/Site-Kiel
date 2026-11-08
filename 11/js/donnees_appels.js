@@ -70,9 +70,9 @@ const REPONDEUR = [
         transcription: "Je suis en bas. La lumière du salon est allumée et le rideau de la cuisine est tiré du mauvais côté, " +
             "comme quand c'est Mira qui le ferme. Donc tu n'es pas là. " + "\n" +
             "(silence de six secondes) " + "\n" +
-            "Tu sais que je peux monter quand je veux. Je le fais pas. Je veux que tu le saches, c'est tout. " + "\n" +
+            "Tu sais que je peux monter quand je veux. Je le fais pas ce soir. " + "\n" +
             "(silence) " + "\n" +
-            "Rappelle-moi. S'il te plaît.",
+            "Rappelle-moi avant que je m'énerve pour de bon.",
     },
     {
         id: "r04",

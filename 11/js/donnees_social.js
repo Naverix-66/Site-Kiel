@@ -244,7 +244,7 @@ const PUBLICATIONS = [
     {
         id: "t01", auteur: "tobias", peinture: "quai_nuit", t: "14/11 19:02",
         lieu: "Kiel",
-        legende: "les gens croient qu'on peut disparaître. on peut pas. si quelqu'un l'a vue, qu'il me le dise.",
+        legende: "les gens croient qu'on peut disparaître. on peut pas. si quelqu'un la voit, c'est à MOI qu'on le dit.",
         jaime: 12,
         indice: "ex_cherche_aussi",
         commentaires: [
