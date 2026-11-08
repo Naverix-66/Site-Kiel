@@ -23,9 +23,9 @@ enregistrerApp({
         ecranOnglets({
             grandTitre: "Fjordgram",
             titrePar: function (onglet) {
-                if (onglet === "recherche") return "Rechercher";
+                if (onglet === "recherche") return "";     // en-tête dessiné par l'onglet
                 if (onglet === "profil") return "@" + COMPTES.lena.pseudo;
-                return "Fjordgram";
+                return "";
             },
             onglets: [
                 { id: "accueil", nom: "Accueil", icone: ICONES.maison },
@@ -49,19 +49,35 @@ enregistrerApp({
    ------------------------------------------------------------ */
 function filFjordgram(corps) {
 
-    /* la rangée de « stories », en haut : c'est ce détail qui
-       fait reconnaître l'application au premier coup d'œil */
+    /* --- l'en-tête : le nom à gauche, les messages à droite --- */
+    corps.appendChild(el("div", { classe: "fg-barre" }, [
+        el("div", { classe: "fg-logo", texte: "Fjordgram" }),
+        el("div", {
+            classe: "fg-messages cliquable",
+            auClic: function () { ecranDM(); },
+        }, [
+            el("span", { classe: "glyphe", html: ICONES.flecheHaut }),
+            el("span", { classe: "badge badge--petit", texte: "3" }),
+        ]),
+    ]));
+
+    /* --- les stories : on les REGARDE, on n'ouvre pas le profil --- */
     const stories = el("div", { classe: "stories" });
 
-    ["lena"].concat(ABONNEMENTS_DE_LENA).forEach(function (id) {
+    const avecStories = ["lena"].concat(ABONNEMENTS_DE_LENA).filter(function (id) {
+        return storiesDe(id).length > 0;
+    });
+
+    avecStories.forEach(function (id, position) {
         const c = compte(id);
-        if (!c) return;
 
         stories.appendChild(el("div", {
             classe: "story cliquable",
-            auClic: function () { ouvrirProfil(id, "fjordgram"); },
+            auClic: function () { ouvrirStories(avecStories, position); },
         }, [
-            el("div", { classe: "story-cercle" }, [avatar({ nom: c.nom, couleur: c.couleur }, 58)]),
+            el("div", {
+                classe: "story-cercle" + (dejaLu("story:" + id) ? " story-cercle--vue" : ""),
+            }, [avatar({ nom: c.nom, couleur: c.couleur }, 58)]),
             el("div", { classe: "story-nom", texte: c.moi ? "Vous" : c.pseudo }),
         ]));
     });
@@ -75,49 +91,236 @@ function filFjordgram(corps) {
 
 
 /* ------------------------------------------------------------
-   RECHERCHER — commun aux deux réseaux
+   LES STORIES
+   ------------------------------------------------------------
+   Plein écran, les petites barres en haut qui se remplissent,
+   on appuie à droite pour avancer, à gauche pour revenir.
+   La plupart ne racontent rien d'utile à l'enquête : c'est la
+   vie des gens, et c'est ce qui fait qu'on y croit.
    ------------------------------------------------------------ */
-function rechercheComptes(corps, reseau) {
+function ouvrirStories(comptes, position) {
 
-    let filtre = "";
+    let indexCompte = position;
+    let indexStory = 0;
+    let minuteur = null;
 
-    const resultats = el("div", { classe: "liste" });
-
-    const dessinerResultats = function () {
-        vide(resultats);
-
-        const mot = sansAccents(filtre.trim());
-
-        Object.keys(COMPTES).forEach(function (id) {
-            const c = COMPTES[id];
-
-            if (mot && sansAccents(c.pseudo).indexOf(mot) === -1 &&
-                sansAccents(c.nom).indexOf(mot) === -1) return;
-
-            const combien = reseau === "kiek" ? videosDe(id).length : publicationsDe(id).length;
-
-            resultats.appendChild(ligne({
-                avatar: avatar({ nom: c.nom, couleur: c.couleur }, 44),
-                titre: c.pseudo,
-                sousTitre: c.nom + " · " + combien + (combien > 1 ? " publications" : " publication"),
-                lignes: 1,
-                auClic: function () { ouvrirProfil(id, reseau); },
-            }));
-        });
-
-        if (!resultats.firstChild) {
-            resultats.appendChild(videMessage("Aucun compte à ce nom."));
-        }
+    /* ⚠️ Le minuteur d'avance automatique doit MOURIR avec
+       l'écran. Sans ce garde-fou, il continuait de tourner après
+       qu'on avait quitté les stories (geste de retour, accueil,
+       autre application) et finissait par fermer l'application
+       ouverte à ce moment-là, l'air de rien. */
+    const ecranToujoursLa = function () {
+        return !!document.querySelector(".story-plein");
     };
 
-    /* un vrai champ de saisie : on tape, ça filtre */
-    const champ = el("input", {
-        attrs: { type: "text", placeholder: "Rechercher un compte", autocomplete: "off" },
+    const avancer = function () {
+        if (!ecranToujoursLa()) {
+            if (minuteur) clearTimeout(minuteur);
+            return;
+        }
+
+        const stories = storiesDe(comptes[indexCompte]);
+
+        if (indexStory < stories.length - 1) {
+            indexStory++;
+        } else if (indexCompte < comptes.length - 1) {
+            indexCompte++;
+            indexStory = 0;
+        } else {
+            if (minuteur) clearTimeout(minuteur);
+            OS.retour();
+            return;
+        }
+        OS.rafraichir();
+    };
+
+    const reculer = function () {
+        if (indexStory > 0) indexStory--;
+        else if (indexCompte > 0) { indexCompte--; indexStory = 0; }
+        OS.rafraichir();
+    };
+
+    OS.pousser({
+        sansBarre: true,
+        plein: true,
+        contenu: function (vue) {
+
+            const id = comptes[indexCompte];
+            const c = compte(id);
+            const stories = storiesDe(id);
+            const story = stories[indexStory] || stories[0];
+
+            marquerLu("story:" + id);
+
+            const ecran = el("div", { classe: "story-plein" });
+
+            ecran.appendChild(el("div", { classe: "story-image" }, [
+                peindre(story.peinture, { recadre: true }),
+            ]));
+
+            /* les barres de progression */
+            const barres = el("div", { classe: "story-barres" });
+            stories.forEach(function (s, i) {
+                barres.appendChild(el("div", { classe: "story-barre" }, [
+                    el("i", {
+                        classe: i < indexStory ? "pleine" : (i === indexStory ? "en-cours" : ""),
+                    }),
+                ]));
+            });
+            ecran.appendChild(barres);
+
+            /* qui, et quand */
+            ecran.appendChild(el("div", { classe: "story-entete" }, [
+                avatar({ nom: c.nom, couleur: c.couleur }, 30),
+                el("span", { classe: "story-pseudo", texte: c.pseudo }),
+                el("span", { classe: "story-heure", texte: justeLHeure(story.t) }),
+                el("span", {
+                    classe: "story-fermer glyphe cliquable",
+                    html: ICONES.croix,
+                    auClic: function () {
+                        if (minuteur) clearTimeout(minuteur);
+                        OS.retour();
+                    },
+                }),
+            ]));
+
+            if (story.texte) {
+                ecran.appendChild(el("div", { classe: "story-texte", texte: story.texte }));
+            }
+
+            if (story.ancienne) {
+                ecran.appendChild(el("div", { classe: "story-archive", texte: "archivée · " + dateLongue(story.t) }));
+            }
+
+            /* les deux moitiés d'écran : avancer / revenir */
+            ecran.appendChild(el("div", {
+                classe: "story-zone story-zone--gauche",
+                auClic: function () { reculer(); },
+            }));
+            ecran.appendChild(el("div", {
+                classe: "story-zone story-zone--droite",
+                auClic: function () { avancer(); },
+            }));
+
+            vue.appendChild(ecran);
+
+            if (minuteur) clearTimeout(minuteur);
+            minuteur = plusTard(avancer, 5200);
+        },
     });
+}
+
+
+/* ------------------------------------------------------------
+   LES MESSAGES PRIVÉS
+   ------------------------------------------------------------ */
+function ecranDM() {
+
+    OS.pousser({
+        titre: "Messages",
+        retourTexte: "Fjordgram",
+        contenu: function (corps) {
+
+            const liste = el("div", { classe: "liste" });
+
+            DM_FJORDGRAM.forEach(function (fil) {
+                const c = compte(fil.compte);
+                const dernier = fil.messages[fil.messages.length - 1];
+
+                liste.appendChild(ligne({
+                    avatar: avatar({ nom: c.nom, couleur: c.couleur }, 48),
+                    titre: c.pseudo,
+                    sousTitre: (dernier.de === "moi" ? "Vous : " : "") + dernier.txt,
+                    droite: dateDeListe(dernier.t),
+                    lignes: 1,
+                    auClic: function () { ouvrirDM(fil); },
+                }));
+            });
+
+            corps.appendChild(liste);
+
+            corps.appendChild(titreDeSectionSombre("Invitations"));
+
+            corps.appendChild(ligne({
+                avatar: avatar({ nom: "?", couleur: "#3A4250" }, 48),
+                titre: "ok_nord",
+                sousTitre: "Demande de message · 2 photos",
+                lignes: 1,
+                chevron: false,
+                auClic: function () {
+                    OS.alerte({
+                        titre: "ok_nord",
+                        message: "Compte créé il y a trois mois. Aucune publication.\n\nElle n'a jamais accepté.",
+                        boutons: [{ texte: "Laisser", fort: true }],
+                    });
+                },
+            }));
+        },
+    });
+}
+
+
+function ouvrirDM(fil) {
+    const c = compte(fil.compte);
+
+    OS.pousser({
+        titre: c.pseudo,
+        retourTexte: "Messages",
+        plein: true,
+        contenu: function (vue) {
+
+            const zone = el("div", { classe: "fil" });
+
+            fil.messages.forEach(function (m, i) {
+                const suivant = fil.messages[i + 1];
+                const finDeRafale = !suivant || suivant.de !== m.de;
+
+                zone.appendChild(el("div", {
+                    classe: "bulle bulle--" + (m.de === "moi" ? "moi" : "eux") + (finDeRafale ? " bulle--pointe" : ""),
+                    texte: m.txt,
+                }));
+            });
+
+            vue.appendChild(zone);
+
+            vue.appendChild(el("div", { classe: "barre-saisie" }, [
+                el("div", { classe: "faux-champ", texte: "Message…" }),
+            ]));
+        },
+    });
+}
+
+
+function titreDeSectionSombre(texte) {
+    return el("div", {
+        classe: "groupe-titre",
+        style: { padding: "18px 18px 6px" },
+        texte: texte.toUpperCase(),
+    });
+}
+
+
+/* ------------------------------------------------------------
+   RECHERCHER — commun aux deux réseaux
+   ------------------------------------------------------------ */
+let filtreRechercheFjordgram = "";
+
+function rechercheComptes(corps, reseau) {
+
+    /* --- la barre de recherche --- */
+    const champ = el("input", {
+        attrs: { type: "text", placeholder: "Rechercher", autocomplete: "off" },
+    });
+    champ.value = filtreRechercheFjordgram;
 
     champ.addEventListener("input", function () {
-        filtre = champ.value;
-        dessinerResultats();
+        filtreRechercheFjordgram = champ.value;
+        OS.rafraichir();
+        // on redonne le curseur au champ après le redessin
+        plusTard(function () {
+            const nouveau = document.querySelector(".champ-recherche--actif input");
+            if (nouveau) { nouveau.focus(); nouveau.setSelectionRange(99, 99); }
+        }, 10);
     });
 
     corps.appendChild(el("div", { classe: "champ-recherche champ-recherche--actif" }, [
@@ -125,14 +328,52 @@ function rechercheComptes(corps, reseau) {
         champ,
     ]));
 
-    corps.appendChild(el("div", {
-        classe: "groupe-titre",
-        style: { padding: "4px 18px 4px" },
-        texte: "COMPTES",
-    }));
+    const mot = sansAccents(filtreRechercheFjordgram.trim());
 
-    corps.appendChild(resultats);
-    dessinerResultats();
+    /* --- quand on tape : les comptes --- */
+    if (mot) {
+        const comptes = Object.keys(COMPTES).filter(function (id) {
+            return sansAccents(COMPTES[id].pseudo).indexOf(mot) !== -1 ||
+                sansAccents(COMPTES[id].nom).indexOf(mot) !== -1;
+        });
+
+        const liste = el("div", { classe: "liste" });
+
+        comptes.forEach(function (id) {
+            const c = COMPTES[id];
+            liste.appendChild(ligne({
+                avatar: avatar({ nom: c.nom, couleur: c.couleur }, 44),
+                titre: c.pseudo,
+                sousTitre: c.nom + " · " + nombreCourt(c.abonnes) + " abonnés",
+                lignes: 1,
+                auClic: function () { ouvrirProfil(id, reseau); },
+            }));
+        });
+
+        corps.appendChild(liste);
+
+        if (comptes.length === 0) {
+            corps.appendChild(videMessage("Aucun compte à ce nom."));
+        }
+        return;
+    }
+
+    /* --- sinon : la mosaïque, comme l'onglet Explorer --- */
+    const mosaique = el("div", { classe: "fg-explorer" });
+
+    PUBLICATIONS.slice().sort(function (a, b) {
+        return b.jaime - a.jaime;
+    }).forEach(function (publication, position) {
+
+        const tuile = el("div", {
+            classe: "vignette cliquable" + (position % 7 === 0 ? " vignette--grande" : ""),
+            auClic: function () { ouvrirPublication(publication); },
+        }, [peindre(publication.peinture, { recadre: true })]);
+
+        mosaique.appendChild(tuile);
+    });
+
+    corps.appendChild(mosaique);
 }
 
 

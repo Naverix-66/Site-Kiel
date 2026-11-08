@@ -145,6 +145,15 @@ const SCENARIO = {
 
         if (this.enCours) return;          // on attend une réponse
 
+        /* Une question de raisonnement à poser ? Mira la pose
+           elle-même, dans la conversation. (Avant, ça vivait
+           dans un écran du carnet : trop lourd, trop écrit.) */
+        const aDemander = ENQUETE.deductionsOuvertes()[0];
+        if (aDemander && !this.sceneEnCours) {
+            this.poserLaQuestion(aDemander);
+            return;
+        }
+
         for (let i = 0; i < SCENES.length; i++) {
             const scene = SCENES[i];
 
@@ -273,6 +282,47 @@ const SCENARIO = {
         } else {
             plusTard(function () { SCENARIO.verifier(); }, 900);
         }
+    },
+
+
+    /* --------------------------------------------------------
+       poserLaQuestion(deduction)
+       --------------------------------------------------------
+       Mira demande, on répond d'un appui. Une mauvaise réponse
+       ne coûte rien : elle dit où regarder, et elle redemande.
+       -------------------------------------------------------- */
+    poserLaQuestion: function (deduction) {
+
+        const self = this;
+
+        this.repondre("mira", [{ txt: deduction.question }], function () {
+            self.enCours = {
+                fil: "mira",
+                reponses: deduction.reponses.map(function (r) {
+                    return { id: deduction.id + ":" + r.id, txt: r.txt };
+                }),
+                suite: function (idComplet) {
+
+                    const idReponse = idComplet.split(":")[1];
+                    const resultat = ENQUETE.repondre(deduction.id, idReponse);
+
+                    if (resultat.bon) {
+                        self.repondre("mira", [
+                            { txt: "oui." },
+                            { txt: resultat.texte },
+                        ]);
+                    } else {
+                        self.repondre("mira", [
+                            { txt: "non, je crois pas." },
+                            { txt: resultat.texte },
+                        ], function () {
+                            self.poserLaQuestion(deduction);
+                        });
+                    }
+                },
+            };
+            self.rafraichirSiVisible("mira");
+        });
     },
 
 

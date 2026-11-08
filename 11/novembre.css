@@ -2054,6 +2054,120 @@ body.autonome #barre-statut { opacity: 0; }
 
 /* ---------- FJORDGRAM ---------- */
 
+/* l'en-tête du fil : le nom à gauche, les messages à droite */
+.fg-barre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px 10px;
+}
+
+.fg-logo {
+    font-family: var(--police-papier);
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.fg-messages { position: relative; padding: 4px; }
+.fg-messages .glyphe { width: 24px; height: 24px; transform: rotate(45deg); }
+
+.badge--petit {
+    min-width: 16px;
+    height: 16px;
+    font-size: 10px;
+    top: -2px;
+    right: -2px;
+}
+
+/* ---------- les stories, en plein écran ---------- */
+.story-plein { position: absolute; inset: 0; background: #000; overflow: hidden; }
+.story-image { position: absolute; inset: 0; }
+.story-image .photo-peinte { width: 100%; height: 100%; }
+
+.story-barres {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    left: 8px;
+    right: 8px;
+    display: flex;
+    gap: 4px;
+    z-index: 3;
+}
+
+.story-barre {
+    flex: 1;
+    height: 2.5px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+}
+
+.story-barre i { display: block; height: 100%; background: #fff; width: 0; }
+.story-barre i.pleine { width: 100%; }
+.story-barre i.en-cours { animation: story-avance 5.2s linear forwards; }
+
+@keyframes story-avance { from { width: 0; } to { width: 100%; } }
+
+.story-entete {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 20px);
+    left: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 3;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.story-pseudo { font-size: 14px; font-weight: 600; }
+.story-heure { font-size: 12px; opacity: 0.75; }
+.story-fermer { width: 18px; height: 18px; margin-left: auto; }
+
+.story-texte {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 86px;
+    z-index: 3;
+    color: #fff;
+    font-size: 17px;
+    line-height: 1.35;
+    text-align: center;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.story-archive {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    z-index: 3;
+    text-align: center;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.story-zone { position: absolute; top: 60px; bottom: 0; width: 50%; z-index: 2; }
+.story-zone--gauche { left: 0; }
+.story-zone--droite { right: 0; }
+
+.story-cercle--vue { background: rgba(255, 255, 255, 0.25); }
+
+/* l'onglet Explorer : une mosaïque, avec une grande tuile */
+.fg-explorer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 2px;
+    padding: 0 2px;
+}
+
+.fg-explorer .vignette { aspect-ratio: 1 / 1; }
+.fg-explorer .vignette--grande { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+
 /* la rangée de stories, en haut du fil */
 .stories {
     display: flex;
@@ -2150,11 +2264,93 @@ body.autonome #barre-statut { opacity: 0; }
 
 .app--kiek { background: #000; }
 
+/* La pile : toutes les vidéos empilées, et un défilement qui
+   accroche sur chacune. C'est le navigateur qui gère l'inertie
+   et l'accroche — d'où la sensation juste, en haut comme en bas. */
+.kiek-pile {
+    position: relative;
+    flex: 1;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    background: #000;
+}
+
+.kiek-pile::-webkit-scrollbar { display: none; }
+
+.kiek-ecran {
+    position: relative;
+    height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    overflow: hidden;
+}
+
 .kiek-video {
     position: relative;
     flex: 1;
     overflow: hidden;
     background: #000;
+}
+
+/* la mosaïque de l'onglet Découvrir */
+.kiek-mosaique {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    padding: 0 3px 10px;
+}
+
+.kiek-tuile {
+    position: relative;
+    aspect-ratio: 9 / 14;
+    overflow: hidden;
+    background: #0E131C;
+    border-radius: 2px;
+}
+
+.kiek-tuile .photo-peinte { width: 100%; height: 100%; }
+
+.kiek-tuile-vues {
+    position: absolute;
+    left: 7px;
+    bottom: 36px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.kiek-tuile-vues .glyphe { width: 10px; height: 10px; }
+
+.kiek-tuile-legende {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 16px;
+    padding: 0 7px;
+    font-size: 11.5px;
+    line-height: 1.25;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.kiek-tuile-compte {
+    position: absolute;
+    left: 7px;
+    bottom: 3px;
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .kiek-image {
@@ -2466,10 +2662,16 @@ body.autonome #barre-statut { opacity: 0; }
 
 .etape--manquante .etape-puce { background: #fff; border: 1px dashed var(--accent); color: var(--accent-fonce); }
 
-/* une conclusion établie */
-.conclusion { padding: 10px 18px; border-bottom: 0.5px solid rgba(75, 59, 54, 0.1); }
-.conclusion-question { font-size: 12.5px; color: var(--encre-claire); }
-.conclusion-reponse { font-size: 14.5px; line-height: 1.4; margin-top: 2px; }
+/* ce que je sais : une phrase, un tiret, rien d'autre */
+.fait {
+    display: flex;
+    gap: 10px;
+    padding: 7px 18px;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.fait-puce { color: var(--or); font-weight: 700; }
 
 .bandeau-papier {
     font-size: 13.5px;

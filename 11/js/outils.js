@@ -453,8 +453,9 @@ function ecranOnglets(options) {
 
             const corps = el("div", { classe: "corps corps--onglets" });
 
-            if (o.grandTitre) {
-                const titreCourant = o.titrePar ? o.titrePar(actif) : o.grandTitre;
+            // un titre vide = l'onglet dessine son propre en-tête
+            const titreCourant = o.titrePar ? o.titrePar(actif) : o.grandTitre;
+            if (titreCourant) {
                 corps.appendChild(el("h1", { classe: "grand-titre", texte: titreCourant }));
             }
 

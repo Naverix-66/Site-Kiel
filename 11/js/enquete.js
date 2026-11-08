@@ -365,93 +365,95 @@ const OBJECTIFS = [
 /* ------------------------------------------------------------
    LES DÉDUCTIONS
    ------------------------------------------------------------
-   question   : ce que le carnet demande
-   consigne   : comment on répond
-   paires     : toutes les combinaisons d'indices acceptées
-                (on reste souple : plusieurs raisonnements
-                justes valent mieux qu'un seul attendu)
-   conclusion : ce que le carnet écrit quand c'est bon
-   rate       : ce que Mira dit quand ça ne tient pas
+   ⚠️ REFONTE. Avant, on choisissait deux traces dans une liste,
+   dans le carnet. C'était une corvée d'écran : beaucoup de
+   texte, un écran de plus, et la joueuse se demandait ce qu'on
+   attendait d'elle.
+
+   Maintenant, c'est MIRA qui pose la question, dans la
+   conversation, dès que la joueuse a de quoi répondre. On
+   choisit une réponse courte, comme on répondrait à une amie.
+   Zéro interface en plus, et on réfléchit autant.
+
+   requis     : les traces à avoir trouvées pour que Mira demande
+   question   : ce qu'elle écrit
+   reponses   : deux ou trois répliques, une seule juste
+   conclusion : la phrase qui s'inscrit dans le carnet
+   rate       : ce qu'elle répond si on se trompe (jamais puni :
+                elle redemande)
    ------------------------------------------------------------ */
 const DEDUCTIONS = [
     {
         id: "d_mensonge", acte: 1, objectif: "o_soiree",
-        question: "Qu'est-ce qu'elle faisait, le soir du 8 ?",
-        consigne: "Désigne les deux traces qui ne disent pas la même chose.",
-        paires: [["sms_mensonge", "agenda_repos"], ["sms_mensonge", "photo_horn"]],
-        conclusion: "Elle a menti à Mira sur sa soirée. Elle n'était pas au travail : elle était dehors, avec son appareil.",
-        rate: "Ces deux-là vont dans le même sens. Cherche plutôt deux choses qui se contredisent.",
+        requis: ["sms_mensonge", "agenda_repos"],
+        question: "alors ? elle bossait vraiment ce soir-là ?",
+        reponses: [
+            { id: "m1", txt: "Non. Elle était en repos.", bonne: true },
+            { id: "m2", txt: "Oui, elle avait un service." },
+            { id: "m3", txt: "Impossible à savoir." },
+        ],
+        conclusion: "Le 8, elle était en repos. Elle a menti à Mira sur sa soirée.",
+        rate: "regarde son agenda, au 8.",
     },
     {
         id: "d_rentree", acte: 1,
-        question: "Est-ce qu'elle est rentrée, cette nuit-là ?",
-        consigne: "Deux traces suffisent à le prouver.",
-        paires: [["sante_pas", "wifi_retour"], ["wifi_retour", "suppressions"], ["wifi_retour", "ecran_eteint"]],
-        conclusion: "Elle est rentrée. 1 h 14, wifi de l'appartement. Elle n'a pas disparu dans le port : elle a dormi chez elle.",
-        rate: "Pas assez. Il faut quelque chose qui prouve un lieu, pas seulement un mouvement.",
+        requis: ["sante_pas", "wifi_retour"],
+        question: "et elle est rentrée, ou pas ?",
+        reponses: [
+            { id: "r1", txt: "Oui. 1 h 14, wifi de l'appartement.", bonne: true },
+            { id: "r2", txt: "Non, elle n'est jamais revenue." },
+            { id: "r3", txt: "Elle a pris le dernier bateau." },
+        ],
+        conclusion: "Elle est rentrée à 1 h 14. Elle n'a pas disparu dehors.",
+        rate: "dans Réglages, le wifi garde l'heure de la dernière connexion.",
     },
     {
         id: "d_telephone_laisse", acte: 2,
-        question: "Pourquoi laisser son téléphone derrière elle ?",
-        consigne: "Relie ce qui suivait ses déplacements à ce qu'elle a fait en rentrant.",
-        paires: [
-            ["mouchard", "suppressions"], ["journal_47", "suppressions"],
-            ["mouchard", "ecran_eteint"], ["journal_47", "ecran_eteint"],
-            ["mouchard", "video_partir"], ["video_partir", "video_sauvee"],
-            ["video_partir", "suppressions"],
+        requis: ["mouchard", "suppressions"],
+        question: "pourquoi laisser son téléphone, alors ?",
+        reponses: [
+            { id: "t1", txt: "Parce qu'il la rendait trouvable.", bonne: true },
+            { id: "t2", txt: "Elle l'a oublié, c'est tout." },
+            { id: "t3", txt: "Pour qu'on le trouve et qu'on cherche." },
         ],
-        conclusion: "Un téléphone qui bouge, c'est une adresse. Elle a nettoyé ce qu'il ne devait pas voir, et elle l'a laissé là.",
-        rate: "Il manque le pourquoi. Qu'est-ce qui, dans ce téléphone, la rendait trouvable ?",
+        conclusion: "Elle a laissé le téléphone exprès : un téléphone qui bouge, c'est une adresse.",
+        rate: "qu'est-ce qu'il y avait dessus qui la suivait ?",
     },
     {
         id: "d_pas_enleve", acte: 2,
-        question: "Est-ce que Tobias l'a enlevée ?",
-        consigne: "Deux traces disent que non.",
-        paires: [
-            ["journal_47", "tobias_ecrit_apres"],
-            ["appareil_jumele", "tobias_ecrit_apres"],
-            ["journal_domicile", "tobias_ecrit_apres"],
-            ["journal_domicile", "mouchard"],
-            ["journal_domicile", "ex_cherche_aussi"],
-            ["ex_cherche_aussi", "mouchard"],
-            ["ex_cherche_aussi", "journal_47"],
+        requis: ["tobias_ecrit_apres", "journal_domicile"],
+        question: "c'est lui qui l'a prise, hein ? dis-moi que c'est lui.",
+        reponses: [
+            { id: "p1", txt: "Non. Il la cherche aussi.", bonne: true },
+            { id: "p2", txt: "Oui, tout l'accuse." },
+            { id: "p3", txt: "Il l'a suivie jusqu'au port." },
         ],
-        conclusion: "Non. Il la croyait chez elle, et il lui écrit encore le 14. On n'écrit pas à quelqu'un qu'on a enlevé.",
-        rate: "Ça ne répond pas à la question. Qu'est-ce qu'il a fait APRÈS le 8 ?",
+        conclusion: "Ce n'est pas lui : il la croyait chez elle, et il lui écrit encore le 14.",
+        rate: "relis ce qu'il lui écrit APRÈS le 8. On n'écrit pas à quelqu'un qu'on a enlevé.",
     },
     {
         id: "d_fuite", acte: 2, objectif: "o_fuite",
-        question: "Qu'est-ce qu'elle préparait ?",
-        consigne: "Deux préparatifs, dans les trois semaines d'avant.",
-        paires: [
-            ["rdv_avocate", "retraits"],
-            ["rdv_avocate", "jonas_argent"],
-            ["retraits", "jonas_argent"],
-            ["brouillon_avocate", "retraits"],
-            ["brouillon_avocate", "rdv_avocate"],
-            ["objectif_vendu", "retraits"],
-            ["objectif_vendu", "jonas_argent"],
-            ["bus_501", "retraits"],
-            ["liste_courses", "retraits"],
-            ["liste_courses", "jonas_argent"],
-            ["liste_courses", "objectif_vendu"],
-            ["liste_courses", "bus_501"],
-            ["conseils_avocate", "retraits"],
-            ["conseils_avocate", "liste_courses"],
-            ["plan_du_coffre", "liste_courses"],
-            ["plan_du_coffre", "retraits"],
-            ["plan_du_coffre", "conseils_avocate"],
+        requis: ["rdv_avocate", "retraits"],
+        question: "une avocate, 600 € en liquide… qu'est-ce qu'elle préparait ?",
+        reponses: [
+            { id: "f1", txt: "Son départ. Depuis des semaines.", bonne: true },
+            { id: "f2", txt: "Un procès contre lui." },
+            { id: "f3", txt: "Un voyage." },
         ],
-        conclusion: "Un départ. Une avocate, de l'argent liquide, du matériel vendu. Ce n'est pas une disparition : c'est une fuite, préparée.",
-        rate: "Ce sont des faits, mais ils ne racontent pas un projet. Cherche ce qui coûte de l'argent et ce qui en rapporte.",
+        conclusion: "Ce n'est pas une disparition, c'est une fuite préparée.",
+        rate: "une procédure prend deux ans. Elle, elle a acheté une caisse de transport pour un chat.",
     },
     {
         id: "d_eckernforde", acte: 3, objectif: "o_eckernforde",
-        question: "Est-elle chez sa grand-mère, à Eckernförde ?",
-        consigne: "Une seule trace suffit à casser cette piste — trouve-la, avec ce qu'elle laisse à la place.",
-        paires: [["mail_hanne_maison", "mail_hanne_cabane"], ["mail_hanne_maison", "note_endroits"], ["mail_hanne_maison", "photo_imprimee"]],
-        conclusion: "Impossible : la maison est vendue depuis mai. Mais dans le même mail, Hanne parle d'autre chose qu'elle n'a pas vendu.",
-        rate: "Mira y croit dur comme fer. Pour lui dire non, il faut une preuve que la maison n'est plus à eux.",
+        requis: ["mail_hanne_maison"],
+        question: "elle est chez sa grand-mère à Eckernförde, c'est sûr. non ?",
+        reponses: [
+            { id: "e1", txt: "Non, la maison est vendue depuis mai.", bonne: true },
+            { id: "e2", txt: "Oui, allons-y." },
+            { id: "e3", txt: "Sa grand-mère l'aurait dit." },
+        ],
+        conclusion: "Pas Eckernförde : la maison est vendue. Mais Hanne parle d'une cabane.",
+        rate: "le mail d'Oma, en mai. Jusqu'au bout.",
     },
 ];
 
@@ -611,17 +613,14 @@ const ENQUETE = {
         return true;
     },
 
-    /* --- les déductions de l'acte en cours, pas encore faites --- */
+    /* --- les questions que Mira peut poser maintenant --- */
     deductionsOuvertes: function () {
         return DEDUCTIONS.filter(function (d) {
             if (ETAT.deductions[d.id]) return false;
             if (d.acte > ETAT.acte) return false;
 
-            // on ne pose la question que si la joueuse a de quoi
-            // y répondre : au moins une paire entièrement trouvée
-            return d.paires.some(function (paire) {
-                return paire.every(function (id) { return ENQUETE.a(id); });
-            });
+            // on ne demande que si la joueuse a de quoi répondre
+            return d.requis.every(function (id) { return ENQUETE.a(id); });
         });
     },
 
@@ -629,27 +628,23 @@ const ENQUETE = {
         return DEDUCTIONS.filter(function (d) { return ETAT.deductions[d.id]; });
     },
 
-    /* --- valider une déduction : le geste central du jeu --- */
-    valider: function (idDeduction, deuxIndices) {
+    deduction: function (id) {
+        return DEDUCTIONS.filter(function (d) { return d.id === id; })[0] || null;
+    },
 
-        const deduction = DEDUCTIONS.filter(function (d) { return d.id === idDeduction; })[0];
+    /* --- valider une réponse donnée dans la conversation --- */
+    repondre: function (idDeduction, idReponse) {
+
+        const deduction = this.deduction(idDeduction);
         if (!deduction) return { bon: false, texte: "" };
 
-        const a = deuxIndices[0];
-        const b = deuxIndices[1];
+        const reponse = deduction.reponses.filter(function (r) { return r.id === idReponse; })[0];
 
-        const bon = deduction.paires.some(function (paire) {
-            return (paire[0] === a && paire[1] === b) || (paire[0] === b && paire[1] === a);
-        });
-
-        if (bon) {
+        if (reponse && reponse.bonne) {
             ETAT.deductions[idDeduction] = true;
             if (deduction.objectif) this.remplirObjectif(deduction.objectif);
             sauvegarder();
             SONS.succes();
-
-            if (typeof SCENARIO !== "undefined") SCENARIO.deductionFaite(idDeduction);
-
             return { bon: true, texte: deduction.conclusion };
         }
 

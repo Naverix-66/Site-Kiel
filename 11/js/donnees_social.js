@@ -344,6 +344,80 @@ function commentairesDeLui() {
 
 
 /* ============================================================
+   LES STORIES
+   ============================================================
+   Une story par compte. La plupart ne servent à rien pour
+   l'enquête, et c'est exprès : c'est un téléphone, pas un
+   dossier d'instruction. On regarde la vie des gens.
+   ============================================================ */
+
+const STORIES = {
+    lena: [
+        { peinture: "ferry", texte: "dernier bateau", t: "08/11 22:36", ancienne: true },
+        { peinture: "noir_presque", texte: "", t: "08/11 23:47", ancienne: true },
+    ],
+    mira: [
+        { peinture: "appartement_nuit", texte: "jour 13. la lampe est toujours allumée.", t: "21/11 06:40" },
+    ],
+    jonas: [
+        { peinture: "kiosque", texte: "service du midi, 84 couverts, je suis mort", t: "21/11 15:20" },
+    ],
+    lisbeth: [
+        { peinture: "kiosque", texte: "qui a encore fini le café", t: "21/11 04:12" },
+    ],
+    keks: [
+        { peinture: "chat_fenetre", texte: "", t: "20/11 11:00" },
+    ],
+    kielbynight: [
+        { peinture: "grues", texte: "brouillard sur la Förde", t: "21/11 02:30" },
+    ],
+    labor: [
+        { peinture: "lampadaire_brume", texte: "tirages prêts : Brandt, 6 pellicules", t: "19/11 17:00" },
+    ],
+    bluey: [
+        { peinture: "peluches", texte: "L'OISEAU EST REVENU", t: "20/11 03:14" },
+    ],
+};
+
+
+function storiesDe(id) {
+    return STORIES[id] || [];
+}
+
+
+/* ============================================================
+   LES MESSAGES PRIVÉS DE FJORDGRAM
+   ============================================================
+   Trois fils, très courts. Du décor, et une demande d'un
+   compte inconnu qu'elle n'a jamais acceptée.
+   ============================================================ */
+
+const DM_FJORDGRAM = [
+    {
+        compte: "mira",
+        messages: [
+            { de: "eux", txt: "tu dors ?", t: "06/11 02:40" },
+            { de: "eux", txt: "je vois que tu es en ligne", t: "06/11 02:41" },
+            { de: "moi", txt: "je regarde des vidéos débiles", t: "06/11 02:44" },
+        ],
+    },
+    {
+        compte: "jonas",
+        messages: [
+            { de: "eux", txt: "regarde ça 😂", t: "28/10 20:10" },
+            { de: "moi", txt: "c'est toi en entier", t: "28/10 20:12" },
+        ],
+    },
+    {
+        compte: "labor",
+        messages: [
+            { de: "eux", txt: "tes tirages sont prêts, on ferme à 18h", t: "05/11 11:02" },
+        ],
+    },
+];
+
+
+/* ============================================================
    KIEK — les vidéos verticales
    ============================================================
    Le TikTok du jeu. (« kiek mal » = « regarde voir », en

@@ -250,9 +250,14 @@ function messagesDuFil(id) {
 
     const ajoutes = ETAT.messagesAjoutes.filter(function (m) { return m.fil === id; });
 
-    return fil.messages.concat(ajoutes).sort(function (a, b) {
+    /* ⚠️ Les messages reçus pendant la partie portent l'HEURE
+       RÉELLE de la joueuse. Si elle joue à 00 h 49, cette heure
+       est « plus tôt » que le 21/11 08:14 écrit d'avance, et ils
+       se rangeaient avant. Donc : tout ce qui arrive en direct
+       passe après, toujours, dans l'ordre d'arrivée. */
+    return fil.messages.slice().sort(function (a, b) {
         return clefDeTri(a.t) - clefDeTri(b.t);
-    });
+    }).concat(ajoutes);
 }
 
 
