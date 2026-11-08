@@ -23,7 +23,15 @@ const SCENARIO = {
 
     ecritDans: null,        // le fil où « … » s'affiche
     enCours: null,          // la question posée à la joueuse
-    sceneEnCours: false,    // pour ne pas jouer deux scènes à la fois
+
+    /* ⚠️ UN COMPTEUR, pas un booléen.
+       Avec un simple vrai/faux, une suite de répliques qui en
+       déclenchait une autre libérait le verrou trop tôt : une
+       deuxième conversation démarrait par-dessus la première et
+       les messages s'entremêlaient. C'était ça, les dialogues
+       auxquels on ne comprenait rien.
+       Le compteur ne retombe à zéro que quand TOUT est fini. */
+    occupe: 0,
     dernierIndice: Date.now(),
     derniereAide: 0,
 
@@ -96,14 +104,19 @@ const SCENARIO = {
         sauvegarder();
 
         /* Une conversation qui attend qu'on y entre ? */
-        if (!this.sceneEnCours && !this.enCours) {
+        if (this.occupe === 0 && !this.enCours) {
             const branche = BRANCHES.filter(function (b) {
                 return b.fil === idFil && !etapeFaite("br:" + b.id) && b.quand();
             })[0];
 
             if (branche) {
                 marquerEtape("br:" + branche.id);
-                plusTard(function () { branche.jouer(); }, 900);
+                this.occupe++;
+
+                plusTard(function () {
+                    branche.jouer();
+                    SCENARIO.occupe = Math.max(0, SCENARIO.occupe - 1);
+                }, 900);
                 return;
             }
         }
@@ -149,7 +162,7 @@ const SCENARIO = {
         // bloquée en acte I pour toujours. Jamais deux fois.)
         this.verifierLesActes();
 
-        if (this.sceneEnCours) return;
+        if (this.occupe > 0) return;
 
         // Une question de Mira restée sans réponse finit par
         // s'effacer : elle ne va pas attendre toute la nuit.
@@ -168,7 +181,7 @@ const SCENARIO = {
            elle-même, dans la conversation. (Avant, ça vivait
            dans un écran du carnet : trop lourd, trop écrit.) */
         const aDemander = ENQUETE.deductionsOuvertes()[0];
-        if (aDemander && !this.sceneEnCours) {
+        if (aDemander && this.occupe === 0) {
             this.poserLaQuestion(aDemander);
             return;
         }
@@ -177,6 +190,7 @@ const SCENARIO = {
             const scene = SCENES[i];
 
             if (etapeFaite(scene.id)) continue;
+            if (this.sceneLancee === scene.id) continue;   // déjà en train de se jouer
             if (!scene.quand()) continue;
 
             this.jouer(scene);
@@ -187,8 +201,14 @@ const SCENARIO = {
 
     jouer: async function (scene) {
 
-        this.sceneEnCours = true;
-        marquerEtape(scene.id);
+        this.occupe++;
+
+        /* La scène n'est marquée « jouée » qu'à la FIN (plus bas).
+           Si la page est rechargée au milieu, elle se rejoue en
+           entier plutôt que de laisser la moitié des répliques
+           dans le vide. Le compteur, lui, empêche de la lancer
+           deux fois dans la même partie. */
+        this.sceneLancee = scene.id;
 
         for (let i = 0; i < scene.suite.length; i++) {
             const replique = scene.suite[i];
@@ -222,9 +242,12 @@ const SCENARIO = {
             this.rafraichirSiVisible(this.enCours.fil);
         }
 
-        this.sceneEnCours = false;
+        marquerEtape(scene.id);
+        this.sceneLancee = null;
 
         if (scene.apres) scene.apres();
+
+        this.occupe = Math.max(0, this.occupe - 1);
 
         if (!scene.question) plusTard(function () { SCENARIO.verifier(); }, 1200);
     },
@@ -297,7 +320,15 @@ const SCENARIO = {
         this.rafraichirSiVisible(fil);
 
         if (suite) {
-            plusTard(function () { suite(idReponse, reponse); }, 500);
+            /* On tient le verrou pendant la demi-seconde qui
+               sépare la réponse de la réaction : sinon une autre
+               scène pouvait se glisser entre les deux. */
+            this.occupe++;
+
+            plusTard(function () {
+                suite(idReponse, reponse);
+                SCENARIO.occupe = Math.max(0, SCENARIO.occupe - 1);
+            }, 500);
         } else {
             plusTard(function () { SCENARIO.verifier(); }, 900);
         }
@@ -349,7 +380,7 @@ const SCENARIO = {
        (les réactions aux réponses). */
     repondre: async function (fil, repliques, apres) {
 
-        this.sceneEnCours = true;
+        this.occupe++;
 
         for (let i = 0; i < repliques.length; i++) {
 
@@ -370,8 +401,12 @@ const SCENARIO = {
             await attendre(380);
         }
 
-        this.sceneEnCours = false;
+        /* apres() AVANT de relâcher : c'est souvent lui qui
+           enchaîne la suite de la conversation, et il doit la
+           démarrer pendant que le verrou tient encore. */
         if (apres) apres();
+
+        this.occupe = Math.max(0, this.occupe - 1);
         plusTard(function () { SCENARIO.verifier(); }, 900);
     },
 
@@ -453,7 +488,7 @@ const SCENARIO = {
     verifierSiOnPatine: function () {
 
         if (ETAT.acte === 0) return;
-        if (this.sceneEnCours || this.enCours) return;
+        if (this.occupe > 0 || this.enCours) return;
 
         const maintenant = Date.now();
         if (maintenant - this.dernierIndice < DELAI_INDICE_DOUX) return;
@@ -489,7 +524,7 @@ const SCENARIO = {
     vieDuTelephone: function () {
 
         if (ETAT.acte === 0) return;
-        if (this.sceneEnCours || this.enCours) return;
+        if (this.occupe > 0 || this.enCours) return;
 
         const maintenant = Date.now();
 
@@ -781,7 +816,8 @@ const SCENES = [
         quand: function () { return ETAT.telephoneDeverrouille; },
         suite: [
             { txt: "vous l'avez ouvert ??", delai: 2200 },
-            { txt: "pardon. bonjour. je m'appelle Mira, je vivais avec elle." },
+            { txt: "pardon" },
+            { txt: "bonjour. moi c'est Mira. je vivais avec elle" },
         ],
         question: {
             reponses: [
@@ -790,11 +826,11 @@ const SCENES = [
             ],
             suite: function (id) {
                 const repliques = id === "r1a"
-                    ? [{ txt: "moi non plus." }, { txt: "mais vous êtes la seule qui lui a répondu cette nuit-là." }]
-                    : [{ txt: "4417 au lieu de 4471." }, { txt: "un chiffre, et c'est tombé chez vous." }];
+                    ? [{ txt: "moi non plus je sais pas" }, { txt: "mais y a que vous qui lui avez répondu cette nuit là" }]
+                    : [{ txt: "4417 au lieu de 4471" }, { txt: "un chiffre. et c'est tombé chez vous" }];
 
                 SCENARIO.repondre("mira", repliques.concat([
-                    { txt: "ouvrez Messages. votre fil, c'est « numéro inconnu »." },
+                    { txt: "allez dans Messages. votre fil c'est « numéro inconnu »" },
                 ]));
             },
         },
@@ -805,9 +841,11 @@ const SCENES = [
         fil: "mira",
         quand: function () { return dejaLu("fil:klara:lu") && ENQUETE.a("lena_reponse"); },
         suite: [
-            { txt: "vos messages sont à gauche. c'est son téléphone à elle : il croit que c'est elle qui parle.", delai: 2600 },
-            { txt: "« gardez la porte fermée quand même »." },
-            { txt: "elle a écrit ça à une inconnue. et rien à moi." },
+            { txt: "vos messages à vous sont à gauche, c'est bizarre je sais", delai: 2600 },
+            { txt: "c'est son téléphone. il croit que c'est elle qui parle" },
+            { pause: 1200 },
+            { txt: "« gardez la porte fermée quand même »" },
+            { txt: "elle écrit ça à une inconnue et à moi elle dit rien" },
         ],
         question: {
             reponses: [
@@ -816,11 +854,12 @@ const SCENES = [
             ],
             suite: function (id) {
                 const repliques = id === "r2a"
-                    ? [{ txt: "oui. et pas d'un inconnu : de quelqu'un qui savait où elle habitait." }]
-                    : [{ txt: "ah." }, { txt: "j'avais pas vu ça comme ça. elle vérifiait." }];
+                    ? [{ txt: "oui" }, { txt: "et pas d'un inconnu dans la rue. de quelqu'un qui savait où elle dormait" }]
+                    : [{ txt: "ah" }, { txt: "j'avais pas vu ça comme ça. elle vérifiait, quoi" }];
 
                 SCENARIO.repondre("mira", repliques.concat([
-                    { txt: "ce soir-là elle m'a dit qu'elle travaillait. vérifiez son agenda." },
+                    { txt: "ce soir là elle m'a dit qu'elle bossait" },
+                    { txt: "regardez son agenda" },
                 ]), function () {
                     ENQUETE.remplirObjectif("o_mon_fil");
                 });
@@ -833,9 +872,11 @@ const SCENES = [
         fil: "mira",
         quand: function () { return ETAT.deductions.d_mensonge === true; },
         suite: [
-            { txt: "repos. elle était en repos et elle m'a dit qu'elle bossait.", delai: 2000 },
-            { txt: "en six ans elle m'a jamais menti." },
-            { txt: "il faut la nuit entière alors. carnet → « nuit du 8 »." },
+            { txt: "repos.", delai: 2000 },
+            { txt: "elle était en repos et elle m'a dit qu'elle bossait" },
+            { txt: "en six ans elle m'avait jamais menti. même pas pour des bêtises" },
+            { pause: 1000 },
+            { txt: "faut reprendre toute la nuit alors. c'est dans le carnet, « la nuit du 8 »" },
         ],
     },
 
@@ -844,9 +885,11 @@ const SCENES = [
         fil: "mira",
         quand: function () { return ETAT.chronoValidee; },
         suite: [
-            { txt: "1h14.", delai: 2400 },
-            { pause: 1400 },
-            { txt: "j'étais dans la chambre d'à côté." },
+            { txt: "1h14", delai: 2400 },
+            { pause: 1600 },
+            { txt: "j'étais dans la chambre d'à côté" },
+            { txt: "elle a fait du bruit dans la cuisine, j'ai pensé « tiens elle rentre tôt »" },
+            { txt: "et je me suis rendormie" },
         ],
         question: {
             reponses: [
@@ -855,11 +898,12 @@ const SCENES = [
             ],
             suite: function (id) {
                 const repliques = id === "r4a"
-                    ? [{ txt: "elle voulait pas que je PUISSE savoir. c'est pas pareil." }]
-                    : [{ txt: "si, un peu. mais merci." }];
+                    ? [{ txt: "elle voulait pas que je PUISSE savoir" }, { txt: "c'est pas pareil. on peut pas dire ce qu'on sait pas" }]
+                    : [{ txt: "si un peu" }, { txt: "mais merci" }];
 
                 SCENARIO.repondre("mira", repliques.concat([
-                    { txt: "donc la question c'est plus « où ». c'est « pourquoi »." },
+                    { pause: 1000 },
+                    { txt: "donc la question c'est plus où elle est. c'est pourquoi elle est partie" },
                 ]), function () {
                     SCENARIO.passerALActe(2);
                 });
@@ -875,9 +919,10 @@ const SCENES = [
         fil: "mira",
         quand: function () { return estOuvert("albumPrive") && ENQUETE.a("capture_3h"); },
         suite: [
-            { txt: "elle gardait des captures.", delai: 2600 },
-            { txt: "je savais qu'il était lourd. je savais pas qu'elle documentait." },
-            { txt: "on documente quand on prépare quelque chose." },
+            { txt: "elle gardait des captures", delai: 2600 },
+            { txt: "je savais qu'il était lourd. je savais pas qu'elle gardait des preuves" },
+            { pause: 1200 },
+            { txt: "on garde des preuves quand on prépare quelque chose, non ?" },
         ],
     },
 
@@ -886,10 +931,11 @@ const SCENES = [
         fil: "mira",
         quand: function () { return estOuvert("mouchard") && ENQUETE.a("mouchard"); },
         suite: [
-            { txt: "un logiciel. depuis avril.", delai: 2600 },
-            { pause: 1600 },
-            { txt: "j'ai cru qu'elle avait oublié son téléphone. elle l'a LAISSÉ." },
-            { txt: "regardez les trois semaines d'avant : l'agenda, la banque, ses notes." },
+            { txt: "un logiciel", delai: 2600 },
+            { txt: "depuis avril. sept mois" },
+            { pause: 1800 },
+            { txt: "j'ai cru qu'elle avait oublié son téléphone. elle l'a LAISSÉ" },
+            { txt: "regardez les trois semaines d'avant. l'agenda, la banque, ses notes" },
         ],
     },
 
@@ -898,10 +944,12 @@ const SCENES = [
         fil: "mira",
         quand: function () { return ETAT.deductions.d_fuite === true; },
         suite: [
-            { txt: "d'accord. elle est pas disparue, elle est partie.", delai: 2200 },
-            { txt: "pardon. je tape mal quand je pleure." },
-            { pause: 1200 },
-            { txt: "alors elle est chez sa grand-mère, à Eckernförde. j'en suis sûre à 100%." },
+            { txt: "d'accord", delai: 2200 },
+            { txt: "d'accord. elle est pas disparue. elle est partie" },
+            { txt: "pardon je tape mal quand je pleure" },
+            { pause: 1600 },
+            { txt: "bon. alors elle est chez sa grand mère, à Eckernförde" },
+            { txt: "j'en suis sûre à 100%" },
         ],
         apres: function () {
             SCENARIO.passerALActe(3);
@@ -917,8 +965,9 @@ const SCENES = [
         fil: "mira",
         quand: function () { return ETAT.deductions.d_eckernforde === true; },
         suite: [
-            { txt: "vendue. en mai.", delai: 2400 },
-            { txt: "je suis vraiment nulle à ça." },
+            { txt: "vendue", delai: 2400 },
+            { txt: "en mai. elle me l'avait dit et j'avais oublié" },
+            { txt: "je suis vraiment nulle à ça" },
         ],
         question: {
             reponses: [
@@ -926,11 +975,14 @@ const SCENES = [
                 { id: "r8b", txt: "Relisez le mail jusqu'au bout." },
             ],
             suite: function (id) {
-                const repliques = id === "r8a" ? [{ txt: "…merci." }] : [{ txt: "attendez." }];
+                const repliques = id === "r8a"
+                    ? [{ txt: "…" }, { txt: "merci" }]
+                    : [{ txt: "attendez" }];
 
                 SCENARIO.repondre("mira", repliques.concat([
-                    { txt: "« la cabane je ne la vends pas ». il y a une cabane." },
-                    { txt: "trouvez où, et posez l'épingle dans Plans." },
+                    { txt: "« la cabane je ne la vends pas »" },
+                    { txt: "y a une cabane. je savais même pas" },
+                    { txt: "trouvez où elle est et posez l'épingle dans Plans" },
                 ]));
             },
         },
@@ -941,11 +993,12 @@ const SCENES = [
         fil: "mira",
         quand: function () { return ETAT.epinglePosee === "bulk"; },
         suite: [
-            { txt: "Bülk.", delai: 2200 },
-            { txt: "on y est allées une fois. elle avait dit « ici personne peut me téléphoner »." },
-            { txt: "j'avais trouvé ça romantique." },
-            { pause: 1500 },
-            { txt: "elle attend que quelqu'un comprenne. depuis onze jours." },
+            { txt: "Bülk", delai: 2200 },
+            { txt: "on y est allées une fois, en vélo. il pleuvait" },
+            { txt: "elle avait dit « ici personne peut me téléphoner ». j'avais trouvé ça romantique" },
+            { pause: 1800 },
+            { txt: "elle attend que quelqu'un comprenne" },
+            { txt: "depuis onze jours" },
         ],
         apres: function () {
             SCENARIO.passerALActe(4);
