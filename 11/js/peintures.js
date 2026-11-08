@@ -701,8 +701,33 @@ const PEINTURES = {
                      qui dépasse (vignettes carrées), false pour
                      voir la photo entière (visionneuse).
    ------------------------------------------------------------ */
+/* Les vraies photos déposées dans 11/assets/ : on les liste ici.
+   Si une clé figure dans cette liste, la photo réelle remplace
+   la peinture SVG. Les autres restent peintes. */
+const PHOTOS_REELLES = [
+    "appartement_nuit", "chat", "cle_pierres", "deux_filles", "ferry",
+    "fjord_juillet", "fleurs_porte", "fond_ecran", "grues", "hornbrucke",
+    "kiosque", "lampadaire_brume", "noir_presque", "phare_bulk",
+    "porte_bleue", "porte_ouverte", "quai_nuit", "velo_bleu",
+];
+
 function peindre(clef, options) {
     const o = options || {};
+
+    if (PHOTOS_REELLES.indexOf(clef) !== -1) {
+        const cadre = el("div", { classe: "photo-peinte photo-reelle" });
+        cadre.appendChild(el("img", {
+            attrs: { src: "assets/" + clef + ".jpg", alt: "", loading: "lazy" },
+            style: {
+                width: "100%",
+                height: "100%",
+                objectFit: o.recadre ? "cover" : "contain",
+                display: "block",
+            },
+        }));
+        return cadre;
+    }
+
     const p = PEINTURES[clef] || PEINTURES.manquante;
 
     const ratio = o.recadre ? "xMidYMid slice" : "xMidYMid meet";

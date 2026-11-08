@@ -148,21 +148,46 @@ function ecranCarnet(corps) {
                et aucun moyen de savoir où aller — c'est ce qui
                est arrivé à la première vraie partie.) */
             const ouYAller = function () {
+
+                /* Si la réponse dépend d'une question que Mira
+                   doit poser, et qu'on a déjà tout ce qu'il
+                   faut pour y répondre : on va la lui demander.
+                   ⚠️ Sans ça, une question du dossier pouvait
+                   rester bloquée pour toujours parce que le
+                   scénario avait raté son déclenchement. */
+                if (question.deduction && typeof SCENARIO !== "undefined") {
+                    const deduction = ENQUETE.deduction(question.deduction);
+                    const prete = deduction && !ETAT.deductions[deduction.id] &&
+                        deduction.requis.every(function (id) { return ENQUETE.a(id); });
+
+                    if (prete) { SCENARIO.forcerQuestion(deduction); return; }
+                }
+
                 if (question.ecran) { question.ecran(); return; }
                 if (question.cible) OS.ouvrirApp(question.cible);
             };
 
+            /* le libellé change selon ce qui manque */
+            let libelleAction = "aller chercher →";
+
+            if (question.deduction) {
+                const deduction = ENQUETE.deduction(question.deduction);
+                const prete = deduction && deduction.requis.every(function (id) { return ENQUETE.a(id); });
+                if (prete) libelleAction = "en parler à Mira →";
+            }
+
             const ligneQuestion = el("div", {
                 classe: "question-ligne" + (repondue ? " question-ligne--repondue" : ""),
-                auClic: (!repondue && (question.ecran || question.cible)) ? ouYAller : null,
+                auClic: (!repondue && (question.ecran || question.cible || question.deduction))
+                    ? ouYAller : null,
             }, [
                 el("span", { classe: "question-puce", texte: repondue ? "✓" : "?" }),
                 el("div", {}, [
                     el("div", { classe: "question-texte", texte: question.texte }),
                     repondue
                         ? el("div", { classe: "question-reponse", texte: question.reponse })
-                        : ((question.ecran || question.cible)
-                            ? el("div", { classe: "question-action", texte: "aller chercher →" })
+                        : ((question.ecran || question.cible || question.deduction)
+                            ? el("div", { classe: "question-action", texte: libelleAction })
                             : null),
                 ]),
             ]);

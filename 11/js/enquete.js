@@ -544,6 +544,7 @@ const DOSSIER = [
                 id: "q_soiree",
                 texte: "Que faisait-elle, ce soir-là ?",
                 repondue: function () { return ETAT.deductions.d_mensonge === true; },
+                deduction: "d_mensonge",
                 reponse: "Elle a menti à Mira. Elle était en repos, dehors, avec son appareil.",
                 cible: "calendrier",
                 aide: "Son agenda, au 8 novembre. Puis Mira te posera la question.",
@@ -560,6 +561,7 @@ const DOSSIER = [
                 id: "q_rentree",
                 texte: "Est-elle rentrée chez elle ?",
                 repondue: function () { return ETAT.deductions.d_rentree === true || ETAT.chronoValidee; },
+                deduction: "d_rentree",
                 reponse: "Oui. 1 h 14, wifi de l'appartement. Elle n'a pas disparu dehors.",
                 cible: "reglages",
                 aide: "Réglages → Wi-Fi, et l'application Santé.",
@@ -622,6 +624,7 @@ const DOSSIER = [
                 id: "q_enleve",
                 texte: "Est-ce lui qui l'a prise ?",
                 repondue: function () { return ETAT.deductions.d_pas_enleve === true; },
+                deduction: "d_pas_enleve",
                 reponse: "Non. Il la croyait chez elle, et il la cherche encore.",
                 cible: "messages",
                 aide: "Relis ce que Tobias écrit APRÈS le 8, et le journal du mouchard.",
@@ -636,6 +639,7 @@ const DOSSIER = [
                 id: "q_preparait",
                 texte: "Qu'est-ce qu'elle préparait ?",
                 repondue: function () { return ETAT.deductions.d_fuite === true; },
+                deduction: "d_fuite",
                 reponse: "Son départ. Depuis des semaines, seule, sans le dire.",
                 cible: "calendrier",
                 aide: "Son agenda de novembre, et les mails de sa banque.",
@@ -654,6 +658,7 @@ const DOSSIER = [
                 id: "q_telephone",
                 texte: "Pourquoi laisser son téléphone ?",
                 repondue: function () { return ETAT.deductions.d_telephone_laisse === true; },
+                deduction: "d_telephone_laisse",
                 reponse: "Un téléphone qui bouge, c'est une adresse. Un téléphone qui reste, c'est quelqu'un qui dort chez lui.",
                 cible: "photos",
                 aide: "Il manque une moitié : ce qu'elle a effacé en rentrant. Photos → Récemment supprimés.",
@@ -668,6 +673,7 @@ const DOSSIER = [
                 id: "q_oma",
                 texte: "Est-elle chez sa grand-mère ?",
                 repondue: function () { return ETAT.deductions.d_eckernforde === true; },
+                deduction: "d_eckernforde",
                 reponse: "Non, la maison est vendue depuis mai. Mais il reste une cabane.",
                 cible: "mail",
                 aide: "Mail → le message d'Oma, en mai. Lis-le jusqu'au bout.",
@@ -972,9 +978,23 @@ const ENQUETE = {
 
         if (objectifsRestants.length === 0) {
             const question = this.questionSansReponse();
+
             if (question) {
+                /* si on a déjà tout pour conclure, c'est à Mira
+                   qu'il faut en parler, pas ailleurs */
+                if (question.deduction) {
+                    const deduction = this.deduction(question.deduction);
+                    const prete = deduction && deduction.requis.every(function (id) {
+                        return ENQUETE.a(id);
+                    });
+                    if (prete) {
+                        return "« " + question.texte + " » — tu as tout ce qu'il faut. Appuie sur la question dans le carnet, on en parle.";
+                    }
+                }
+
                 return "« " + question.texte + " » — " + (question.aide || "cherche encore.");
             }
+
             return "Tout est dans le dossier. Il ne manque plus rien.";
         }
 

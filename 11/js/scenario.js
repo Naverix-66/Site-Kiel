@@ -32,6 +32,7 @@ const SCENARIO = {
        auxquels on ne comprenait rien.
        Le compteur ne retombe à zéro que quand TOUT est fini. */
     occupe: 0,
+    derniereActivite: 0,
     dernierIndice: Date.now(),
     derniereAide: 0,
 
@@ -163,7 +164,37 @@ const SCENARIO = {
     /* ========================================================
        LE MOTEUR DE SCÈNES
        ======================================================== */
+    /* --------------------------------------------------------
+       forcerQuestion(deduction)
+       --------------------------------------------------------
+       Depuis le carnet : « demande-lui ». On ouvre la
+       conversation et Mira pose la question tout de suite, même
+       si le scénario avait raté son déclenchement.
+       -------------------------------------------------------- */
+    forcerQuestion: function (deduction) {
+        if (!deduction || ETAT.deductions[deduction.id]) return;
+
+        this.enCours = null;
+        this.occupe = 0;
+        this.ecritDans = null;
+
+        allerAuFil("mira");
+        plusTard(function () { SCENARIO.poserLaQuestion(deduction); }, 500);
+    },
+
+
     verifier: function () {
+
+        /* Garde-fou : si le compteur est resté bloqué sans la
+           moindre activité pendant une demi-minute, c'est qu'une
+           suite de répliques s'est interrompue en chemin. On le
+           remet à zéro plutôt que de figer la partie. */
+        if (this.occupe > 0 && this.derniereActivite &&
+            Date.now() - this.derniereActivite > 30000) {
+            this.occupe = 0;
+            this.ecritDans = null;
+        }
+
 
         // Les actes avancent TOUJOURS, même si Mira attend une
         // réponse qui ne vient pas. (Première version : le
@@ -212,6 +243,7 @@ const SCENARIO = {
     jouer: async function (scene) {
 
         this.occupe++;
+        this.derniereActivite = Date.now();
 
         /* La scène n'est marquée « jouée » qu'à la FIN (plus bas).
            Si la page est rechargée au milieu, elle se rejoue en
@@ -395,32 +427,43 @@ const SCENARIO = {
     repondre: async function (fil, repliques, apres) {
 
         this.occupe++;
+        this.derniereActivite = Date.now();
 
-        for (let i = 0; i < repliques.length; i++) {
+        /* ⚠️ try/finally : si quoi que ce soit lève une erreur au
+           milieu d'une réplique, le compteur doit redescendre.
+           Sans ça, il restait bloqué au-dessus de zéro et TOUT
+           le scénario se figeait en silence — plus une question,
+           plus une scène, pour le reste de la partie. */
+        try {
+            for (let i = 0; i < repliques.length; i++) {
 
-            // une pause pure, sans message (comme dans jouer())
-            if (repliques[i].pause) {
-                await attendre(repliques[i].pause);
-                continue;
+                if (repliques[i].pause) {
+                    await attendre(repliques[i].pause);
+                    continue;
+                }
+
+                this.ecritDans = fil;
+                this.rafraichirSiVisible(fil);
+
+                await attendre(repliques[i].delai || DELAI_AVANT_REPONSE_MIRA);
+
+                this.ecritDans = null;
+                this.envoyer(fil, repliques[i].txt);
+
+                await attendre(380);
             }
 
-            this.ecritDans = fil;
-            this.rafraichirSiVisible(fil);
+            /* apres() AVANT de relâcher : c'est souvent lui qui
+               enchaîne la suite de la conversation, et il doit la
+               démarrer pendant que le verrou tient encore. */
+            if (apres) apres();
 
-            await attendre(repliques[i].delai || DELAI_AVANT_REPONSE_MIRA);
-
+        } finally {
             this.ecritDans = null;
-            this.envoyer(fil, repliques[i].txt);
-
-            await attendre(380);
+            this.occupe = Math.max(0, this.occupe - 1);
+            this.derniereActivite = Date.now();
         }
 
-        /* apres() AVANT de relâcher : c'est souvent lui qui
-           enchaîne la suite de la conversation, et il doit la
-           démarrer pendant que le verrou tient encore. */
-        if (apres) apres();
-
-        this.occupe = Math.max(0, this.occupe - 1);
         plusTard(function () { SCENARIO.verifier(); }, 900);
     },
 
