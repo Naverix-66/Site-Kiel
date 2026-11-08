@@ -244,11 +244,12 @@ const PUBLICATIONS = [
     {
         id: "t01", auteur: "tobias", peinture: "quai_nuit", t: "14/11 19:02",
         lieu: "Kiel",
-        legende: "si quelqu'un l'a vue, qu'il me le dise. je ne dors plus.",
+        legende: "les gens croient qu'on peut disparaître. on peut pas. si quelqu'un l'a vue, qu'il me le dise.",
         jaime: 12,
         indice: "ex_cherche_aussi",
         commentaires: [
             { de: "mira.lq", txt: "arrête d'écrire sur elle." },
+            { de: "t.reh", lui: true, txt: "tu me parleras autrement quand on l'aura retrouvée." },
             { de: "lisbeth.g", txt: "courage Tobias 🙏" },
         ],
     },

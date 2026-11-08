@@ -19,6 +19,7 @@ function etatNeuf() {
 
         /* --- où on en est dans l'histoire --- */
         acte: 0,                  // 0 = l'enveloppe, 1 à 4 = les actes, 5 = épilogue
+        prologueVu: false,        // la nuit du 8, sur le téléphone de la joueuse
         enveloppeOuverte: false,
         motLu: false,
         photoRetournee: false,

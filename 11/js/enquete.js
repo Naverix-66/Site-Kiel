@@ -188,6 +188,11 @@ const INDICES = {
         quoi: "Jonas : « il y a la cabane du grand-père, mais elle y va jamais. »",
         ou: "Messages → Jonas",
     },
+    menace_depart: {
+        acte: 2, app: "messages", quand: "07/11",
+        quoi: "La veille, il écrit : « si tu pars, je te retrouve. » Puis la liste de ce qu'il peut atteindre.",
+        ou: "Messages → Tobias",
+    },
     double_cle: {
         acte: 2, app: "photos", quand: "21/09",
         quoi: "Il s'est fait un double de ses clés. Il le lui a annoncé comme on offre un cadeau.",
@@ -449,7 +454,7 @@ const DEDUCTIONS = [
     {
         id: "d_fuite", acte: 2, objectif: "o_fuite",
         requis: ["rdv_avocate", "retraits"],
-        question: "une avocate, 600 € en liquide… qu'est-ce qu'elle préparait ?",
+        question: "une avocate, 600 € en liquide, et lui qui écrit « si tu pars je te retrouve »… qu'est-ce qu'elle préparait ?",
         reponses: [
             { id: "f1", txt: "Son départ. Depuis des semaines.", bonne: true },
             { id: "f2", txt: "Un procès contre lui." },

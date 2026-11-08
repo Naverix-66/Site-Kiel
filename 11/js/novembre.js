@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Code du téléphone :", CODE_TELEPHONE);
         console.log("Album privé :", CODE_ALBUM_PRIVE, "— Mouchard :", CODE_MOUCHARD, "— Coffre :", MOT_DU_COFFRE);
 
+        ETAT.prologueVu = true;
         ETAT.enveloppeOuverte = true;
         ETAT.motLu = true;
         ETAT.photoRetournee = true;
@@ -35,6 +36,14 @@ document.addEventListener("DOMContentLoaded", function () {
     if (ETAT.telephoneDeverrouille) {
         OS.dessinerAccueil();
         SCENARIO.demarrer();
+        return;
+    }
+
+    /* Toute première fois : la nuit du 8, sur SON téléphone à
+       elle. C'est là qu'elle reçoit le message perdu et qu'elle
+       y répond — onze jours avant de recevoir l'enveloppe. */
+    if (!ETAT.prologueVu) {
+        PROLOGUE.commencer();
         return;
     }
 

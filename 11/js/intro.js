@@ -44,6 +44,18 @@ const INTRO = {
 
     zone: null,
 
+    /* L'acte 0 vit dans sa propre couche, par-dessus le
+       téléphone. On la recrée au besoin : on peut revenir au
+       mot depuis le pavé de code, alors qu'elle a été enlevée. */
+    assurerZone: function () {
+        if (this.zone && this.zone.parentNode) return this.zone;
+
+        this.zone = el("div", { classe: "acte0" });
+        document.getElementById("ecran").appendChild(this.zone);
+        return this.zone;
+    },
+
+
     /* ========================================================
        commencer()
        ========================================================
@@ -51,8 +63,7 @@ const INTRO = {
        ======================================================== */
     commencer: function () {
 
-        this.zone = el("div", { classe: "acte0" });
-        document.getElementById("ecran").appendChild(this.zone);
+        this.assurerZone();
 
         if (ETAT.telephoneDeverrouille) {
             // partie déjà commencée : on ne rejoue pas l'enveloppe
@@ -122,6 +133,7 @@ const INTRO = {
        -------------------------------------------------------- */
     ecranMot: function () {
 
+        this.assurerZone();
         vide(this.zone);
 
         const papier = el("div", { classe: "mot" });
@@ -181,6 +193,7 @@ const INTRO = {
        -------------------------------------------------------- */
     ecranPhoto: function () {
 
+        this.assurerZone();
         vide(this.zone);
 
         this.zone.appendChild(el("div", { classe: "acte0-titre", texte: "Dans l'enveloppe" }));
@@ -224,6 +237,12 @@ const INTRO = {
         this.zone.appendChild(photo);
         this.zone.appendChild(consigne);
 
+        this.zone.appendChild(el("div", {
+            classe: "acte0-lien cliquable",
+            texte: "relire le mot",
+            auClic: function () { INTRO.ecranMot(); },
+        }));
+
         if (ETAT.photoRetournee) {
             vide(consigne);
             consigne.appendChild(bouton("Allumer le téléphone", function () {
@@ -249,8 +268,15 @@ const INTRO = {
 
         OS.demanderCode({
             titre: "Saisir le code",
-            indice: "Quatre chiffres. « Son code, c'était toujours la date de la photo qu'elle gardait sur elle. »",
+            indice: "Quatre chiffres. « Le code, c'est la date de la photo. »",
             bonCode: CODE_TELEPHONE,
+
+            /* On peut toujours retourner lire le mot et retourner
+               la photo : rien n'est pire que d'être coincée
+               devant un pavé numérique en ayant oublié l'indice. */
+            libelleAnnule: "Le mot",
+            annule: function () { INTRO.ecranPhoto(); },
+
             reussi: function () { INTRO.terminer(false); },
             rate: function () {
                 // Au troisième échec, le mot de Mira revient à l'écran.

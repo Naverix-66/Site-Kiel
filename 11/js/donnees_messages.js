@@ -98,15 +98,21 @@ const FILS = [
        Serrurier. Il ouvre les portes des gens pour vivre, et il
        trouve ça normal.
 
-       Règle d'écriture pour lui, et on ne s'en écarte jamais :
-       il ne menace pas, il ne crie pas, il n'insulte pas. Il
-       s'inquiète. Il rend service. Il s'excuse. Et il sait des
-       choses qu'il ne devrait pas savoir — l'heure à laquelle
-       elle éteint, la boulangerie où elle va, le prénom de la
-       personne chez qui elle a dormi.
+       C'est LE méchant de l'histoire, et il fonctionne en
+       cycle — c'est ce cycle qui est insupportable à lire :
 
-       C'est ça qui fait peur : il est gentil, tout le monde
-       l'aime bien, et il a un double de ses clés.
+         il rend service  →  il surveille  →  il reproche  →
+         il menace  →  il s'excuse  →  il rend service…
+
+       Il sait des choses qu'il ne devrait pas savoir. Il le dit
+       calmement. Et quand elle résiste, il énumère ce qu'il
+       peut atteindre : son frère, son labo, sa grand-mère, son
+       chat, sa porte. Il n'a jamais besoin de lever la main.
+
+       Deux garde-fous d'écriture : aucune violence physique
+       n'est décrite, et il ne sait JAMAIS où elle est. Il reste
+       un homme qui menace dans le vide — c'est ça qui le rend
+       à la fois terrifiant et pathétique.
        ======================================================== */
     {
         id: "tobias",
@@ -130,9 +136,28 @@ const FILS = [
             { de: "moi", t: "05/11 23:52", txt: "arrête" },
             { de: "eux", t: "05/11 23:52", txt: "je m'inquiète. c'est tout." },
             { de: "moi", t: "05/11 23:55", txt: "ne m'écris plus" },
-            { de: "eux", t: "05/11 23:56", txt: "ok" },
+            { de: "eux", t: "05/11 23:56", txt: "ne me parle pas comme ça" },
+            { de: "eux", t: "05/11 23:57", txt: "je t'ai attendue deux heures devant le labo mardi. deux heures." },
+            { de: "eux", t: "05/11 23:58", txt: "tu me fais passer pour un con devant tout le monde et c'est moi le problème" },
             { de: "eux", t: "06/11 00:02", txt: "ok" },
+            { de: "eux", t: "06/11 00:03", txt: "ok" },
             { de: "eux", t: "06/11 00:19", txt: "tu as éteint ta lampe à 00h12. dors bien." },
+
+            { de: "eux", t: "06/11 04:40", txt: "tu as beaucoup bougé cette nuit. tu cherchais quelque chose ?" },
+
+            /* --- le 7 : il dit tout haut ce qu'il peut atteindre --- */
+            { de: "eux", t: "07/11 21:02", txt: "je sais que tu prépares quelque chose" },
+            {
+                de: "eux", t: "07/11 21:04",
+                txt: "alors je te dis un truc une fois. si tu pars, je te retrouve.",
+                indice: "menace_depart",
+            },
+            { de: "eux", t: "07/11 21:04", txt: "c'est pas une menace. c'est juste comme ça." },
+            { de: "eux", t: "07/11 21:09", txt: "ton frère bosse le mardi. ta grand mère est à Eckernförde. ton labo ferme à 18h. je sais tout ça depuis des mois et j'ai jamais rien fait de mal." },
+            { de: "eux", t: "07/11 21:11", txt: "et je peux ouvrir ta porte en quatre minutes. tu le sais aussi." },
+            { de: "moi", t: "07/11 21:40", txt: "qu'est-ce que tu veux" },
+            { de: "eux", t: "07/11 21:41", txt: "que tu arrêtes de me mentir. c'est tout ce que j'ai jamais demandé." },
+            { de: "eux", t: "07/11 23:58", txt: "pardon pour tout à l'heure. j'étais fatigué. tu sais que je suis pas comme ça." },
 
             {
                 de: "eux", t: "08/11 22:49", txt: "pourquoi tu raccroches",
@@ -144,13 +169,19 @@ const FILS = [
 
             /* --- après : il écrit encore. Donc il ne sait pas. --- */
             { de: "eux", t: "10/11 07:15", txt: "ta porte est fermée à double tour. ce n'est pas ton habitude." },
-            { de: "eux", t: "12/11 20:10", txt: "je suis passé. mira ne m'a pas ouvert. je comprends." },
-            { de: "eux", t: "12/11 20:14", txt: "j'ai laissé de quoi manger devant la porte. prends le avant les mouettes." },
+            { de: "eux", t: "11/11 03:12", txt: "OÙ EST-CE QUE TU ES" },
+            { de: "eux", t: "11/11 03:14", txt: "pardon. j'ai pas dormi." },
+            { de: "eux", t: "12/11 20:10", txt: "je suis passé. mira ne m'a pas ouvert." },
+            { de: "eux", t: "12/11 20:13", txt: "dis lui que je sais qu'elle sait." },
+            { de: "eux", t: "13/11 19:30", txt: "tu as pris le chat." },
+            { de: "eux", t: "13/11 19:31", txt: "donc tu es partie. donc tu me mentais depuis des semaines, en me regardant dans les yeux." },
+            { de: "eux", t: "13/11 19:44", txt: "après tout ce que j'ai fait pour toi." },
             {
                 de: "eux", t: "14/11 02:44", txt: "dis juste que tu es vivante",
                 indice: "tobias_ecrit_apres",
             },
             { de: "eux", t: "14/11 02:51", txt: "je sais que je suis trop. je travaille là dessus. vraiment." },
+            { de: "eux", t: "14/11 02:52", txt: "reviens et je change. tu me connais." },
             { de: "eux", t: "16/11 13:02", txt: "la police m'a appelé. je leur ai dit que je savais pas où tu étais." },
             { de: "eux", t: "16/11 13:03", txt: "c'est la première fois en sept mois que c'est vrai." },
         ],

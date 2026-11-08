@@ -406,7 +406,13 @@ const OS = {
 
         vide(this.barreStatut);
 
-        this.barreStatut.appendChild(el("div", { classe: "statut-heure", texte: heureReelle() }));
+        /* heureForcee : le prologue se passe la nuit du 8 à 23 h.
+           On ment à l'horloge pendant ce moment-là, et elle
+           reprend l'heure réelle ensuite. */
+        this.barreStatut.appendChild(el("div", {
+            classe: "statut-heure",
+            texte: this.heureForcee || heureReelle(),
+        }));
 
         const batterie = el("div", {
             classe: "statut-batterie" + (ETAT.batterie <= 20 ? " statut-batterie--faible" : ""),
@@ -980,7 +986,9 @@ const OS = {
                 }));
             }
             if (toucheTexte) {
-                toucheTexte.textContent = saisie.length > 0 ? "Effacer" : (o.annule ? "Annuler" : "");
+                toucheTexte.textContent = saisie.length > 0
+                    ? "Effacer"
+                    : (o.annule ? (o.libelleAnnule || "Annuler") : "");
             }
         };
 
@@ -1056,7 +1064,7 @@ const OS = {
 
         toucheTexte = el("div", {
             classe: "pave-touche pave-touche--texte",
-            texte: o.annule ? "Annuler" : "",
+            texte: o.annule ? (o.libelleAnnule || "Annuler") : "",
             auClic: function () {
                 if (saisie.length > 0) {
                     SONS.tape();

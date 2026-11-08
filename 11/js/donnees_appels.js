@@ -67,10 +67,12 @@ const REPONDEUR = [
         contact: "tobias",
         t: "12/11 20:28",
         duree: "0:22",
-        transcription: "C'est moi. Je suis en bas. La lumière du salon est allumée et le rideau de la cuisine est tiré du mauvais côté, " +
+        transcription: "Je suis en bas. La lumière du salon est allumée et le rideau de la cuisine est tiré du mauvais côté, " +
             "comme quand c'est Mira qui le ferme. Donc tu n'es pas là. " + "\n" +
             "(silence de six secondes) " + "\n" +
-            "Je ne monte pas, hein. Je dis juste que je sais.",
+            "Tu sais que je peux monter quand je veux. Je le fais pas. Je veux que tu le saches, c'est tout. " + "\n" +
+            "(silence) " + "\n" +
+            "Rappelle-moi. S'il te plaît.",
     },
     {
         id: "r04",

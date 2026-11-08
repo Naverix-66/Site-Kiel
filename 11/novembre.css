@@ -3073,6 +3073,114 @@ body.autonome #barre-statut { opacity: 0; }
 
 
 /* ============================================================
+   9 bis. LE PROLOGUE — la nuit du 8, sur le téléphone de la joueuse
+   ============================================================ */
+
+.prologue {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    background: var(--nuit);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.prologue--noir { background: #000; }
+
+/* le carton de date */
+.carton {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #000;
+    transition: opacity 0.7s ease;
+}
+
+.carton--part { opacity: 0; }
+
+.carton-jour {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--texte-gris);
+    opacity: 0;
+    animation: ligne-apparait 0.9s ease 0.3s forwards;
+}
+
+.carton-heure {
+    font-family: var(--police-papier);
+    font-size: 46px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    opacity: 0;
+    animation: ligne-apparait 0.9s ease 1.1s forwards;
+}
+
+.carton-lieu {
+    font-size: 13px;
+    color: var(--texte-faible);
+    opacity: 0;
+    animation: ligne-apparait 0.9s ease 2s forwards;
+}
+
+/* le défilement automatique : on regarde, on ne touche pas */
+.kiek-pile--auto { pointer-events: none; }
+
+.prologue-bannieres {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 8px);
+    left: 0;
+    right: 0;
+    padding: 0 10px;
+    z-index: 10;
+}
+
+.banniere--prologue { animation: banniere-entree 0.45s cubic-bezier(0.2, 1.2, 0.4, 1); }
+
+/* la barre de saisie du prologue : le texte est déjà écrit */
+.barre-saisie--prologue { gap: 8px; }
+
+.faux-champ--pret {
+    color: var(--texte);
+    border-color: rgba(10, 132, 255, 0.5);
+}
+
+.bouton-envoyer {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--bleu);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: respire-bouton 1.6s ease-in-out infinite;
+}
+
+.bouton-envoyer .glyphe { width: 17px; height: 17px; }
+.bouton-envoyer:active { opacity: 0.6; }
+
+@keyframes respire-bouton {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(10, 132, 255, 0.5); }
+    50% { transform: scale(1.06); box-shadow: 0 0 0 7px rgba(10, 132, 255, 0); }
+}
+
+/* le petit lien discret de l'acte 0 */
+.acte0-lien {
+    margin-top: 14px;
+    font-size: 13px;
+    color: rgba(251, 243, 238, 0.45);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+
+/* ============================================================
    10. ACTE 0 — L'ENVELOPPE
    ============================================================ */
 

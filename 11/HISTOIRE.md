@@ -106,17 +106,30 @@ La clé est sous la troisième pierre.
 
 ## Comment on écrit Tobias
 
-C'est le personnage le plus difficile du jeu, et la règle tient en une ligne :
-**il ne menace jamais.**
+C'est **le méchant de l'histoire**, et il fonctionne en cycle. C'est ce cycle,
+plus que n'importe quelle phrase, qui est insupportable à lire :
 
-Il s'inquiète. Il rend service. Il s'excuse. Il répare le joint de la porte en
-passant. Il change la serrure du kiosque et refuse d'être payé. Il apporte à
-manger devant chez elle quand elle a disparu. Tout le monde l'aime bien —
-Lisbeth écrit « il est adorable franchement », et c'est elle qui a raison selon
-tout le monde sauf Lena.
+> il rend service → il surveille → il reproche → **il menace** → il s'excuse →
+> il rend service…
 
-Ce qui fait peur chez lui, ce n'est jamais ce qu'il dit, c'est **ce qu'il
-sait** :
+Il répare le joint de sa porte en passant. Il change la serrure du kiosque et
+refuse d'être payé — Lisbeth écrit « il est adorable franchement ». Puis, le
+7 novembre :
+
+> **si tu pars, je te retrouve.**
+> c'est pas une menace. c'est juste comme ça.
+> ton frère bosse le mardi. ta grand mère est à Eckernförde. ton labo ferme à
+> 18h. je sais tout ça depuis des mois et j'ai jamais rien fait de mal.
+> et je peux ouvrir ta porte en quatre minutes. tu le sais aussi.
+
+Puis, deux heures après : *« pardon pour tout à l'heure. j'étais fatigué. tu
+sais que je suis pas comme ça. »*
+
+Et quand elle a disparu : « OÙ EST-CE QUE TU ES » à 3 h du matin, « pardon, j'ai
+pas dormi » deux minutes plus tard, « dis à Mira que je sais qu'elle sait », et
+enfin « reviens et je change, tu me connais ».
+
+L'autre moitié de la peur, c'est **ce qu'il sait** :
 
 - « tu as changé de boulangerie »
 - « tu as éteint ta lampe à 00 h 12. dors bien. »
@@ -136,9 +149,10 @@ Son métier n'est pas un détail : **serrurier**. Il entre où il veut, et c'est
 son travail. Sur Fjordgram il photographie des portes. Sous l'une d'elles :
 « une porte, c'est juste une question de temps. 4 minutes celle-là. »
 
-⚠️ Ce qu'on ne fait JAMAIS avec lui : crier, insulter, frapper, menacer
-explicitement. À la seconde où il devient un méchant de film, il cesse de faire
-peur.
+⚠️ Les deux seules limites qu'on garde : **aucune violence physique n'est
+décrite**, et **il ne sait jamais où elle est**. Il menace dans le vide — c'est
+ce qui le rend à la fois terrifiant et, à la toute fin, pathétique. Le dossier
+qu'on envoie à Me Vogt est la seule chose qui lui répond.
 
 ---
 
