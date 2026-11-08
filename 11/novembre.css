@@ -677,7 +677,28 @@ body.autonome #barre-statut { opacity: 0; }
     /* on garde le défilement vertical au doigt, mais on se
        réserve l'horizontal : c'est notre geste de retour */
     touch-action: pan-y;
+    /* l'ombre portée à gauche : on sent qu'il y a quelque chose
+       dessous, même quand l'app couvre tout */
+    box-shadow: -14px 0 40px rgba(0, 0, 0, 0.55);
+    transform-origin: center 62%;
 }
+
+/* L'écran d'accueil recule pendant qu'une application est
+   ouverte : un rien d'échelle et de lumière en moins, et les
+   deux plans se décollent. C'est tout ce qu'il faut. */
+.accueil--derriere {
+    transform: scale(0.94);
+    filter: brightness(0.72);
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), filter 0.32s ease;
+}
+
+#accueil {
+    transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), filter 0.32s ease;
+    transform-origin: center 58%;
+}
+
+/* une vue empilée porte elle aussi son ombre */
+.vue + .vue { box-shadow: -10px 0 30px rgba(0, 0, 0, 0.45); }
 
 .app--clair { background: var(--creme); color: var(--encre); }
 

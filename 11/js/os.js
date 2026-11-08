@@ -235,7 +235,13 @@ const OS = {
             dessous = null;
         };
 
-        this.scene.addEventListener("pointerdown", function (evenement) {
+        /* ⚠️ On écoute sur l'ÉCRAN, pas sur la scène.
+           La barre blanche du bas est en dehors de la scène :
+           un glissé qui partait d'elle n'arrivait jamais
+           jusqu'ici. C'est pour ça que le geste « remonter pour
+           revenir à l'accueil » ne marchait qu'une fois sur
+           trois — il fallait partir juste au-dessus de la barre. */
+        this.ecran.addEventListener("pointerdown", function (evenement) {
             if (self.verrouille) return;
             if (!self.appOuverte) return;
 
@@ -243,7 +249,7 @@ const OS = {
             mode = null;
         });
 
-        this.scene.addEventListener("pointermove", function (evenement) {
+        this.ecran.addEventListener("pointermove", function (evenement) {
             if (!depart) return;
 
             const dx = evenement.clientX - depart.x;
@@ -253,7 +259,10 @@ const OS = {
             if (!mode) {
                 if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
 
-                const hauteur = self.scene.clientHeight;
+                /* le bas de l'écran, mesuré en vraies coordonnées
+                   de page : la zone de la barre blanche */
+                const cadre = self.ecran.getBoundingClientRect();
+                const zoneDuBas = cadre.bottom - 52;
 
                 if (depart.x <= LARGEUR_BORD && dx > 0 && Math.abs(dx) > Math.abs(dy)) {
                     const elements = elementsDuGeste();
@@ -266,8 +275,9 @@ const OS = {
                     poser(glissant, "transition", "none");
                     poser(dessous, "transition", "none");
 
-                } else if (depart.y > hauteur - 60 && dy < 0 && Math.abs(dy) > Math.abs(dx)) {
+                } else if (depart.y > zoneDuBas && dy < 0 && Math.abs(dy) > Math.abs(dx)) {
                     mode = "accueil";
+                    evenement.preventDefault();
 
                 } else {
                     mode = "abandon";     // c'est un défilement ordinaire
@@ -286,6 +296,27 @@ const OS = {
                     poser(dessous, "filter", "brightness(" + (0.72 + 0.28 * part) + ")");
                 }
             }
+
+            /* Le glissé vers l'accueil : l'application rétrécit
+               sous le doigt et ses coins s'arrondissent, pendant
+               que l'écran d'accueil revient vers nous. C'est ce
+               mouvement-là qui donne l'impression que les deux
+               sont à des profondeurs différentes. */
+            if (mode === "accueil" && self.elementApp) {
+                evenement.preventDefault();
+
+                const part = Math.min(Math.max(0, -dy) / 220, 1);
+
+                poser(self.elementApp, "transition", "none");
+                poser(self.elementApp, "transform", "scale(" + (1 - part * 0.14).toFixed(3) + ")");
+                poser(self.elementApp, "border-radius", Math.round(part * 34) + "px");
+
+                if (self.elementAccueil) {
+                    poser(self.elementAccueil, "transition", "none");
+                    poser(self.elementAccueil, "transform", "scale(" + (0.94 + part * 0.06).toFixed(3) + ")");
+                    poser(self.elementAccueil, "filter", "brightness(" + (0.72 + part * 0.28).toFixed(2) + ")");
+                }
+            }
         });
 
         const relacher = function (evenement) {
@@ -302,10 +333,53 @@ const OS = {
                 return;
             }
 
-            if (mode === "accueil" && -dy > SEUIL_ACCUEIL) {
+            if (mode === "accueil") {
+                const valide = -dy > SEUIL_ACCUEIL || (duree < 300 && -dy > 30);
+
+                if (valide) {
+                    // l'app finit de rétrécir, puis disparaît
+                    poser(self.elementApp, "transition", "transform 0.24s ease, opacity 0.24s ease");
+                    poser(self.elementApp, "transform", "scale(0.82)");
+                    poser(self.elementApp, "opacity", "0");
+
+                    if (self.elementAccueil) {
+                        poser(self.elementAccueil, "transition", "transform 0.3s ease, filter 0.3s ease");
+                        poser(self.elementAccueil, "transform", "scale(1)");
+                        poser(self.elementAccueil, "filter", "brightness(1)");
+                    }
+
+                    plusTard(function () {
+                        self.fermerApp({ glisse: true, silencieux: true });
+                    }, 220);
+
+                    SONS.retour();
+
+                } else {
+                    // on repose tout en place
+                    poser(self.elementApp, "transition", "transform 0.22s ease, border-radius 0.22s ease");
+                    poser(self.elementApp, "transform", "scale(1)");
+                    poser(self.elementApp, "border-radius", "0px");
+
+                    if (self.elementAccueil) {
+                        poser(self.elementAccueil, "transition", "transform 0.22s ease, filter 0.22s ease");
+                        poser(self.elementAccueil, "transform", "scale(0.94)");
+                        poser(self.elementAccueil, "filter", "brightness(0.72)");
+                    }
+
+                    const app = self.elementApp;
+                    const accueil = self.elementAccueil;
+                    plusTard(function () {
+                        retirer(app, "transition");
+                        retirer(app, "transform");
+                        retirer(app, "border-radius");
+                        retirer(accueil, "transition");
+                        retirer(accueil, "transform");
+                        retirer(accueil, "filter");
+                    }, 240);
+                }
+
                 depart = null;
                 mode = null;
-                self.fermerApp();
                 return;
             }
 
@@ -420,6 +494,10 @@ const OS = {
         if (this.elementAccueil && this.elementAccueil.parentNode) {
             this.elementAccueil.remove();
         }
+
+        // si une app est ouverte, l'accueil reste en arrière-plan
+        if (this.appOuverte) accueil.classList.add("accueil--derriere");
+
         this.elementAccueil = accueil;
         this.scene.insertBefore(accueil, this.scene.firstChild);
     },
@@ -547,6 +625,9 @@ const OS = {
 
         this.appOuverte = id;
         this.pile = [];
+
+        // l'écran d'accueil recule d'un cran derrière l'app
+        if (this.elementAccueil) this.elementAccueil.classList.add("accueil--derriere");
 
         this.elementApp = el("div", {
             classe: "app app--ouvrante" + (definition.clair ? " app--clair" : "") +
