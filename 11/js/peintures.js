@@ -705,7 +705,7 @@ const PEINTURES = {
    Si une clé figure dans cette liste, la photo réelle remplace
    la peinture SVG. Les autres restent peintes. */
 const PHOTOS_REELLES = [
-    "appartement_nuit", "chat", "cle_pierres", "deux_filles", "ferry",
+    "appartement_nuit", "chat_fenetre", "cle_pierres", "deux_filles", "ferry",
     "fjord_juillet", "fleurs_porte", "fond_ecran", "grues", "hornbrucke",
     "kiosque", "lampadaire_brume", "noir_presque", "phare_bulk",
     "porte_bleue", "porte_ouverte", "quai_nuit", "velo_bleu",
