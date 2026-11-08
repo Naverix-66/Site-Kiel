@@ -52,6 +52,16 @@ const SCENARIO = {
         // Et la vie du téléphone, qui continue pendant qu'on cherche.
         setInterval(function () { SCENARIO.vieDuTelephone(); }, 15000);
 
+        /* ⚠️ Un battement régulier.
+           Tout le scénario avance par déclenchements : une
+           réponse, une trace trouvée, une scène qui finit. Si
+           l'un de ces déclencheurs manque à l'appel — et il en
+           manquait un après certaines réactions de Mira — la
+           question suivante restait en attente pour toujours.
+           Ce battement de six secondes rattrape tout : il est
+           sans effet quand une conversation est en cours. */
+        setInterval(function () { SCENARIO.verifier(); }, 6000);
+
         plusTard(function () { SCENARIO.verifier(); }, 900);
     },
 
@@ -357,10 +367,14 @@ const SCENARIO = {
                     const resultat = ENQUETE.repondre(deduction.id, idReponse);
 
                     if (resultat.bon) {
-                        self.repondre("mira", [
-                            { txt: "oui." },
-                            { txt: resultat.texte },
-                        ]);
+                        /* Mira réagit avec SES mots. La phrase du
+                           carnet, elle, s'écrit dans le carnet —
+                           on ne la lui fait pas réciter. */
+                        const reaction = (deduction.reaction || ["oui."]).map(function (t) {
+                            return { txt: t };
+                        });
+                        self.repondre("mira", reaction);
+
                     } else {
                         self.repondre("mira", [
                             { txt: "non, je crois pas." },
@@ -867,18 +881,10 @@ const SCENES = [
         },
     },
 
-    {
-        id: "s3_mensonge",
-        fil: "mira",
-        quand: function () { return ETAT.deductions.d_mensonge === true; },
-        suite: [
-            { txt: "repos.", delai: 2000 },
-            { txt: "elle était en repos et elle m'a dit qu'elle bossait" },
-            { txt: "en six ans elle m'avait jamais menti. même pas pour des bêtises" },
-            { pause: 1000 },
-            { txt: "faut reprendre toute la nuit alors. c'est dans le carnet, « la nuit du 8 »" },
-        ],
-    },
+    /* ⚠️ Il y avait ici une scène « s3_mensonge » qui répétait
+       mot pour mot ce que Mira venait de répondre à la question.
+       Tout son contenu est passé dans la `reaction` de la
+       déduction d_mensonge. Ne pas la recréer. */
 
     {
         id: "s4_chrono",
@@ -943,12 +949,12 @@ const SCENES = [
         id: "s7_fuite",
         fil: "mira",
         quand: function () { return ETAT.deductions.d_fuite === true; },
+        /* (le « elle est partie » est déjà dit en réaction à la
+           déduction : ici on enchaîne seulement sur sa fausse
+           certitude) */
         suite: [
-            { txt: "d'accord", delai: 2200 },
-            { txt: "d'accord. elle est pas disparue. elle est partie" },
-            { txt: "pardon je tape mal quand je pleure" },
-            { pause: 1600 },
-            { txt: "bon. alors elle est chez sa grand mère, à Eckernförde" },
+            { txt: "bon.", delai: 3000 },
+            { txt: "alors elle est chez sa grand mère, à Eckernförde" },
             { txt: "j'en suis sûre à 100%" },
         ],
         apres: function () {
@@ -964,10 +970,10 @@ const SCENES = [
         id: "s8_eckernforde",
         fil: "mira",
         quand: function () { return ETAT.deductions.d_eckernforde === true; },
+        /* (le « vendue, en mai » est dans la réaction de la
+           déduction : ici on va directement à la suite) */
         suite: [
-            { txt: "vendue", delai: 2400 },
-            { txt: "en mai. elle me l'avait dit et j'avais oublié" },
-            { txt: "je suis vraiment nulle à ça" },
+            { txt: "bon. qu'est-ce qu'on fait maintenant", delai: 2600 },
         ],
         question: {
             reponses: [

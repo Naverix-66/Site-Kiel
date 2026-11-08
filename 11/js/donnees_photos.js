@@ -144,7 +144,7 @@ const PHOTOS = [
     {
         id: "pr05", capture: "code_tobias", t: "29/10 20:16",
         lieu: null, appareil: "Capture d'écran",
-        legende: "il tape son code devant moi comme si j'étais un meuble",
+        legende: "1908, son anniversaire. il tape son code devant moi comme si j'étais un meuble.",
         albums: ["prive"],
         indice: "capture_code_tobias",
     },

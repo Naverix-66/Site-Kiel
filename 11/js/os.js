@@ -215,7 +215,7 @@ const OS = {
                         // on retire la vue du dessus sans rejouer d'animation
                         const haut = self.pile.pop();
                         if (haut && haut.element.parentNode) haut.element.remove();
-                        self.rafraichir();
+                        plusTard(function () { self.rafraichir(); }, 60);
                     }
                 }, 250);
                 SONS.retour();
@@ -795,9 +795,13 @@ const OS = {
             plusTard(function () { dessous.element.classList.remove("vue--revient"); }, 240);
         }
 
-        // Redessiner la vue qui revient : son contenu a peut-être
-        // changé (un indice trouvé, un fil devenu lu…).
-        this.rafraichir();
+        /* ⚠️ On redessine la vue qui revient APRÈS le glissement,
+           pas pendant. Son contenu a souvent changé (un fil
+           devenu lu, une trace trouvée) et la reconstruire au
+           milieu de l'animation faisait clignoter tout l'écran :
+           on avait l'impression que l'application se fermait et
+           se rouvrait. */
+        plusTard(function () { OS.rafraichir(); }, 260);
     },
 
 

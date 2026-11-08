@@ -50,6 +50,21 @@ function grilleParJour(corps, photos, idAlbum) {
     let jourCourant = "";
     let grille = null;
 
+    /* ⚠️ Les traces portées par une photo se ramassent à
+       l'affichage de la grille, pas en ouvrant la photo. La
+       date et le lieu sont écrits en tête de chaque journée :
+       si on les a sous les yeux, on les a lus. (Même règle que
+       pour la liste des appels. L'heure exacte reste dans la
+       visionneuse pour qui veut vérifier, et le carnet la note
+       de toute façon.) */
+    plusTard(function () {
+        const aNoter = [];
+        photos.forEach(function (photo) {
+            if (photo.indice) aNoter.push(photo.indice);
+        });
+        ENQUETE.trouverPlusieurs(aNoter);
+    }, 700);
+
     photos.forEach(function (photo) {
         const jour = photo.t.split(" ")[0];
 

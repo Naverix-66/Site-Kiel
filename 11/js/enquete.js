@@ -398,7 +398,16 @@ const OBJECTIFS = [
    requis     : les traces à avoir trouvées pour que Mira demande
    question   : ce qu'elle écrit
    reponses   : deux ou trois répliques, une seule juste
-   conclusion : la phrase qui s'inscrit dans le carnet
+   reaction   : ce que MIRA répond quand c'est juste — en langage
+                parlé, et ça enchaîne sur la suite
+   conclusion : ce que LE CARNET écrit. Deux textes différents,
+                et c'est important : ⚠️ au début Mira récitait la
+                phrase du carnet (« Le 8, elle était en repos.
+                Elle a menti à Mira sur sa soirée. ») puis une
+                scène répétait la même chose juste après. On
+                lisait trois fois la même information, dont une
+                où Mira parlait d'elle-même à la troisième
+                personne.
    rate       : ce qu'elle répond si on se trompe (jamais puni :
                 elle redemande)
    ------------------------------------------------------------ */
@@ -412,6 +421,11 @@ const DEDUCTIONS = [
             { id: "m2", txt: "Oui, elle avait un service." },
             { id: "m3", txt: "Impossible à savoir." },
         ],
+        reaction: [
+            "repos.",
+            "en six ans elle m'avait jamais menti. même pas pour des bêtises",
+            "faut reprendre toute la nuit alors. c'est dans le carnet, « la nuit du 8 »",
+        ],
         conclusion: "Le 8, elle était en repos. Elle a menti à Mira sur sa soirée.",
         rate: "regarde son agenda, au 8.",
     },
@@ -423,6 +437,10 @@ const DEDUCTIONS = [
             { id: "r1", txt: "Oui. 1 h 14, wifi de l'appartement.", bonne: true },
             { id: "r2", txt: "Non, elle n'est jamais revenue." },
             { id: "r3", txt: "Elle a pris le dernier bateau." },
+        ],
+        reaction: [
+            "1h14",
+            "donc elle est rentrée et je dormais à quatre mètres",
         ],
         conclusion: "Elle est rentrée à 1 h 14. Elle n'a pas disparu dehors.",
         rate: "dans Réglages, le wifi garde l'heure de la dernière connexion.",
@@ -436,6 +454,10 @@ const DEDUCTIONS = [
             { id: "t2", txt: "Elle l'a oublié, c'est tout." },
             { id: "t3", txt: "Pour qu'on le trouve et qu'on cherche." },
         ],
+        reaction: [
+            "voilà.",
+            "elle l'a pas oublié. elle l'a posé.",
+        ],
         conclusion: "Elle a laissé le téléphone exprès : un téléphone qui bouge, c'est une adresse.",
         rate: "qu'est-ce qu'il y avait dessus qui la suivait ?",
     },
@@ -447,6 +469,11 @@ const DEDUCTIONS = [
             { id: "p1", txt: "Non. Il la cherche aussi.", bonne: true },
             { id: "p2", txt: "Oui, tout l'accuse." },
             { id: "p3", txt: "Il l'a suivie jusqu'au port." },
+        ],
+        reaction: [
+            "…",
+            "non. il la cherche aussi, et il la cherche mal.",
+            "ça me soulage et ça me dégoûte en même temps",
         ],
         conclusion: "Ce n'est pas lui : il la croyait chez elle, et il lui écrit encore le 14.",
         rate: "relis ce qu'il lui écrit APRÈS le 8. On n'écrit pas à quelqu'un qu'on a enlevé.",
@@ -460,6 +487,11 @@ const DEDUCTIONS = [
             { id: "f2", txt: "Un procès contre lui." },
             { id: "f3", txt: "Un voyage." },
         ],
+        reaction: [
+            "d'accord",
+            "elle est pas disparue. elle est partie.",
+            "pardon je tape mal quand je pleure",
+        ],
         conclusion: "Ce n'est pas une disparition, c'est une fuite préparée.",
         rate: "une procédure prend deux ans. Elle, elle a acheté une caisse de transport pour un chat.",
     },
@@ -471,6 +503,10 @@ const DEDUCTIONS = [
             { id: "e1", txt: "Non, la maison est vendue depuis mai.", bonne: true },
             { id: "e2", txt: "Oui, allons-y." },
             { id: "e3", txt: "Sa grand-mère l'aurait dit." },
+        ],
+        reaction: [
+            "vendue. en mai.",
+            "elle me l'avait dit et j'avais oublié. je suis vraiment nulle à ça",
         ],
         conclusion: "Pas Eckernförde : la maison est vendue. Mais Hanne parle d'une cabane.",
         rate: "le mail d'Oma, en mai. Jusqu'au bout.",

@@ -157,12 +157,28 @@ enregistrerApp({
         if (!estOuvert("mouchard")) {
             ENQUETE.trouver("deux_calculettes");
 
+            let echecs = 0;
+
             OS.demanderCode({
                 titre: "Code d'accès",
-                indice: "Ce n'est pas une calculatrice. Et ce n'est pas son code à elle.",
+                indice: "Ce n'est pas une calculatrice, et ce n'est pas son code à elle. " +
+                    "Elle a photographié celui de quelqu'un d'autre.",
                 bonCode: CODE_MOUCHARD,
                 sansHorloge: true,
                 annule: function () { OS.fermerApp(); },
+
+                /* Au deuxième essai raté, on dit franchement où
+                   est le code. Personne ne doit rester coincé
+                   devant un pavé numérique. */
+                rate: function () {
+                    echecs++;
+                    if (echecs < 2) return;
+
+                    OS.toast(estOuvert("albumPrive")
+                        ? "Album Privé → la capture du 29 octobre."
+                        : "Il faut d'abord ouvrir l'album Privé, dans Photos.",
+                    { info: true, icone: ICONES.info, duree: 6000 });
+                },
                 reussi: function () {
                     ouvrirVerrou("mouchard");
                     SONS.revelation();
