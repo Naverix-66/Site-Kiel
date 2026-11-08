@@ -94,6 +94,20 @@ const SCENARIO = {
     filOuvert: function (idFil) {
         if (idFil === "klara") ETAT.lus["fil:klara:lu"] = true;
         sauvegarder();
+
+        /* Une conversation qui attend qu'on y entre ? */
+        if (!this.sceneEnCours && !this.enCours) {
+            const branche = BRANCHES.filter(function (b) {
+                return b.fil === idFil && !etapeFaite("br:" + b.id) && b.quand();
+            })[0];
+
+            if (branche) {
+                marquerEtape("br:" + branche.id);
+                plusTard(function () { branche.jouer(); }, 900);
+                return;
+            }
+        }
+
         this.verifier();
     },
 
@@ -523,6 +537,148 @@ const SCENARIO = {
         });
     },
 };
+
+
+/* ============================================================
+   LES CONVERSATIONS QU'ON MÈNE
+   ============================================================
+   Jusqu'ici, les fils étaient figés : on lisait ce qui avait
+   été écrit avant, et c'est tout. Ici, on RÉPOND — depuis le
+   téléphone de Lena, donc les gens croient d'abord parler à
+   elle.
+
+   Ce qu'on choisit de dire change ce qu'on obtient. Jonas
+   protège sa sœur : si on le brusque, il se ferme ; si on lui
+   dit la vérité, il finit par lâcher deux choses que personne
+   d'autre ne sait.
+
+   ⚠️ Même règle que partout : on ne peut pas se fermer une
+   porte définitivement. Si Jonas se braque, Mira rattrape le
+   coup et la conversation se rouvre.
+   ============================================================ */
+const BRANCHES = [
+    {
+        id: "jonas_ouverture",
+        fil: "jonas",
+        quand: function () { return ETAT.acte >= 2; },
+        jouer: function () { jonasRemarqueQuelquun(); },
+    },
+];
+
+
+function jonasRemarqueQuelquun() {
+
+    SCENARIO.repondre("jonas", [
+        { txt: "lena ???" },
+        { txt: "t'es là ? je vois que tu lis" },
+    ], function () {
+        SCENARIO.enCours = {
+            fil: "jonas",
+            reponses: [
+                { id: "jv", txt: "Ce n'est pas Lena. Mira m'a envoyé son téléphone." },
+                { id: "jb", txt: "Je sais pour les 300 €." },
+                { id: "jr", txt: "Ne pas répondre." },
+            ],
+            suite: function (id) {
+
+                if (id === "jr") {
+                    SCENARIO.repondre("jonas", [{ txt: "ok." }], function () {
+                        // la porte reste ouverte : on pourra revenir
+                        ETAT.etapesScenario["br:jonas_ouverture"] = false;
+                        sauvegarder();
+                    });
+                    return;
+                }
+
+                if (id === "jb") {
+                    /* Le bluff : il panique et se ferme. Mira
+                       rattrape, et on repart sur la vérité. */
+                    SCENARIO.repondre("jonas", [
+                        { txt: "qui êtes vous ???" },
+                        { txt: "c'est son téléphone. répondez." },
+                    ], function () {
+                        plusTard(function () {
+                            SCENARIO.repondre("mira", [
+                                { txt: "jonas vient de m'appeler en panique." },
+                                { txt: "je lui ai expliqué. dites-lui qui vous êtes, il parlera." },
+                            ], function () {
+                                jonasSeCalme();
+                            });
+                        }, 1200);
+                    });
+                    return;
+                }
+
+                jonasSeCalme();
+            },
+        };
+        SCENARIO.rafraichirSiVisible("jonas");
+    });
+}
+
+
+function jonasSeCalme() {
+
+    SCENARIO.repondre("jonas", [
+        { txt: "mira m'a prévenu qu'elle envoyait le téléphone à quelqu'un." },
+        { txt: "je pensais pas que ça servirait à quelque chose." },
+        { txt: "demandez." },
+    ], function () {
+        jonasQuestions();
+    });
+}
+
+
+function jonasQuestions() {
+
+    const reponses = [];
+
+    if (!ENQUETE.a("jonas_sim")) {
+        reponses.push({ id: "j_argent", txt: "Pourquoi elle t'a demandé 300 € en liquide ?" });
+    }
+    if (!ENQUETE.a("jonas_cabane")) {
+        reponses.push({ id: "j_ou", txt: "Où est-ce qu'elle irait, si elle devait disparaître ?" });
+    }
+    reponses.push({ id: "j_fin", txt: "Merci, Jonas." });
+
+    SCENARIO.enCours = {
+        fil: "jonas",
+        reponses: reponses,
+        suite: function (id) {
+
+            if (id === "j_argent") {
+                SCENARIO.repondre("jonas", [
+                    { txt: "elle voulait du liquide, elle a pas dit pourquoi." },
+                    { txt: "et elle m'a demandé si je connaissais quelqu'un qui vend des cartes sim sans papiers." },
+                    { txt: "j'ai dit non. j'aurais dû poser des questions." },
+                ], function () {
+                    ENQUETE.trouver("jonas_sim");
+                    jonasQuestions();
+                });
+                return;
+            }
+
+            if (id === "j_ou") {
+                SCENARIO.repondre("jonas", [
+                    { txt: "nulle part. elle déteste partir, elle a jamais quitté Kiel." },
+                    { pause: 1600 },
+                    { txt: "…attendez." },
+                    { txt: "il y a la cabane du grand-père, au bord de l'eau. mais elle y va jamais en hiver, il y fait -2." },
+                ], function () {
+                    ENQUETE.trouver("jonas_cabane");
+                    jonasQuestions();
+                });
+                return;
+            }
+
+            SCENARIO.repondre("jonas", [
+                { txt: "si vous la trouvez, dites lui que j'ai rien dit à maman." },
+            ]);
+        },
+    };
+
+    SCENARIO.rafraichirSiVisible("jonas");
+}
 
 
 /* ============================================================

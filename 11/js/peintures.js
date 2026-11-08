@@ -58,9 +58,31 @@ function degrade(etapes, vertical) {
 }
 
 
+/* ------------------------------------------------------------
+   LE MODE LÉGER
+   ------------------------------------------------------------
+   ⚠️ Le grain (feTurbulence) et la brume (feGaussianBlur) sont
+   des filtres SVG, et un filtre coûte très cher dès qu'il
+   couvre tout l'écran. Tant qu'on affichait une photo à la
+   fois, aucun problème. Depuis que Kiek empile huit vidéos
+   plein écran et que le fil d'Insta en aligne quinze, Safari
+   sur iPhone finissait par rendre l'âme : c'était ÇA, les
+   plantages de Kiek.
+
+   Donc : par défaut on peint LÉGER (aucun filtre). On ne
+   demande le grain que là où il y a une seule image à l'écran
+   — la visionneuse Photos et la photo imprimée de l'enveloppe —
+   avec peindre(clef, { detail: true }).
+   ------------------------------------------------------------ */
+let PEINTURE_DETAILLEE = false;
+
+
 /* Le grain argentique : un bruit léger posé sur toute l'image.
-   C'est LE détail qui fait "photo de nuit" au lieu de "dessin". */
+   C'est LE détail qui fait "photo de nuit" au lieu de "dessin" —
+   mais on ne se l'autorise qu'en gros plan. */
 function grain(opacite) {
+    if (!PEINTURE_DETAILLEE) return "";
+
     compteurDeDegrades++;
     const id = "grain" + compteurDeDegrades;
 
@@ -84,14 +106,27 @@ function vignette(force) {
 }
 
 
-/* Une bande de brume horizontale, floutée. */
+/* Une bande de brume horizontale. Floutée en gros plan, simple
+   dégradé en mode léger — à l'œil, à cette taille, on ne voit
+   pas la différence. */
 function brume(y, hauteur, opacite, couleur) {
     compteurDeDegrades++;
     const id = "flou" + compteurDeDegrades;
+    const teinte = couleur || "#8FA3BE";
+
+    if (!PEINTURE_DETAILLEE) {
+        const doux = degrade([
+            ["0%", teinte, 0],
+            ["45%", teinte, opacite],
+            ["100%", teinte, 0],
+        ]);
+        return "<defs>" + doux.def + "</defs>" +
+            '<rect x="-60" y="' + y + '" width="500" height="' + hauteur + '" fill="url(#' + doux.id + ')"/>';
+    }
 
     return '<filter id="' + id + '"><feGaussianBlur stdDeviation="9"/></filter>' +
         '<rect x="-60" y="' + y + '" width="500" height="' + hauteur + '" ' +
-        'fill="' + (couleur || "#8FA3BE") + '" opacity="' + opacite + '" filter="url(#' + id + ')"/>';
+        'fill="' + teinte + '" opacity="' + opacite + '" filter="url(#' + id + ')"/>';
 }
 
 
@@ -636,9 +671,15 @@ function peindre(clef, options) {
 
     const ratio = o.recadre ? "xMidYMid slice" : "xMidYMid meet";
 
+    // detail: true -> grain et flou. Réservé aux écrans qui
+    // n'affichent qu'une seule image (voir le mode léger).
+    PEINTURE_DETAILLEE = !!o.detail;
+
     const svg = '<svg viewBox="' + p.boite + '" preserveAspectRatio="' + ratio + '" ' +
         'width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">' +
         p.dessin() + "</svg>";
+
+    PEINTURE_DETAILLEE = false;
 
     return el("div", { classe: "photo-peinte", html: svg });
 }

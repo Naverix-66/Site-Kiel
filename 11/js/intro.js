@@ -33,7 +33,10 @@ const LE_MOT = [
     "Elle croyait m'écrire. Un chiffre de travers.",
     "Ce numéro, c'est le vôtre. Et vous avez répondu.",
     "",
-    "Son code, c'est la date de la photo. Elle est au dos.",
+    "Alors fouillez ce téléphone. Tout est dedans.",
+    "Trouvez-la.",
+    "",
+    "Le code, c'est la date de la photo. Elle est au dos.",
 ];
 
 
@@ -201,7 +204,7 @@ const INTRO = {
         const photo = el("div", { classe: "photo-imprimee" }, [
             el("div", { classe: "faces" }, [
                 el("div", { classe: "face face--recto" }, [
-                    peindre("fjord_juillet", { recadre: true }),
+                    peindre("fjord_juillet", { recadre: true, detail: true }),
                 ]),
                 el("div", { classe: "face face--dos" }, [
                     el("div", { classe: "mention", texte: "au crayon, au dos" }),
@@ -290,11 +293,16 @@ const INTRO = {
         if (this.zone && this.zone.parentNode) this.zone.remove();
 
         OS.dessinerAccueil();
-
-        if (!silencieux) {
-            OS.toast("Carnet d'enquête ouvert", { icone: ICONES.carnet });
-        }
-
         SCENARIO.demarrer();
+
+        /* ⚠️ On n'abandonne pas la joueuse devant seize icônes.
+           Le téléphone s'ouvre là où l'histoire commence : la
+           conversation avec Mira, qui est en train d'écrire.
+           (Avant, on atterrissait sur l'écran d'accueil sans
+           savoir quoi faire — c'était le reproche le plus juste
+           qu'on pouvait faire à l'intro.) */
+        if (!silencieux) {
+            plusTard(function () { allerAuFil("mira"); }, 1200);
+        }
     },
 };

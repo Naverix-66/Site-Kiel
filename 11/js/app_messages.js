@@ -227,8 +227,19 @@ function dessinerFil(vue, fil) {
         ]));
     }
 
-    // On colle le fil en bas, comme un vrai.
-    plusTard(function () { zone.scrollTop = zone.scrollHeight; }, 30);
+    /* On colle le fil en bas, comme un vrai.
+
+       ⚠️ Tout de suite, PUIS au prochain rendu. Avant, on
+       attendait 30 ms : le fil s'affichait donc en haut, puis
+       sautait en bas — c'était la secousse visible à chaque
+       message reçu. La version synchrone suffit quand on
+       rafraîchit (la vue est déjà dans la page) ; le
+       requestAnimationFrame couvre le cas où la vue vient
+       d'être créée et n'est pas encore attachée. */
+    const callerEnBas = function () { zone.scrollTop = zone.scrollHeight; };
+
+    callerEnBas();
+    window.requestAnimationFrame(callerEnBas);
 }
 
 

@@ -236,7 +236,8 @@ function imagePhoto(photo, options) {
         return element;
     }
 
-    return peindre(photo.peinture, { recadre: o.recadre });
+    // le grain seulement en grand : une seule image à l'écran
+    return peindre(photo.peinture, { recadre: o.recadre, detail: o.grande });
 }
 
 

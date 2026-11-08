@@ -178,6 +178,16 @@ const INDICES = {
         quoi: "Elle a demandé de l'argent liquide à son frère, sans dire pourquoi.",
         ou: "Messages → Jonas",
     },
+    jonas_sim: {
+        acte: 2, app: "messages",
+        quoi: "Elle a demandé à son frère où trouver une carte SIM sans papiers.",
+        ou: "Messages → Jonas",
+    },
+    jonas_cabane: {
+        acte: 3, app: "messages",
+        quoi: "Jonas : « il y a la cabane du grand-père, mais elle y va jamais. »",
+        ou: "Messages → Jonas",
+    },
     ex_profil: {
         acte: 2, app: "fjordgram",
         quoi: "Son profil à lui : 38 abonnés, 412 abonnements. Il suit tout son entourage à elle, un par un.",
@@ -513,6 +523,10 @@ const AIDES = [
     {
         quand: function () { return !ETAT.deductions.d_eckernforde; },
         texte: "Mail → le message d'Oma, en mai. Mira se trompe.",
+    },
+    {
+        quand: function () { return ETAT.acte >= 2 && !ENQUETE.a("jonas_cabane"); },
+        texte: "Écrivez à Jonas. Il protège sa sœur, mais il parle si on lui dit la vérité.",
     },
     {
         quand: function () { return !ETAT.epinglePosee; },

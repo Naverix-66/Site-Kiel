@@ -584,6 +584,7 @@ const OS = {
         this.appOuverte = null;
         this.pile = [];
         this.elementApp = null;
+        this.badgesARafraichir = false;
 
         this.dessinerAccueil();
     },
@@ -809,14 +810,24 @@ const OS = {
 
 
     /* Redessine l'écran d'accueil (donc les pastilles rouges).
-       Il est toujours là, derrière l'app : on peut le rafraîchir
-       même quand une application est ouverte. */
+
+       ⚠️ Mais SEULEMENT si aucune application n'est ouverte.
+       Redessiner l'accueil pendant qu'on lit provoquait une
+       secousse d'une demi-seconde à chaque message reçu : le
+       navigateur recalculait toute la mise en page derrière.
+       Quand une app est ouverte, on note juste qu'il faudra
+       rafraîchir en sortant. */
     rafraichirBadges: function () {
         if (!this.scene || !this.elementAccueil) return;
 
+        if (this.appOuverte) {
+            this.badgesARafraichir = true;
+            return;
+        }
+
         const dossierEtaitOuvert = this.dossierOuvert;
         this.dessinerAccueil();
-        if (dossierEtaitOuvert && !this.appOuverte) this.ouvrirDossier(dossierEtaitOuvert);
+        if (dossierEtaitOuvert) this.ouvrirDossier(dossierEtaitOuvert);
     },
 
 
