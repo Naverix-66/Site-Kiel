@@ -35,9 +35,14 @@ const SCENARIO = {
 
         this.reprise();
 
+        this.demarreeA = Date.now();
+
         // Le filet de sécurité : si rien n'a été trouvé depuis un
         // moment, Mira finit par souffler quelque chose.
         setInterval(function () { SCENARIO.verifierSiOnPatine(); }, 20000);
+
+        // Et la vie du téléphone, qui continue pendant qu'on cherche.
+        setInterval(function () { SCENARIO.vieDuTelephone(); }, 15000);
 
         plusTard(function () { SCENARIO.verifier(); }, 900);
     },
@@ -448,6 +453,51 @@ const SCENARIO = {
 
 
     /* ========================================================
+       L'AMBIANCE — le téléphone vit pendant qu'on fouille
+       ========================================================
+       Un vrai téléphone ne reste pas immobile. Toutes les deux
+       minutes environ, il se passe quelque chose : Jonas écrit,
+       quelqu'un ajoute une story, une appli pousse une
+       notification.
+
+       ⚠️ RÈGLE ABSOLUE, pour ne jamais perdre la joueuse :
+       une notification d'ambiance ne change JAMAIS l'objectif,
+       n'apporte JAMAIS d'indice, et n'attend JAMAIS de réponse.
+       C'est du décor. Ce qu'il faut faire reste écrit au même
+       endroit, dans le carnet, du début à la fin.
+
+       Et jamais pendant que Mira pose une question : on ne
+       parle pas par-dessus quelqu'un.
+       ======================================================== */
+    demarreeA: Date.now(),
+    derniereAmbiance: 0,
+
+    vieDuTelephone: function () {
+
+        if (ETAT.acte === 0) return;
+        if (this.sceneEnCours || this.enCours) return;
+
+        const maintenant = Date.now();
+
+        // on laisse deux minutes de calme en arrivant
+        if (maintenant - this.demarreeA < 120000) return;
+        if (maintenant - this.derniereAmbiance < 110000) return;
+
+        for (let i = 0; i < AMBIANCE.length; i++) {
+            const evenement = AMBIANCE[i];
+
+            if (etapeFaite("amb:" + evenement.id)) continue;
+            if (evenement.quand && !evenement.quand()) continue;
+
+            marquerEtape("amb:" + evenement.id);
+            this.derniereAmbiance = maintenant;
+            evenement.faire();
+            return;
+        }
+    },
+
+
+    /* ========================================================
        LE DERNIER GESTE DU JEU
        ======================================================== */
     envoyerPreuves: function () {
@@ -473,6 +523,93 @@ const SCENARIO = {
         });
     },
 };
+
+
+/* ============================================================
+   L'AMBIANCE
+   ============================================================
+   Du décor, uniquement du décor. Rien ici n'avance l'enquête,
+   rien n'attend de réponse, rien ne doit faire croire à la
+   joueuse qu'elle doit s'en occuper.
+
+   Dans l'ordre où ça arrive, environ toutes les deux minutes.
+   ============================================================ */
+const AMBIANCE = [
+
+    {
+        id: "jonas_nouvelles",
+        faire: function () {
+            SCENARIO.envoyer("jonas", "des nouvelles ?");
+        },
+    },
+
+    {
+        id: "story_lisbeth",
+        faire: function () {
+            OS.notifier({
+                appId: "fjordgram",
+                titre: "Fjordgram",
+                texte: "lisbeth.g a ajouté à sa story",
+            });
+        },
+    },
+
+    {
+        id: "kiek_pousse",
+        faire: function () {
+            OS.notifier({
+                appId: "kiek",
+                titre: "Kiek",
+                texte: "kiel.bynight a publié une vidéo · brouillard sur la Förde",
+            });
+        },
+    },
+
+    {
+        id: "mira_pause",
+        quand: function () { return ETAT.acte >= 2; },
+        faire: function () {
+            SCENARIO.envoyer("mira", "je prends mon service. si je réponds pas tout de suite, c'est que je suis dans une chambre.");
+        },
+    },
+
+    {
+        id: "meteo",
+        faire: function () {
+            OS.notifier({
+                appId: "safari",
+                titre: "Kieler Nachrichten",
+                texte: "Brouillard sur la Förde cette nuit encore. Visibilité 300 m.",
+            });
+        },
+    },
+
+    {
+        id: "jonas_photo",
+        faire: function () {
+            SCENARIO.envoyer("jonas", "maman a retrouvé une photo de nous deux à Laboe. on avait des casquettes affreuses.");
+        },
+    },
+
+    {
+        id: "mira_retour",
+        quand: function () { return etapeFaite("amb:mira_pause"); },
+        faire: function () {
+            SCENARIO.envoyer("mira", "pause. vous en êtes où ?");
+        },
+    },
+
+    {
+        id: "labor_relance",
+        faire: function () {
+            OS.notifier({
+                appId: "mail",
+                titre: "Labor Nordlicht",
+                texte: "Vos tirages attendent toujours. On les garde encore un mois.",
+            });
+        },
+    },
+];
 
 
 /* ============================================================
