@@ -545,6 +545,8 @@ const DOSSIER = [
                 texte: "Que faisait-elle, ce soir-là ?",
                 repondue: function () { return ETAT.deductions.d_mensonge === true; },
                 reponse: "Elle a menti à Mira. Elle était en repos, dehors, avec son appareil.",
+                cible: "calendrier",
+                aide: "Son agenda, au 8 novembre. Puis Mira te posera la question.",
             },
             {
                 id: "q_ordre",
@@ -552,24 +554,31 @@ const DOSSIER = [
                 repondue: function () { return ETAT.chronoValidee; },
                 reponse: "19 h 42 le mensonge, 22 h 10 le pont, 23 h 02 mon message, puis 4 212 pas.",
                 ecran: function () { ecranChronologie(); },
+                aide: "Carnet → la nuit du 8. Les six traces, dans l'ordre.",
             },
             {
                 id: "q_rentree",
                 texte: "Est-elle rentrée chez elle ?",
                 repondue: function () { return ETAT.deductions.d_rentree === true || ETAT.chronoValidee; },
                 reponse: "Oui. 1 h 14, wifi de l'appartement. Elle n'a pas disparu dehors.",
+                cible: "reglages",
+                aide: "Réglages → Wi-Fi, et l'application Santé.",
             },
             {
                 id: "q_efface",
                 texte: "Qu'a-t-elle effacé en rentrant ?",
                 repondue: function () { return ENQUETE.a("photos_supprimees"); },
                 reponse: "Trois photos du 3 juillet : un phare, une porte bleue, une clé.",
+                cible: "photos",
+                aide: "Photos → Albums → « Récemment supprimés ». Elles y sont encore.",
             },
             {
                 id: "q_pose",
                 texte: "Quand a-t-elle posé ce téléphone ?",
                 repondue: function () { return ENQUETE.a("ecran_eteint"); },
                 reponse: "5 h 36. Plus un seul déverrouillage après.",
+                cible: "reglages",
+                aide: "Réglages → Temps d'écran. Le dernier déverrouillage est écrit en haut.",
             },
         ],
     },
@@ -582,30 +591,40 @@ const DOSSIER = [
                 texte: "Qui la suivait ?",
                 repondue: function () { return ENQUETE.a("mouchard"); },
                 reponse: "Un logiciel installé en avril, déguisé en calculatrice.",
+                cible: "reglages",
+                aide: "Réglages → Confidentialité → Localisation. Une application ment sur ce qu'elle est.",
             },
             {
                 id: "q_qui",
                 texte: "Qui l'a installé ?",
                 repondue: function () { return ENQUETE.a("recu_familysafe"); },
                 reponse: "Tobias Reh. 4,99 € par mois, carte se terminant par 4417.",
+                cible: "mail",
+                aide: "Mail → Corbeille. Un abonnement, ça laisse un reçu.",
             },
             {
                 id: "q_savait",
                 texte: "Le savait-elle ?",
                 repondue: function () { return ENQUETE.a("recherches_web") || ENQUETE.a("video_sauvee"); },
                 reponse: "Oui. Elle a cherché toute la nuit du 6 novembre, entre 2 h et 4 h.",
+                cible: "safari",
+                aide: "Safari → ses recherches. Regarde la nuit du 6 novembre.",
             },
             {
                 id: "q_silence",
                 texte: "Pourquoi n'a-t-elle rien dit à personne ?",
                 repondue: function () { return ENQUETE.a("conseils_avocate"); },
                 reponse: "Son avocate le lui a demandé. Même à Mira. Surtout à Mira.",
+                cible: "notes",
+                aide: "Notes → « Me Vogt — ce qu'elle a dit ».",
             },
             {
                 id: "q_enleve",
                 texte: "Est-ce lui qui l'a prise ?",
                 repondue: function () { return ETAT.deductions.d_pas_enleve === true; },
                 reponse: "Non. Il la croyait chez elle, et il la cherche encore.",
+                cible: "messages",
+                aide: "Relis ce que Tobias écrit APRÈS le 8, et le journal du mouchard.",
             },
         ],
     },
@@ -618,6 +637,8 @@ const DOSSIER = [
                 texte: "Qu'est-ce qu'elle préparait ?",
                 repondue: function () { return ETAT.deductions.d_fuite === true; },
                 reponse: "Son départ. Depuis des semaines, seule, sans le dire.",
+                cible: "calendrier",
+                aide: "Son agenda de novembre, et les mails de sa banque.",
             },
             {
                 id: "q_argent",
@@ -626,12 +647,16 @@ const DOSSIER = [
                     return ENQUETE.a("retraits") && (ENQUETE.a("jonas_argent") || ENQUETE.a("objectif_vendu"));
                 },
                 reponse: "600 € au distributeur, 400 € d'un objectif vendu, 300 € à son frère.",
+                cible: "mail",
+                aide: "Mail → le récapitulatif de la banque, et l'annonce vendue.",
             },
             {
                 id: "q_telephone",
                 texte: "Pourquoi laisser son téléphone ?",
                 repondue: function () { return ETAT.deductions.d_telephone_laisse === true; },
                 reponse: "Un téléphone qui bouge, c'est une adresse. Un téléphone qui reste, c'est quelqu'un qui dort chez lui.",
+                cible: "photos",
+                aide: "Il manque une moitié : ce qu'elle a effacé en rentrant. Photos → Récemment supprimés.",
             },
         ],
     },
@@ -644,6 +669,8 @@ const DOSSIER = [
                 texte: "Est-elle chez sa grand-mère ?",
                 repondue: function () { return ETAT.deductions.d_eckernforde === true; },
                 reponse: "Non, la maison est vendue depuis mai. Mais il reste une cabane.",
+                cible: "mail",
+                aide: "Mail → le message d'Oma, en mai. Lis-le jusqu'au bout.",
             },
             {
                 id: "q_ou",
@@ -651,12 +678,15 @@ const DOSSIER = [
                 repondue: function () { return ETAT.epinglePosee === "bulk"; },
                 reponse: "Bülk. La cabane bleue derrière le phare, à Strande.",
                 ecran: function () { OS.ouvrirApp("plans"); },
+                aide: "Plans. Pose l'épingle à Bülk, derrière le phare.",
             },
             {
                 id: "q_comment",
                 texte: "Comment y est-elle allée ?",
                 repondue: function () { return ENQUETE.a("bus_501"); },
                 reponse: "Bus 501, service de nuit, puis 2,4 km à pied. Avec son vélo et le chat.",
+                cible: "safari",
+                aide: "Safari → l'historique du 6 novembre. Elle a regardé des horaires de bus.",
             },
         ],
     },
@@ -669,12 +699,16 @@ const DOSSIER = [
                 texte: "Comment lui prouver que je ne suis pas lui ?",
                 repondue: function () { return ETAT.questionsLenaRepondues.length >= 3; },
                 reponse: "Le chat, le dos de la photo, et ce qu'elle m'a répondu cette nuit-là.",
+                cible: "messages",
+                aide: "Messages → le compte sans nom. Réponds à ses trois questions.",
             },
             {
                 id: "q_aider",
                 texte: "Qu'est-ce que je peux faire pour elle ?",
                 repondue: function () { return ETAT.preuvesEnvoyees; },
                 reponse: "Envoyer le reçu et le journal de positions à Me Vogt. C'est fait.",
+                cible: "mail",
+                aide: "Mail → Corbeille → le reçu FamilySafe. Il y a un bouton pour le transférer.",
             },
         ],
     },
@@ -760,9 +794,23 @@ const AIDES = [
         quand: function () { return !ETAT.epinglePosee; },
         texte: "Bülk. Comme au dos de ta photo. Pose l'épingle dans Plans.",
     },
+    /* ⚠️ Le filet de fin de partie.
+       On peut terminer l'histoire en laissant des questions
+       sans réponse — c'est arrivé à la première partie d'Evan :
+       quatre « ? » restaient dans le dossier et plus rien ne
+       disait où chercher. À partir d'ici, l'aide pointe
+       toujours la première question ouverte, quelle qu'elle
+       soit, jusqu'à ce que le dossier soit complet. */
+    {
+        quand: function () { return ENQUETE.questionSansReponse() !== null; },
+        texte: function () {
+            const question = ENQUETE.questionSansReponse();
+            return "« " + question.texte + " » — " + (question.aide || "cherche encore.");
+        },
+    },
     {
         quand: function () { return true; },
-        texte: "Relis votre fil à toutes les deux. Tout est parti de là.",
+        texte: "Tout est dans le dossier. Il ne manque plus rien.",
     },
 ];
 
@@ -894,12 +942,49 @@ const ENQUETE = {
         return { bon: false, texte: deduction.rate };
     },
 
+    /* --- la première question du dossier restée sans réponse --- */
+    questionSansReponse: function () {
+        let trouvee = null;
+
+        DOSSIER.forEach(function (groupe) {
+            if (trouvee) return;
+            if (ETAT.acte < groupe.acte) return;
+
+            groupe.questions.forEach(function (question) {
+                if (trouvee) return;
+                if (!question.repondue()) trouvee = question;
+            });
+        });
+
+        return trouvee;
+    },
+
     /* --- le coup de main de Mira --- */
     aide: function () {
-        for (let i = 0; i < AIDES.length; i++) {
-            if (AIDES[i].quand()) return AIDES[i].texte;
+
+        /* Quand l'histoire est finie, la liste AIDES (qui suit le
+           chemin principal) n'a plus rien à dire d'utile : on
+           pointe directement la première question du dossier
+           restée sans réponse. */
+        const objectifsRestants = this.objectifs().filter(function (o) {
+            return !ENQUETE.objectifFait(o.id);
+        });
+
+        if (objectifsRestants.length === 0) {
+            const question = this.questionSansReponse();
+            if (question) {
+                return "« " + question.texte + " » — " + (question.aide || "cherche encore.");
+            }
+            return "Tout est dans le dossier. Il ne manque plus rien.";
         }
-        return AIDES[AIDES.length - 1].texte;
+
+        for (let i = 0; i < AIDES.length; i++) {
+            if (AIDES[i].quand()) {
+                const texte = AIDES[i].texte;
+                return typeof texte === "function" ? texte() : texte;
+            }
+        }
+        return "Tout est dans le dossier.";
     },
 
     /* --- où on en est, en pourcentage (pour le carnet) --- */

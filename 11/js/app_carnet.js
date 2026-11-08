@@ -88,6 +88,32 @@ function ecranCarnet(corps) {
             ]),
             el("span", { classe: "glyphe chevron-carte", html: ICONES.chevron }),
         ]));
+
+    } else if (compte.repondues < compte.total) {
+
+        /* L'histoire est finie, le dossier non. On le dit, et on
+           donne la porte suivante — sinon on reste avec des « ? »
+           et aucun moyen de savoir où aller. */
+        const manquantes = compte.total - compte.repondues;
+
+        corps.appendChild(el("div", {
+            classe: "bande-maintenant cliquable",
+            auClic: function () {
+                const question = ENQUETE.questionSansReponse();
+                if (!question) return;
+                if (question.ecran) { question.ecran(); return; }
+                if (question.cible) OS.ouvrirApp(question.cible);
+            },
+        }, [
+            el("div", {}, [
+                el("div", { classe: "bande-maintenant-sur", texte: "TU L'AS RETROUVÉE" }),
+                el("div", {
+                    classe: "bande-maintenant-titre",
+                    texte: "Il reste " + manquantes + (manquantes > 1 ? " questions" : " question") + " sans réponse",
+                }),
+            ]),
+            el("span", { classe: "glyphe chevron-carte", html: ICONES.chevron }),
+        ]));
     }
 
     /* --- le dossier : les questions, groupe par groupe --- */
@@ -115,17 +141,28 @@ function ecranCarnet(corps) {
 
             const repondue = question.repondue();
 
+            /* Une question sans réponse n'est pas un reproche :
+               c'est une porte. On appuie, et le téléphone ouvre
+               l'endroit où il faut chercher. (Sans ça, on peut
+               finir l'histoire avec quatre « ? » dans le dossier
+               et aucun moyen de savoir où aller — c'est ce qui
+               est arrivé à la première vraie partie.) */
+            const ouYAller = function () {
+                if (question.ecran) { question.ecran(); return; }
+                if (question.cible) OS.ouvrirApp(question.cible);
+            };
+
             const ligneQuestion = el("div", {
                 classe: "question-ligne" + (repondue ? " question-ligne--repondue" : ""),
-                auClic: (!repondue && question.ecran) ? question.ecran : null,
+                auClic: (!repondue && (question.ecran || question.cible)) ? ouYAller : null,
             }, [
                 el("span", { classe: "question-puce", texte: repondue ? "✓" : "?" }),
                 el("div", {}, [
                     el("div", { classe: "question-texte", texte: question.texte }),
                     repondue
                         ? el("div", { classe: "question-reponse", texte: question.reponse })
-                        : (question.ecran
-                            ? el("div", { classe: "question-action", texte: "y répondre →" })
+                        : ((question.ecran || question.cible)
+                            ? el("div", { classe: "question-action", texte: "aller chercher →" })
                             : null),
                 ]),
             ]);
