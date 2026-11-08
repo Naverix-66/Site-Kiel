@@ -114,6 +114,11 @@ function pageDeDemarrage() {
             });
 
             corps.appendChild(recherches);
+
+            /* Ses recherches sont lisibles d'un coup d'œil :
+               on les note sans attendre un clic. */
+            plusTard(function () { ENQUETE.trouver("recherches_web"); }, 700);
+
             vue.appendChild(corps);
 
             /* --- la barre d'adresse et la barre d'outils, en bas --- */

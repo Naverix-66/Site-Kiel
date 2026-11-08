@@ -54,6 +54,18 @@ function listeDesAppels(corps) {
 
     const liste = el("div", { classe: "liste" });
 
+    /* ⚠️ Les traces portées par un appel se ramassent à
+       l'AFFICHAGE de la liste, pas au clic sur le petit « i ».
+       « Tobias — entrant — 3 s » est écrit noir sur blanc dans
+       la liste : si on l'a sous les yeux, on l'a lu. Demander
+       un clic de plus pour l'enregistrer, ce n'était pas une
+       énigme, c'était une case à cocher. */
+    plusTard(function () {
+        APPELS.forEach(function (appel) {
+            if (appel.indice) ENQUETE.trouver(appel.indice);
+        });
+    }, 600);
+
     APPELS.forEach(function (appel) {
 
         const contact = CONTACTS[appel.contact] || { nom: appel.contact };

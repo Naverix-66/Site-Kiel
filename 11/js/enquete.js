@@ -468,6 +468,188 @@ const DEDUCTIONS = [
 ];
 
 
+/* ============================================================
+   LE DOSSIER — toutes les questions du jeu
+   ============================================================
+   C'est ÇA, le carnet, et il n'y a rien d'autre dedans : une
+   liste de questions. Chacune attend sa réponse, et la réponse
+   s'écrit toute seule dès que la joueuse a de quoi la donner.
+
+   Les questions des actes à venir restent caviardées : on voit
+   combien il en reste, on ne sait pas lesquelles. C'est la
+   forme la plus honnête qu'on ait trouvée — on mesure le
+   chemin sans se faire gâcher la suite.
+
+   Aucune mécanique ici : « repondue » ne fait que REGARDER
+   l'état du jeu. Une question se remplit parce qu'on a trouvé
+   quelque chose ailleurs, jamais parce qu'on a rempli un
+   formulaire dans le carnet.
+
+   ecran : les quelques questions sur lesquelles on peut agir
+           (la chronologie, la carte) ouvrent l'écran qui va bien.
+   ============================================================ */
+
+const DOSSIER = [
+
+    {
+        groupe: "La nuit du 8", acte: 1,
+        questions: [
+            {
+                id: "q_soiree",
+                texte: "Que faisait-elle, ce soir-là ?",
+                repondue: function () { return ETAT.deductions.d_mensonge === true; },
+                reponse: "Elle a menti à Mira. Elle était en repos, dehors, avec son appareil.",
+            },
+            {
+                id: "q_ordre",
+                texte: "Dans quel ordre s'est passée cette nuit ?",
+                repondue: function () { return ETAT.chronoValidee; },
+                reponse: "19 h 42 le mensonge, 22 h 10 le pont, 23 h 02 mon message, puis 4 212 pas.",
+                ecran: function () { ecranChronologie(); },
+            },
+            {
+                id: "q_rentree",
+                texte: "Est-elle rentrée chez elle ?",
+                repondue: function () { return ETAT.deductions.d_rentree === true || ETAT.chronoValidee; },
+                reponse: "Oui. 1 h 14, wifi de l'appartement. Elle n'a pas disparu dehors.",
+            },
+            {
+                id: "q_efface",
+                texte: "Qu'a-t-elle effacé en rentrant ?",
+                repondue: function () { return ENQUETE.a("photos_supprimees"); },
+                reponse: "Trois photos du 3 juillet : un phare, une porte bleue, une clé.",
+            },
+            {
+                id: "q_pose",
+                texte: "Quand a-t-elle posé ce téléphone ?",
+                repondue: function () { return ENQUETE.a("ecran_eteint"); },
+                reponse: "5 h 36. Plus un seul déverrouillage après.",
+            },
+        ],
+    },
+
+    {
+        groupe: "Ce qu'elle subissait", acte: 2,
+        questions: [
+            {
+                id: "q_suivie",
+                texte: "Qui la suivait ?",
+                repondue: function () { return ENQUETE.a("mouchard"); },
+                reponse: "Un logiciel installé en avril, déguisé en calculatrice.",
+            },
+            {
+                id: "q_qui",
+                texte: "Qui l'a installé ?",
+                repondue: function () { return ENQUETE.a("recu_familysafe"); },
+                reponse: "Tobias Reh. 4,99 € par mois, carte se terminant par 4417.",
+            },
+            {
+                id: "q_savait",
+                texte: "Le savait-elle ?",
+                repondue: function () { return ENQUETE.a("recherches_web") || ENQUETE.a("video_sauvee"); },
+                reponse: "Oui. Elle a cherché toute la nuit du 6 novembre, entre 2 h et 4 h.",
+            },
+            {
+                id: "q_silence",
+                texte: "Pourquoi n'a-t-elle rien dit à personne ?",
+                repondue: function () { return ENQUETE.a("conseils_avocate"); },
+                reponse: "Son avocate le lui a demandé. Même à Mira. Surtout à Mira.",
+            },
+            {
+                id: "q_enleve",
+                texte: "Est-ce lui qui l'a prise ?",
+                repondue: function () { return ETAT.deductions.d_pas_enleve === true; },
+                reponse: "Non. Il la croyait chez elle, et il la cherche encore.",
+            },
+        ],
+    },
+
+    {
+        groupe: "Pourquoi elle est partie", acte: 2,
+        questions: [
+            {
+                id: "q_preparait",
+                texte: "Qu'est-ce qu'elle préparait ?",
+                repondue: function () { return ETAT.deductions.d_fuite === true; },
+                reponse: "Son départ. Depuis des semaines, seule, sans le dire.",
+            },
+            {
+                id: "q_argent",
+                texte: "Avec quel argent ?",
+                repondue: function () {
+                    return ENQUETE.a("retraits") && (ENQUETE.a("jonas_argent") || ENQUETE.a("objectif_vendu"));
+                },
+                reponse: "600 € au distributeur, 400 € d'un objectif vendu, 300 € à son frère.",
+            },
+            {
+                id: "q_telephone",
+                texte: "Pourquoi laisser son téléphone ?",
+                repondue: function () { return ETAT.deductions.d_telephone_laisse === true; },
+                reponse: "Un téléphone qui bouge, c'est une adresse. Un téléphone qui reste, c'est quelqu'un qui dort chez lui.",
+            },
+        ],
+    },
+
+    {
+        groupe: "Où elle est", acte: 3,
+        questions: [
+            {
+                id: "q_oma",
+                texte: "Est-elle chez sa grand-mère ?",
+                repondue: function () { return ETAT.deductions.d_eckernforde === true; },
+                reponse: "Non, la maison est vendue depuis mai. Mais il reste une cabane.",
+            },
+            {
+                id: "q_ou",
+                texte: "Où est-elle ?",
+                repondue: function () { return ETAT.epinglePosee === "bulk"; },
+                reponse: "Bülk. La cabane bleue derrière le phare, à Strande.",
+                ecran: function () { OS.ouvrirApp("plans"); },
+            },
+            {
+                id: "q_comment",
+                texte: "Comment y est-elle allée ?",
+                repondue: function () { return ENQUETE.a("bus_501"); },
+                reponse: "Bus 501, service de nuit, puis 2,4 km à pied. Avec son vélo et le chat.",
+            },
+        ],
+    },
+
+    {
+        groupe: "Ce que je peux faire", acte: 4,
+        questions: [
+            {
+                id: "q_preuve",
+                texte: "Comment lui prouver que je ne suis pas lui ?",
+                repondue: function () { return ETAT.questionsLenaRepondues.length >= 3; },
+                reponse: "Le chat, le dos de la photo, et ce qu'elle m'a répondu cette nuit-là.",
+            },
+            {
+                id: "q_aider",
+                texte: "Qu'est-ce que je peux faire pour elle ?",
+                repondue: function () { return ETAT.preuvesEnvoyees; },
+                reponse: "Envoyer le reçu et le journal de positions à Me Vogt. C'est fait.",
+            },
+        ],
+    },
+];
+
+
+function questionsDuDossier() {
+    let total = 0;
+    let repondues = 0;
+
+    DOSSIER.forEach(function (groupe) {
+        groupe.questions.forEach(function (q) {
+            total++;
+            if (q.repondue()) repondues++;
+        });
+    });
+
+    return { total: total, repondues: repondues };
+}
+
+
 /* ------------------------------------------------------------
    LES AIDES
    ------------------------------------------------------------

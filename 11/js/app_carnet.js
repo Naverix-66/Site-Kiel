@@ -51,62 +51,96 @@ enregistrerApp({
 
 function ecranCarnet(corps) {
 
+    const compte = questionsDuDossier();
+
+    /* --- l'en-tête du dossier --- */
+    corps.appendChild(el("div", { classe: "dossier-entete" }, [
+        el("div", { classe: "dossier-reference", texte: "DOSSIER 11-4482/26" }),
+        el("h2", { texte: "Brandt, Lena" }),
+        el("div", { classe: "dossier-compte" }, [
+            el("b", { texte: compte.repondues + " / " + compte.total }),
+            el("span", { texte: " questions répondues" }),
+        ]),
+        el("div", { classe: "avancement-barre" }, [
+            el("i", { style: { width: Math.round((compte.repondues / compte.total) * 100) + "%" } }),
+        ]),
+    ]));
+
+    /* --- la prochaine chose à faire, en une ligne --- */
     const restants = ENQUETE.objectifs().filter(function (o) { return !ENQUETE.objectifFait(o.id); });
 
-    /* --- 1. une seule chose à faire --- */
     if (restants.length > 0) {
         const courant = restants[0];
 
-        const carte = el("div", { classe: "carte-objectif" });
-        carte.appendChild(el("div", { classe: "carte-objectif-sur-titre", texte: "À FAIRE" }));
-        carte.appendChild(el("h3", { texte: courant.titre }));
-
-        if (courant.cible) {
-            carte.appendChild(bouton(courant.cible.bouton || "Y aller", function () {
+        corps.appendChild(el("div", {
+            classe: "bande-maintenant cliquable",
+            auClic: function () {
                 const cible = courant.cible;
+                if (!cible) return;
                 if (cible.onglet === "chrono") { ecranChronologie(); return; }
                 if (cible.fil) { allerAuFil(cible.fil); return; }
                 if (cible.app) OS.ouvrirApp(cible.app);
-            }));
-        }
-
-        corps.appendChild(carte);
-    } else {
-        corps.appendChild(el("div", { classe: "carte-objectif" }, [
-            el("div", { classe: "carte-objectif-sur-titre", texte: "TERMINÉ" }),
-            el("h3", { texte: "Tu l'as retrouvée." }),
+            },
+        }, [
+            el("div", {}, [
+                el("div", { classe: "bande-maintenant-sur", texte: "MAINTENANT" }),
+                el("div", { classe: "bande-maintenant-titre", texte: courant.titre }),
+            ]),
+            el("span", { classe: "glyphe chevron-carte", html: ICONES.chevron }),
         ]));
     }
 
-    /* --- 2. ce que je sais --- */
-    const etablies = ENQUETE.deductionsFaites();
+    /* --- le dossier : les questions, groupe par groupe --- */
+    DOSSIER.forEach(function (groupeDeQuestions) {
 
-    if (etablies.length > 0) {
-        corps.appendChild(titreDeSection("Ce que je sais"));
+        const accessible = ETAT.acte >= groupeDeQuestions.acte;
 
-        etablies.forEach(function (deduction) {
-            corps.appendChild(el("div", { classe: "fait" }, [
-                el("span", { classe: "fait-puce", texte: "—" }),
-                el("span", { texte: deduction.conclusion }),
-            ]));
+        corps.appendChild(el("div", { classe: "titre-section" }, [
+            el("span", { texte: groupeDeQuestions.groupe.toUpperCase() }),
+        ]));
+
+        groupeDeQuestions.questions.forEach(function (question) {
+
+            /* pas encore accessible : la ligne est caviardée */
+            if (!accessible) {
+                corps.appendChild(el("div", { classe: "question-ligne question-ligne--secrete" }, [
+                    el("span", { classe: "question-puce", texte: "·" }),
+                    el("span", {
+                        classe: "caviarde",
+                        style: { width: (55 + (question.texte.length % 7) * 5) + "%" },
+                    }),
+                ]));
+                return;
+            }
+
+            const repondue = question.repondue();
+
+            const ligneQuestion = el("div", {
+                classe: "question-ligne" + (repondue ? " question-ligne--repondue" : ""),
+                auClic: (!repondue && question.ecran) ? question.ecran : null,
+            }, [
+                el("span", { classe: "question-puce", texte: repondue ? "✓" : "?" }),
+                el("div", {}, [
+                    el("div", { classe: "question-texte", texte: question.texte }),
+                    repondue
+                        ? el("div", { classe: "question-reponse", texte: question.reponse })
+                        : (question.ecran
+                            ? el("div", { classe: "question-action", texte: "y répondre →" })
+                            : null),
+                ]),
+            ]);
+
+            corps.appendChild(ligneQuestion);
         });
-    }
+    });
 
-    /* --- 3 et 4. deux portes, deux chiffres --- */
-    const trouvees = PIECES_CHRONO.filter(function (p) { return ENQUETE.a(p.indice); }).length;
+    /* --- le bas : les traces, et le coup de main --- */
+    corps.appendChild(el("div", {
+        classe: "lien-traces cliquable",
+        texte: ETAT.indices.length + " traces notées  →",
+        auClic: function () { ecranDesTraces(); },
+    }));
 
-    corps.appendChild(titreDeSection("Mes dossiers"));
-
-    corps.appendChild(groupe(null, [
-        ligneReglage("La nuit du 8", ETAT.chronoValidee ? "établie" : trouvees + " / 6", {
-            auClic: function () { ecranChronologie(); },
-        }),
-        ligneReglage("Mes traces", String(ETAT.indices.length), {
-            auClic: function () { ecranDesTraces(); },
-        }),
-    ]));
-
-    /* --- le coup de main --- */
     corps.appendChild(el("div", { classe: "zone-boutons" }, [
         bouton("Mira, aide-moi", function () {
             SONS.message();
