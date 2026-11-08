@@ -473,6 +473,42 @@ const PEINTURES = {
         },
     },
 
+    /* Un double de clés posé sur la table de la cuisine, avec un
+       mot plié à côté. Rien de violent, aucune menace : un
+       cadeau. C'est l'objet le plus effrayant du jeu. */
+    double_cle: {
+        boite: "0 0 300 400",
+        dessin: function () {
+            const bois = degrade([["0%", "#8A6A4A"], ["100%", "#6E5238"]]);
+
+            return "<defs>" + bois.def + "</defs>" +
+                '<rect width="300" height="400" fill="url(#' + bois.id + ')"/>' +
+                // les veines du bois
+                '<g stroke="#5E452F" stroke-width="2" opacity="0.5">' +
+                '<path d="M0 90 Q150 80 300 96 M0 190 Q150 202 300 186 M0 300 Q150 288 300 304"/>' +
+                "</g>" +
+                halo(150, 120, 190, "#FFE2A8", 0.22) +
+                // le mot plié
+                '<g transform="rotate(-4 150 290)">' +
+                '<rect x="62" y="248" width="176" height="96" rx="2" fill="#F6F1E6"/>' +
+                '<rect x="62" y="248" width="176" height="96" rx="2" fill="none" stroke="#DED6C4" stroke-width="2"/>' +
+                '<path d="M62 296 L238 296" stroke="#E4DCCB" stroke-width="2"/>' +
+                '<text x="150" y="276" font-family="Caveat, cursive" font-size="21" fill="#5A5048" text-anchor="middle">' +
+                "je t'en ai fait un double</text>" +
+                '<text x="150" y="322" font-family="Caveat, cursive" font-size="21" fill="#5A5048" text-anchor="middle">' +
+                "au cas où. T.</text>" +
+                "</g>" +
+                // la clé, neuve, posée dessus
+                '<g transform="rotate(24 150 180)">' +
+                '<circle cx="150" cy="140" r="22" fill="none" stroke="#C8B48A" stroke-width="9"/>' +
+                '<circle cx="150" cy="140" r="8" fill="#6E5238"/>' +
+                '<path d="M150 162 L150 232" stroke="#C8B48A" stroke-width="10"/>' +
+                '<path d="M150 206 L170 206 M150 220 L166 220" stroke="#C8B48A" stroke-width="9"/>' +
+                "</g>" +
+                vignette(0.4) + grain(0.12);
+        },
+    },
+
     fjord_juillet: {
         boite: "0 0 400 300",
         dessin: function () {

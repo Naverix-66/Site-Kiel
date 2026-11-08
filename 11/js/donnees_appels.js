@@ -67,10 +67,10 @@ const REPONDEUR = [
         contact: "tobias",
         t: "12/11 20:28",
         duree: "0:22",
-        transcription: "C'est moi. Je suis en bas de chez toi, il y a de la lumière au salon alors je sais que vous êtes là. " +
-            "Mira ne m'ouvre pas. Je ne vais pas rester, je voulais juste… " + "\n" +
+        transcription: "C'est moi. Je suis en bas. La lumière du salon est allumée et le rideau de la cuisine est tiré du mauvais côté, " +
+            "comme quand c'est Mira qui le ferme. Donc tu n'es pas là. " + "\n" +
             "(silence de six secondes) " + "\n" +
-            "Bon. Voilà.",
+            "Je ne monte pas, hein. Je dis juste que je sais.",
     },
     {
         id: "r04",

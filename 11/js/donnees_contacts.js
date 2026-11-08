@@ -46,6 +46,7 @@ const CONTACTS = {
         numero: "+49 171 9908 2244",
         couleur: "#7A5B4A",
         role: "ex",
+        details: "Schlüsseldienst Reh — serrurier, 24 h/24",
     },
 
     jonas: {

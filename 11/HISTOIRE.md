@@ -96,11 +96,49 @@ La clé est sous la troisième pierre.
 |---|---|---|---|
 | **Lena Brandt**, 27 | la disparue. Photographe de nuit, argentique. Mère française, père allemand : elle écrit en français et jure en allemand. | tout | tout. Elle a construit sa sortie seule, et elle n'a prévenu personne — pas même sa coloc. |
 | **Mira Lindqvist**, 31 | la colocataire. Infirmière de nuit à l'UKSH. C'est elle qui t'envoie le téléphone et qui te parle en direct pendant tout le jeu. | les habitudes de Lena, ses horaires, ses mensonges | rien. Mira ne ment jamais — mais **elle se trompe**, souvent, et avec aplomb. C'est ça qui rend l'enquête vivante : il faut parfois lui dire non. |
-| **Tobias Reh**, 33 | l'ex. Développeur. Charmant à l'écrit, insupportable entre les lignes. | où elle était, minute par minute, pendant sept mois | qu'il paie 4,99 €/mois pour ça. |
+| **Tobias Reh**, 33 | l'ex. **Serrurier**, ouvert 24 h/24. Il ouvre les portes des gens pour vivre, et il trouve ça normal. | où elle était, minute par minute, pendant sept mois | qu'il paie 4,99 €/mois pour ça. Et qu'il a gardé un double. |
 | **Jonas Brandt**, 24 | le petit frère. Cuisinier. | que sa sœur allait partir — elle lui a demandé de l'argent liquide en octobre | il te mentira d'abord. Par protection. Il lâche tout si tu lui montres que tu as compris. |
 | **Hanne Brandt**, 81 | la grand-mère, à Eckernförde. Écrit de longs mails en français avec zéro ponctuation. | la cabane. La clé sous la troisième pierre. | rien : elle ne sait pas que sa petite-fille a disparu, et c'est tant mieux. |
 | **Me Vogt** | l'avocate. Un nom dans un agenda, un brouillon de mail jamais envoyé. | — | — |
 | **Keks** | le chat. Roux, bête, adoré. | — | c'est la réponse à une question, à la fin. |
+
+---
+
+## Comment on écrit Tobias
+
+C'est le personnage le plus difficile du jeu, et la règle tient en une ligne :
+**il ne menace jamais.**
+
+Il s'inquiète. Il rend service. Il s'excuse. Il répare le joint de la porte en
+passant. Il change la serrure du kiosque et refuse d'être payé. Il apporte à
+manger devant chez elle quand elle a disparu. Tout le monde l'aime bien —
+Lisbeth écrit « il est adorable franchement », et c'est elle qui a raison selon
+tout le monde sauf Lena.
+
+Ce qui fait peur chez lui, ce n'est jamais ce qu'il dit, c'est **ce qu'il
+sait** :
+
+- « tu as changé de boulangerie »
+- « tu as éteint ta lampe à 00 h 12. dors bien. »
+- « il fait 4 degrés et tu n'as pas pris ton écharpe verte »
+- « ta porte est fermée à double tour. ce n'est pas ton habitude. »
+- sur son répondeur : *« le rideau de la cuisine est tiré du mauvais côté, comme
+  quand c'est Mira qui le ferme. Donc tu n'es pas là. Je ne monte pas, hein.
+  Je dis juste que je sais. »*
+
+Et il y a l'objet. Dans l'album verrouillé, une photo d'un **double de ses clés
+posé sur la table de la cuisine**, avec un mot : *« je t'en ai fait un double,
+au cas où. T. »* Légende de Lena : « il me l'a posé là pendant que j'étais sous
+la douche ». Aucune violence, aucune insulte, un cadeau — et c'est la chose la
+plus effrayante du téléphone.
+
+Son métier n'est pas un détail : **serrurier**. Il entre où il veut, et c'est
+son travail. Sur Fjordgram il photographie des portes. Sous l'une d'elles :
+« une porte, c'est juste une question de temps. 4 minutes celle-là. »
+
+⚠️ Ce qu'on ne fait JAMAIS avec lui : crier, insulter, frapper, menacer
+explicitement. À la seconde où il devient un méchant de film, il cesse de faire
+peur.
 
 ---
 

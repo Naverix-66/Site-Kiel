@@ -28,7 +28,7 @@ const COMPTES = {
         pseudo: "t.reh",
         nom: "Tobias Reh",
         couleur: "#7A5B4A",
-        bio: "Kiel · développeur\n« on ne perd que ce qu'on n'a pas su garder »",
+        bio: "Schlüsseldienst Reh · Kiel · ouvert 24 h/24\n« une porte, c'est juste une question de temps »",
         abonnes: 38,
         abonnements: 412,
         lui: true,
@@ -244,26 +244,30 @@ const PUBLICATIONS = [
     {
         id: "t01", auteur: "tobias", peinture: "quai_nuit", t: "14/11 19:02",
         lieu: "Kiel",
-        legende: "si quelqu'un l'a vue, qu'il me le dise.",
+        legende: "si quelqu'un l'a vue, qu'il me le dise. je ne dors plus.",
         jaime: 12,
         indice: "ex_cherche_aussi",
         commentaires: [
             { de: "mira.lq", txt: "arrête d'écrire sur elle." },
+            { de: "lisbeth.g", txt: "courage Tobias 🙏" },
         ],
     },
     {
         id: "t02", auteur: "tobias", peinture: "hornbrucke", t: "02/11 22:40",
         lieu: "Hörn, Kiel",
-        legende: "belle nuit pour marcher",
+        legende: "intervention à 22h. je passais par là de toute façon.",
         jaime: 4,
         commentaires: [],
     },
     {
-        id: "t03", auteur: "tobias", peinture: "appartement_nuit", t: "20/09 23:50",
+        id: "t03", auteur: "tobias", peinture: "porte_bleue", t: "20/09 23:50",
         lieu: "Kiel",
-        legende: "il y a des gens qui ne savent pas ce qu'ils ont",
+        legende: "une porte, c'est juste une question de temps. 4 minutes celle-là.",
         jaime: 7,
-        commentaires: [],
+        commentaires: [
+            { de: "jonas.brandt", txt: "😂 flippant mec" },
+            { de: "t.reh", lui: true, txt: "c'est mon métier 🙂" },
+        ],
     },
 
     /* ---------- les autres ---------- */

@@ -188,6 +188,11 @@ const INDICES = {
         quoi: "Jonas : « il y a la cabane du grand-père, mais elle y va jamais. »",
         ou: "Messages → Jonas",
     },
+    double_cle: {
+        acte: 2, app: "photos", quand: "21/09",
+        quoi: "Il s'est fait un double de ses clés. Il le lui a annoncé comme on offre un cadeau.",
+        ou: "Photos → album Privé",
+    },
     ex_profil: {
         acte: 2, app: "fjordgram",
         quoi: "Son profil à lui : 38 abonnés, 412 abonnements. Il suit tout son entourage à elle, un par un.",

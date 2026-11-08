@@ -107,6 +107,19 @@ const INTRO = {
     /* --------------------------------------------------------
        2. LE MOT, ÉCRIT À LA MAIN
        -------------------------------------------------------- */
+    /* --------------------------------------------------------
+       2. LE MOT
+       --------------------------------------------------------
+       ⚠️ DEUXIÈME VERSION. La première écrivait lettre par
+       lettre, avec un curseur qui clignotait : le papier
+       grandissait à mesure, les lignes sautaient, le curseur
+       se baladait — ça faisait brouillon.
+
+       Maintenant les lignes sont toutes posées dès le départ
+       (donc le papier a sa taille finale, rien ne bouge) et
+       elles apparaissent en fondu, l'une après l'autre. On lit
+       au rythme où ça s'écrit, sans que rien ne tressaute.
+       -------------------------------------------------------- */
     ecranMot: function () {
 
         vide(this.zone);
@@ -117,78 +130,49 @@ const INTRO = {
         const consigne = el("div", { classe: "acte0-consigne", texte: "" });
         this.zone.appendChild(consigne);
 
-        let ligneCourante = 0;
-        let lettreCourante = 0;
-        let elementLigne = null;
-        let fini = false;
-        let minuteur = null;
+        const PAS = 0.34;          // secondes entre deux lignes
+        let decalage = 0.3;
 
-        const curseur = el("span", { classe: "curseur" });
+        LE_MOT.forEach(function (texte) {
 
-        const terminerLEcriture = function () {
-            if (fini) return;
-            fini = true;
+            if (texte === "") {
+                papier.appendChild(el("div", { style: { height: "13px" } }));
+                return;
+            }
 
-            if (minuteur) clearTimeout(minuteur);
+            papier.appendChild(el("div", {
+                classe: "mot-ligne",
+                texte: texte,
+                style: { animationDelay: decalage.toFixed(2) + "s" },
+            }));
 
-            vide(papier);
-            LE_MOT.forEach(function (ligne) {
-                papier.appendChild(el("div", {
-                    texte: ligne,
-                    style: ligne === "" ? { height: "14px" } : null,
-                }));
-            });
-            papier.appendChild(el("div", { classe: "signature", texte: "— M." }));
+            decalage += PAS;
+        });
 
+        papier.appendChild(el("div", {
+            classe: "mot-ligne signature",
+            texte: "— M.",
+            style: { animationDelay: (decalage + 0.2).toFixed(2) + "s" },
+        }));
+
+        const toutMontrer = function () {
+            papier.classList.add("mot--entier");
+        };
+
+        // un appui sur le papier affiche tout d'un coup
+        papier.addEventListener("click", toutMontrer);
+
+        const total = (decalage + 0.9) * 1000;
+
+        plusTard(function () {
             ETAT.motLu = true;
             sauvegarder();
 
-            consigne.textContent = "";
+            toutMontrer();
             consigne.appendChild(bouton("Il y avait aussi une photo", function () {
                 INTRO.ecranPhoto();
             }, { classe: "bouton--papier" }));
-        };
-
-        const ecrireUneLettre = function () {
-
-            if (fini) return;
-
-            if (ligneCourante >= LE_MOT.length) {
-                terminerLEcriture();
-                return;
-            }
-
-            const texte = LE_MOT[ligneCourante];
-
-            if (!elementLigne) {
-                elementLigne = el("div", {
-                    style: texte === "" ? { height: "14px" } : null,
-                });
-                papier.appendChild(elementLigne);
-                papier.appendChild(curseur);
-            }
-
-            if (lettreCourante >= texte.length) {
-                ligneCourante++;
-                lettreCourante = 0;
-                elementLigne = null;
-                minuteur = plusTard(ecrireUneLettre, texte === "" ? 60 : 220);
-                return;
-            }
-
-            elementLigne.textContent += texte.charAt(lettreCourante);
-            lettreCourante++;
-
-            // un son très discret, une lettre sur cinq
-            if (lettreCourante % 5 === 0) souffle(0.015, 0.012, 2600);
-
-            minuteur = plusTard(ecrireUneLettre, VITESSE_ECRITURE_LETTRE);
-        };
-
-        // Un appui sur le papier termine l'écriture tout de suite.
-        papier.addEventListener("click", terminerLEcriture);
-
-        plusTard(ecrireUneLettre, 500);
+        }, total);
     },
 
 

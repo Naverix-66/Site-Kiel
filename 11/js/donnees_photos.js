@@ -135,6 +135,13 @@ const PHOTOS = [
         albums: ["prive"],
     },
     {
+        id: "pr06", peinture: "double_cle", t: "21/09 19:40",
+        lieu: "Jägersberg 14, Kiel", appareil: "iPhone 12 mini — 26 mm — f/1.6",
+        legende: "il me l'a posé sur la table pendant que j'étais sous la douche",
+        albums: ["prive"],
+        indice: "double_cle",
+    },
+    {
         id: "pr05", capture: "code_tobias", t: "29/10 20:16",
         lieu: null, appareil: "Capture d'écran",
         legende: "il tape son code devant moi comme si j'étais un meuble",

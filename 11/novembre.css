@@ -3191,13 +3191,25 @@ body.autonome #barre-statut { opacity: 0; }
 }
 
 .mot .signature { text-align: right; margin-top: 14px; font-size: 24px; }
-.mot .curseur {
-    display: inline-block;
-    width: 2px;
-    height: 20px;
-    background: var(--encre);
-    vertical-align: -3px;
-    animation: clignote 0.9s steps(1) infinite;
+
+/* Les lignes sont toutes là dès le départ (le papier ne bouge
+   pas d'un pixel) : elles se contentent d'apparaître en fondu,
+   l'une après l'autre. */
+.mot-ligne {
+    opacity: 0;
+    animation: ligne-apparait 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@keyframes ligne-apparait {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* un appui, et tout est là */
+.mot--entier .mot-ligne {
+    animation: none;
+    opacity: 1;
+    transform: none;
 }
 
 /* la photo imprimée, qui se retourne */

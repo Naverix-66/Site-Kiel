@@ -95,20 +95,36 @@ const FILS = [
     /* ========================================================
        TOBIAS — l'ex
        ========================================================
-       Rien de violent, jamais. Juste quelqu'un qui sait
-       toujours où elle est, et qui le lui fait savoir.
-       C'est ce décalage qui fait froid dans le dos.
+       Serrurier. Il ouvre les portes des gens pour vivre, et il
+       trouve ça normal.
+
+       Règle d'écriture pour lui, et on ne s'en écarte jamais :
+       il ne menace pas, il ne crie pas, il n'insulte pas. Il
+       s'inquiète. Il rend service. Il s'excuse. Et il sait des
+       choses qu'il ne devrait pas savoir — l'heure à laquelle
+       elle éteint, la boulangerie où elle va, le prénom de la
+       personne chez qui elle a dormi.
+
+       C'est ça qui fait peur : il est gentil, tout le monde
+       l'aime bien, et il a un double de ses clés.
        ======================================================== */
     {
         id: "tobias",
         contact: "tobias",
         messages: [
+            { de: "eux", t: "12/09 08:40", txt: "j'ai remplacé le joint de ta porte en passant. elle fermait mal." },
+            { de: "moi", t: "12/09 12:10", txt: "tu es entré ?" },
+            { de: "eux", t: "12/09 12:11", txt: "de l'extérieur. je suis serrurier lena 🙂" },
+
             { de: "eux", t: "20/10 21:14", txt: "tu as changé ta photo. elle est jolie" },
-            { de: "eux", t: "28/10 23:36", txt: "tu rentres tard en ce moment" },
+            { de: "eux", t: "28/10 23:36", txt: "tu rentres tard en ce moment. tu devrais pas prendre la Kiellinie seule à cette heure là" },
 
             { de: "eux", t: "01/11 07:48", txt: "bon anniversaire à ta grand-mère. dis lui bonjour" },
             { de: "moi", t: "01/11 12:20", txt: "comment tu sais ça" },
             { de: "eux", t: "01/11 12:22", txt: "j'ai de la mémoire, c'est tout." },
+
+            { de: "eux", t: "03/11 19:30", txt: "tu as changé de boulangerie" },
+            { de: "eux", t: "03/11 19:30", txt: "celle de Holtenauer est meilleure, tu avais raison" },
 
             { de: "eux", t: "05/11 23:51", txt: "tu étais où ce soir" },
             { de: "moi", t: "05/11 23:52", txt: "arrête" },
@@ -116,22 +132,27 @@ const FILS = [
             { de: "moi", t: "05/11 23:55", txt: "ne m'écris plus" },
             { de: "eux", t: "05/11 23:56", txt: "ok" },
             { de: "eux", t: "06/11 00:02", txt: "ok" },
+            { de: "eux", t: "06/11 00:19", txt: "tu as éteint ta lampe à 00h12. dors bien." },
 
             {
                 de: "eux", t: "08/11 22:49", txt: "pourquoi tu raccroches",
                 indice: "sms_tobias_nuit",
             },
             { de: "eux", t: "08/11 22:50", txt: "lena" },
+            { de: "eux", t: "08/11 22:58", txt: "il fait 4 degrés et tu n'as pas pris ton écharpe verte" },
             { de: "eux", t: "08/11 23:20", txt: "ok." },
 
             /* --- après : il écrit encore. Donc il ne sait pas. --- */
-            { de: "eux", t: "12/11 20:10", txt: "je suis passé. mira m'a pas ouvert" },
+            { de: "eux", t: "10/11 07:15", txt: "ta porte est fermée à double tour. ce n'est pas ton habitude." },
+            { de: "eux", t: "12/11 20:10", txt: "je suis passé. mira ne m'a pas ouvert. je comprends." },
+            { de: "eux", t: "12/11 20:14", txt: "j'ai laissé de quoi manger devant la porte. prends le avant les mouettes." },
             {
                 de: "eux", t: "14/11 02:44", txt: "dis juste que tu es vivante",
                 indice: "tobias_ecrit_apres",
             },
+            { de: "eux", t: "14/11 02:51", txt: "je sais que je suis trop. je travaille là dessus. vraiment." },
             { de: "eux", t: "16/11 13:02", txt: "la police m'a appelé. je leur ai dit que je savais pas où tu étais." },
-            { de: "eux", t: "16/11 13:03", txt: "c'est la première fois en sept mois." },
+            { de: "eux", t: "16/11 13:03", txt: "c'est la première fois en sept mois que c'est vrai." },
         ],
     },
 
@@ -177,6 +198,9 @@ const FILS = [
         id: "lisbeth",
         contact: "lisbeth",
         messages: [
+            { de: "eux", t: "02/11 11:20", txt: "ton ex est venu changer la serrure du kiosk ce matin. il a pas voulu être payé" },
+            { de: "eux", t: "02/11 11:21", txt: "il est adorable franchement. je comprends pas pourquoi tu en parles jamais" },
+
             { de: "eux", t: "08/11 22:31", txt: "tu peux me remplacer demain matin ? 6h-12h" },
             { de: "eux", t: "08/11 23:40", txt: "lena ? c'est urgent là, je dois trouver quelqu'un" },
             { de: "eux", t: "09/11 00:58", txt: "laisse tomber, pawel a dit oui" },
